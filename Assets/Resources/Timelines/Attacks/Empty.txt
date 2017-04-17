@@ -1,0 +1,12 @@
+#This is a comment
+//This is also a comment
+//These files are used to create attack patterns and stages runtime, while still being fairly easy to edit
+//Any newlines are disregarded; they start after ;// (and the file start) and end in a ;
+//You cannot indent
+//These are the implemented functions:
+//setBulletProperty(name,property,value), createBullet(name), wait(value), setNum(name,value), addNum(name,value,value), subNum(name,value,value), mulNum(name,value,value), divNum(name,value,value),
+modNum(name,value,value), powNum(name,value,value), sinNum(name,value), cosNum(name,value), tanNum(name,value), absNum(name,value), asinNum(name,value), acosNum(name,value), atanNum(name,value);
+//name is what you refer a variable by;
+//value is either a number or a name. can't be a function;
+//property is one of the following: movementx, movementy, isharmful, scale, id, colorise, colorr, colorg, colorb, colora;
+#Without further ado, here we go!

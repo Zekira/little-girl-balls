@@ -1,0 +1,7 @@
+Using Unity 5.3.3f1
+Don't know if stuff goes wrong with other versions.
+
+32-bit:
+http://download.unity3d.com/download_unity/910d71450a97/Windows32EditorInstaller/UnitySetup32-5.3.3f1.exe?_ga=1.260107214.258907070.1401301023
+64-bit:
+http://download.unity3d.com/download_unity/910d71450a97/Windows64EditorInstaller/UnitySetup64-5.3.3f1.exe?_ga=1.260107214.258907070.1401301023
