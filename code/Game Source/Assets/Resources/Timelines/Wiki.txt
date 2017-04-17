@@ -1,0 +1,95 @@
+The syntax:
+//This is a comment;
+#This is a comment;
+Lines are seperated by ;. Even comments.
+Any non-comment line has the format "<Command>([arg0,arg1, ..]);". All commands must be lowercase.
+Any "name" command is the name used to store a value.
+Any "value" argument can be either a name of a variable or a number. If it's a name, it passes its current value, not the reference.
+Valid commands:
+
+starttimeline(string);
+  Starts the timeline specified.
+dialogue(string);
+  Starts the dialogue specified. This prevents all timelines from continuing until the dialogue is done.
+repeat(value);
+  Executes everything until "endrepeat;" "value" times. These can be used inside one another.
+endrepeat;
+  Denotes the end of a repeat block.
+wait(value);
+  Waits the specified number of ticks. (A tick is 1/60th of a second.)
+bulletproperty(name, property, value[, more values]);
+  Sets the "property" of "name" to "value(s)". The following properties are recognised:
+  "movement":
+    The vector that describes it's movement every tick.
+	Takes 2 value arguments: x and y.
+  "isharmful":
+    0 when not harmful (shot by the player, usually), 1 when harmful.
+  "scale":
+    The size of the bullet. 1 is equal to 1 unit. (The field is ~9.2 units high and ~8 units wide.)
+  "id":
+    What number bullet to use. Found inside Resources/Graphics/Bullets. Determines only the visuals.
+  "innercolor":
+    What to turn the red in the original sprite into.
+	Takes 4 value arguments: r, g, b, and a.
+  "outercolor":
+    What to turn the green in the original sprite into.
+	Takes 4 value arguments: r, g, b, and a.
+  "rotation":
+    What rotation offset the bullet starts with. In radians.
+enemyproperty(name, property, value[, more values]);
+  Sets the "property" of "name" to "value(s)". The following properties are recognised:
+  "scale":
+    The size of the enemy. 1 is equal to 1 unit.
+  "attackpath":
+    Gives the enemy one or more attacks, the one happening after the previous. If there are no more, the enemy dies.
+	The difficulty modifier gets added to the string(s), so if playing on easy, Timelines/Attacks/Stage1/Boss1 becomes Timelines/Attacks/Stage1/Boss1_0.
+	Takes any amount of string arguments.
+  "spellcardname":
+    States what attacks are spellcards ("this is a name"), and what attacks aren't ("").
+	Takes any amount of string arguments.
+  "id":
+    What number enemy to use. Found inside Resources/Graphics/Enemies. Determines only the visuals.
+  "colorise":
+    Whether to give it a color through unity's default sprite shader. 0 for not, 1 for yes.
+  "color":
+    If "colorise" is not zero, change it to this color.
+  "maxhealth":
+    The health of this enemy's first attack.
+  "boss":
+    Whether this enemy is a boss.
+  "dropvalue":
+    How much value to drop. TODO: Be sure about how we manage value.
+  "droppower":
+    How much power to drop (0-400). Gets rounded to 5's, every 100 power gets bundled to a large power item, and if it's more than 400, it drops a full power item.
+  "dropscore":
+    How many score items to drop. Every score item is worth whatever the Value on the UI says.
+  "startpos":
+    Where to intially spawn the enemy.
+createbullet(name);
+  Creates the bullet stored and modified as "name" with all of its properties.
+createenemy(name);
+  Creates the enemy stored and modified as "name" with all of its properties.
+moveparent(value, value);
+  Moves whatever the TimelineInterprenter is attached to.
+destroyparent;
+  Destroys whatever the TimelineInterprenter is attached to.
+settime;
+  Sets the time limit of whatever the TimelineInterprenter is attached to.
+setparenthealth(value);
+  Sets the parent's current health, and if it exceeds the max health, also sets the max health to it.
+setparentmaxhealth(value);
+  Sets the parent's max health. Usually unneccessary due to setparenthealth's functionality.
+setparentscore(value);
+  Sets the score that is immediatly added to the score when you kill this enemy.
+angletoplayer(value);
+  Returns the angle in radians between whatever this TimelineInterprenter is attached to and the player in such a way that setting the direction of the bullet to the player fires straight at them.
+random(name, value, value);
+  Sets "name" to a random float between the two values.
+set(name, value);
+  Sets "name" to "value".
+add(name, value, value);
+  Sets name to the sum of the two values.
+  Same goes for the commands "sub" (subtracts), "mul" (multiplies), "div" (divides), "mod" (modulo), "pow" (power).
+sin(name, value);
+  Sets name to sin("value").
+  Same goes for the commands "asin" (inverse sin), "cos" (cosine), "acos" (inverse cosine), "tan" (tangent), "atan" (inverse tangent), abs (absolute value).

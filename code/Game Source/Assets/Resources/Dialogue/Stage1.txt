@@ -1,0 +1,8 @@
+rachel|happy|left|false|yay my first incident
+>rachel|thinking|left|false|warm weather sure is warm
+>charno|alert|right|true|oh hi there
+>rachel|annoyed|left|true|oh no now i need actual dialogue
+>charno|thinking|right|true|or we can just fight
+>rachel|surprised|left|true|sure uh.. lets just do that
+>charno|neutral|right|true|ok. ready? 3.. 2.. 1..
+>charno|happy|right|true|go
