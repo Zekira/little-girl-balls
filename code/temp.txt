@@ -1,0 +1,3 @@
+yet again creating a folder htrough github
+
+look i'm creating this github at work so i can't exactly install git on my desktop
