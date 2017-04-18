@@ -138,6 +138,15 @@ public class TimelineInterprenter : MonoBehaviour {
                         case "rotation":
                             bulletTemplate.rotation = ParseValue(args[2]);
                             break;
+                        case "position":
+                            Vector2 position = new Vector2();
+                            position.x = ParseValue(args[2]);
+                            position.y = ParseValue(args[3]);
+                            bulletTemplate.position = position;
+                            break;
+                        case "relativepos":
+                            bulletTemplate.positionIsRelative = ParseValue(args[2]) > 0 ? true : false;
+                            break;
                         default:
                             break;
                     }

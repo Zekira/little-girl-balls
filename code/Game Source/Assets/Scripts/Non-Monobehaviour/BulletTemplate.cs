@@ -14,7 +14,9 @@ public class BulletTemplate {
     public byte bulletID = 0; //What texture to grab.
     public Color innerColor = Color.white; //What color the outer color (green in the sprite) should become.
     public Color outerColor = Color.white; //What color the inner color (red in the sprite) should become.
-    public int bulletDamage = 1;
+    public int bulletDamage = 1; //What damage the bullet does when hitting an enemy.
+    public Vector2 position = new Vector2(0f, 0f); //What position to spawn the bullet in.
+    public bool positionIsRelative = true; //Whether position is added to its spawner's position
 
     public BulletTemplate() {
     }
@@ -29,6 +31,8 @@ public class BulletTemplate {
         innerColor = template.innerColor;
         outerColor = template.outerColor;
         bulletDamage = template.bulletDamage;
+        position = template.position;
+        positionIsRelative = template.positionIsRelative;
     }
 
     /// <summary>

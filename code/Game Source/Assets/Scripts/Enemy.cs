@@ -89,6 +89,11 @@ public class Enemy : MonoBehaviour {
                 createdObject.transform.position = position + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble());
             }
         }
+        //Clears bullets if it's a boss
+        if (template.isBoss) { 
+            StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f));
+        }
+
         //Goes to the next attack, and if there is none, goes away.
         if (currentAttack + 1 < template.attackPath.Count) {
             currentAttack++;
@@ -114,7 +119,7 @@ public class Enemy : MonoBehaviour {
     /// </summary>
     /// <param name="name"></param>
     public void ActivateSpellcard() {
-        name = template.spellcardName[currentAttack];
+        string name = template.spellcardName[currentAttack];
         if (name != "") {
             GlobalHelper.bossUI.FindChild("SpellcardUI").gameObject.SetActive(true);
             GlobalHelper.spellcardBackground.gameObject.SetActive(true);

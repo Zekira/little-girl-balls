@@ -15,21 +15,24 @@ public static class GlobalHelper {
     public static GameObject player = GameObject.FindGameObjectWithTag("Player");
     public static GameObject levelManager = GameObject.FindWithTag("LevelManager");
 
+    public static PlayerStats stats = player.GetComponent<PlayerStats>();
+    public static System.Random random = new System.Random(); //NOTE: Handle ALL random events through this; if I want to be able to add replays, I should save the seeds and input them here.
+
     public const int enemyTextureCount = 1;
     public const int bulletTextureCount = 3;
-    public static PlayerStats stats = player.GetComponent<PlayerStats>();
     public static List<GameObject> backupBullets = new List<GameObject>();
     public static List<Sprite> bulletSprites = new List<Sprite>();
     public static List<Sprite> enemySprites = new List<Sprite>();
+
     public static int totalFiredBullets;
-    public static System.Random random = new System.Random(); //NOTE: Handle ALL random events through this; if I want to be able to add replays, I should save the seeds and input them here.
     public static bool paused = false;
     public static bool dialogue = false;
     public enum Difficulty {EASY, NORMAL, HARD, LUNATIC, EXTRA};
     public static Difficulty difficulty = Difficulty.EASY;
     public static bool autoCollectItems = false;
+    public static float destroyBulletsHeight = 99f;
 
-    //Things used in createbullet and createenemy that differ everytime but is a waste to keep creating.
+    //Things used in createbullet and createenemy that differ everytime but is a waste to keep creating and better to just keep access to all the time.
     private static GameObject createdObject;
     private static MaterialPropertyBlock bulletMatPropertyBlock = new MaterialPropertyBlock();
     private static Bullet bullet;
@@ -157,10 +160,15 @@ public static class GlobalHelper {
         //Modifies the bullet based on whether it's harmful (eg shot by the enemy or player). Harmful bullets can be grazed and kill you, unharmful bullets have damage attached and don't harm you.
         if (bulletTemplate.isHarmful) {
             bulletpos = new Vector3(bulletPosition.x, bulletPosition.y, totalFiredBullets / 100000f);
-            createdObject.transform.position = bulletpos;
         } else {
-            bulletpos = new Vector3(bulletPosition.x, bulletPosition.y, 5 + totalFiredBullets / 100000f);
-            createdObject.transform.position = bulletpos;
+            bulletpos = new Vector3(bulletPosition.x, bulletPosition.y, 5 + totalFiredBullets / 100000f); //Player shot bullets should not cover actual harmful bullets.
+        }
+        if (!bulletTemplate.positionIsRelative) {
+            bulletpos.x = bulletTemplate.position.x;
+            bulletpos.y = bulletTemplate.position.y;
+        } else {
+            bulletpos.x += bulletTemplate.position.x;
+            bulletpos.y += bulletTemplate.position.y;
         }
         //Set the bullet's internal position vars; reading transform.position is a laggy operation apparantly, so this solves that.
         bullet = createdObject.GetComponent<Bullet>();
@@ -168,6 +176,8 @@ public static class GlobalHelper {
         bullet.posx = bulletpos.x;
         bullet.posy = bulletpos.y;
         bullet.posz = bulletpos.z;
+        //Set the actual position
+        createdObject.transform.position = bulletpos;
 
         bullet.grazed = false;
 

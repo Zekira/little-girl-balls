@@ -17,6 +17,10 @@ public class Bullet : MonoBehaviour {
             //Check whether colliding with the player is lethal, and if so, either be grazed or be lethal.
             //A bullet is 1 unit long if its scale is 1.
             if (bulletTemplate.isHarmful) {
+                if (posy > GlobalHelper.destroyBulletsHeight) { //Destroy it if the clear "animation" is happening and it's above the height. TODO: Add a var to make some bullets immune to clearing.
+                    Deactivate();
+                }
+
                 otherpos = GlobalHelper.GetStats().playerPosition;
                 deltax = otherpos.x - posx;
                 deltay = otherpos.y - posy;
