@@ -23,7 +23,7 @@ bulletproperty(name, property, value[, more values]);
     The vector that describes it's movement every tick.
 	Takes 2 value arguments: x and y.
   "isharmful":
-    0 when not harmful (shot by the player, usually), 1 when harmful.
+    0 when not harmful (shot by the player, usually), 1 when harmful. Defaults to harmful.
   "scale":
     The size of the bullet. 1 is equal to 1 unit. (The field is ~9.2 units high and ~8 units wide.)
   "id":
@@ -36,6 +36,11 @@ bulletproperty(name, property, value[, more values]);
 	Takes 4 value arguments: r, g, b, and a.
   "rotation":
     What rotation offset the bullet starts with. In radians.
+  "position":
+    What position to set this to.
+	Takes 2 value arguments: x and y.
+  "relativepos":
+    0 when "position" uses absolute coordinates, 1 when it's relative to its parent's position. Defaults to relative.
 enemyproperty(name, property, value[, more values]);
   Sets the "property" of "name" to "value(s)". The following properties are recognised:
   "scale":
@@ -47,6 +52,9 @@ enemyproperty(name, property, value[, more values]);
   "spellcardname":
     States what attacks are spellcards ("this is a name"), and what attacks aren't ("").
 	Takes any amount of string arguments.
+  "time":
+    Sets the time on each of the spellcards.
+	Takes any amount of value arguments.
   "id":
     What number enemy to use. Found inside Resources/Graphics/Enemies. Determines only the visuals.
   "colorise":
@@ -73,8 +81,6 @@ moveparent(value, value);
   Moves whatever the TimelineInterprenter is attached to.
 destroyparent;
   Destroys whatever the TimelineInterprenter is attached to.
-settime;
-  Sets the time limit of whatever the TimelineInterprenter is attached to.
 setparenthealth(value);
   Sets the parent's current health, and if it exceeds the max health, also sets the max health to it.
 setparentmaxhealth(value);

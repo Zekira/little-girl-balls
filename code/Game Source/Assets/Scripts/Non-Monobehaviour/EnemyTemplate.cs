@@ -5,7 +5,6 @@ using System.Collections.Generic;
 /// </summary>
 public class EnemyTemplate {
     public float scale = 1f;
-    public List<string> attackPath = new List<string>(); //NECCESSARY; should be at least one long.
     public int enemyID = 0;
     public bool colorise = false;
     public Color color = Color.white;
@@ -18,7 +17,9 @@ public class EnemyTemplate {
     public int dropScoreCount = 0;
     public Vector2 startpostion = new Vector2(0f, 0f);
     public uint baseScore = 0;
+    public List<string> attackPath = new List<string>(); //NECCESSARY; should be at least one long.
     public List<string> spellcardName = new List<string>();
+    public List<int> spellTimers = new List<int>();
 
 
     public EnemyTemplate() {
@@ -40,5 +41,6 @@ public class EnemyTemplate {
         baseScore = template.baseScore;
         dropPowerFullCount = template.dropPowerFullCount;
         spellcardName = template.spellcardName;
+        spellTimers = template.spellTimers;
     }
 }

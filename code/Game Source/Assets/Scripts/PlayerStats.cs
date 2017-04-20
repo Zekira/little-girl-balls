@@ -24,7 +24,7 @@ public class PlayerStats : MonoBehaviour {
     public uint value = 10000;
     public ushort graze = 0;
 
-    public byte invincibility = 0;
+    public int invincibility = 0;
     public bool noMovement = false;
     public Vector3 startPosition;
     public float hitboxRadius = 0.15f;
@@ -65,7 +65,7 @@ public class PlayerStats : MonoBehaviour {
             //Invincibility cooldown.
             if (invincibility > 0) {
                 invincibility--;
-                if (invincibility > 90 || invincibility % 8 > 4) {
+                if (noMovement || invincibility % 8 > 4) {
                     transform.GetComponent<SpriteRenderer>().enabled = false;
                 } else {
                     transform.GetComponent<SpriteRenderer>().enabled = true;
@@ -78,6 +78,8 @@ public class PlayerStats : MonoBehaviour {
     /// Starts what should happen when you take damage: losing hp and starting the DeathAnimation.
     /// </summary>
     public void TakeDamage() {
+        //Set the spellcard bonus to failure. Does basically nothing if there's no spell active except eat like .01ms
+        GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
         if (invincibility <= 0) {
             if (lives == 0) { //Getting hit with zero lives in stock is a bad idea.
                 //Debug.Log("<b>Game over lul git good skrub</b>");
@@ -87,7 +89,7 @@ public class PlayerStats : MonoBehaviour {
                 SetBombs(2, bombpieces);
                 noMovement = true;
                 transform.Find("DeathAnimation").gameObject.SetActive(true);
-                invincibility = 150;
+                invincibility = 210;
             }
         }
     }

@@ -162,11 +162,7 @@ public class TimelineInterprenter : MonoBehaviour {
                         case "attackpath": //Sets one or more attackpaths of this enemy. Clears previous attackpaths.
                             enemyTemplate.attackPath.Clear();
                             for (int i = 2; i < args.Length; i++) {
-                                if (enemyTemplate.attackPath.Count <= i - 2) {
-                                    enemyTemplate.attackPath.Add(args[i] + "_" + (int)GlobalHelper.difficulty);
-                                } else {
-                                    enemyTemplate.attackPath[i - 2] = args[i] + "_" + (int)GlobalHelper.difficulty;
-                                }
+                                enemyTemplate.attackPath.Add(args[i] + "_" + (int)GlobalHelper.difficulty);
                             }
                             break;
                         case "spellcardname":
@@ -174,11 +170,13 @@ public class TimelineInterprenter : MonoBehaviour {
                             //.. I mean, you have to say what you're casting before the duel! Just like in canon!
                             enemyTemplate.spellcardName.Clear();
                             for (int i = 2; i < args.Length; i++) {
-                                if (enemyTemplate.spellcardName.Count <= i - 2) {
-                                    enemyTemplate.spellcardName.Add(args[i].Replace('_', ' '));
-                                } else {
-                                    enemyTemplate.spellcardName[i - 2] = args[i].Replace('_', ' ');
-                                }
+                                enemyTemplate.spellcardName.Add(args[i].Replace('_', ' '));
+                            }
+                            break;
+                        case "time": //States the time for each spellcard. ..probably best off making spellcards a class at this point.
+                            enemyTemplate.spellTimers.Clear();
+                            for (int i = 2; i < args.Length; i++) {
+                                enemyTemplate.spellTimers.Add(Mathf.RoundToInt(ParseValue(args[i])));
                             }
                             break;
                         case "id": //Sets the ID of the IMAGE of the enemy, as defined in Resources/Graphics/Enemies.
@@ -242,10 +240,6 @@ public class TimelineInterprenter : MonoBehaviour {
                     args = GetArguments(instructions[currentLine]).Split(',');
                     cooldown = Mathf.RoundToInt(ParseValue(args[0]));
                     return;
-                case "settime": //Sets the timer of this enemy to some value. Practically useless for regular enemies.
-                    args = GetArguments(instructions[currentLine]).Split(',');
-                    parentEnemy.timer = Mathf.RoundToInt(ParseValue(args[0]));
-                    break;
                 case "setparenthealth":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     parentEnemy.health = Mathf.RoundToInt(ParseValue(args[0]));

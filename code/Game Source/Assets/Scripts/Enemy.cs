@@ -13,6 +13,9 @@ public class Enemy : MonoBehaviour {
     public int timer = 9999;
     public int currentAttack = 0;
 
+    private bool midDelay = false;
+    private int temptimer;
+
     void Start() {
         //Initialising stuff to both prevent null errors and update the UI if this is a boss.
         healthbarTransform = transform.Find("Healthbar");
@@ -20,27 +23,33 @@ public class Enemy : MonoBehaviour {
         if (template.isBoss) {
             healthbarTransform.gameObject.SetActive(true);
             GlobalHelper.bossUI.gameObject.SetActive(true);
-            SetUIStarCount(template.attackPath.Count);
-            ActivateSpellcard();
+            SetUIStarCount();
+            currentAttack = -1;
+
+            NextPhase(false, 0);
         }
     }
 
 	void Update () {
-        if (!GlobalHelper.paused) {
+        if (!GlobalHelper.paused && !midDelay) {
             timer--;
             //Timeout'd attack.
             if (timer <= 0) {
-                NextPhase(false);
+                NextPhase(false, 60);
             }
             //Kiled attack.
             if (health <= 0) {
-                NextPhase(true);
+                NextPhase(true, 60);
             }
             //Updates the UI's timer.
             if (template.isBoss) {
                 GlobalHelper.GetTimer(true).GetComponent<Text>().text = (Mathf.Min(timer / 60, 99)).ToString();
-                int temptimer = timer % 60 * 100 / 60;
-                GlobalHelper.GetTimer(false).GetComponent<Text>().text = (temptimer / 10).ToString() + (temptimer % 10).ToString();
+                temptimer = timer % 60 * 100 / 60;
+                if (timer < 6000) {
+                    GlobalHelper.GetTimer(false).GetComponent<Text>().text = (temptimer / 10).ToString() + (temptimer % 10).ToString();
+                } else {
+                    GlobalHelper.GetTimer(false).GetComponent<Text>().text = "99";
+                }
             }
         }
 	}
@@ -61,72 +70,85 @@ public class Enemy : MonoBehaviour {
     /// Drops items, goes to the next attack / dies, optionally updates the UI (mainly if it's a boss).
     /// </summary>
     /// <param name="byDamage">Whether it happened by being damaged.</param>
-    private void NextPhase(bool byDamage) {
+    private void NextPhase(bool byDamage, int delay) {
         if (byDamage) {
-            GlobalHelper.stats.AddScore(template.baseScore);
-            GameObject createdObject;
-            Vector3 position;
-            position = transform.position;
-            //Drop stuff depending on what's stated in the template, with a random offset, and z-value set to how important it is (+randomness to prevent z-fighting).
-            for (int i = 0; i < template.dropPowerCount; i++) {
-                createdObject = Instantiate((GameObject)Resources.Load("Prefabs/PowerItem"));
-                createdObject.transform.SetParent(itemParentTransform);
-                createdObject.transform.position = position + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble());
+            if (template.isBoss) {
+                GlobalHelper.stats.AddScore(GlobalHelper.levelManager.GetComponent<SpellcardManager>().currentValue);
+            } else {
+                GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
+                GlobalHelper.stats.AddScore(template.baseScore);
             }
-            for (int i = 0; i < template.dropPowerLargeCount; i++) {
-                createdObject = Instantiate((GameObject)Resources.Load("Prefabs/PowerItemLarge"));
-                createdObject.transform.SetParent(itemParentTransform);
-                createdObject.transform.position = position + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble() - 0.02f);
-            }
-            if (template.dropPowerFullCount >= 1) {
-                createdObject = Instantiate((GameObject)Resources.Load("Prefabs/PowerItemFull"));
-                createdObject.transform.SetParent(itemParentTransform);
-                createdObject.transform.position = position + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble() - 0.03f);
-            }
-            for (int i = 0; i < template.dropScoreCount; i++) {
-                createdObject = Instantiate((GameObject)Resources.Load("Prefabs/PointItem"));
-                createdObject.transform.SetParent(itemParentTransform);
-                createdObject.transform.position = position + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble());
-            }
+            DropItems();
         }
-        //Clears bullets if it's a boss
-        if (template.isBoss) { 
-            StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f));
+        //If this attack was a spellcard (or didn't exist), a bonus needs to be shown
+        if (currentAttack >= 0 && template.spellcardName[currentAttack] != "") {
+            StartCoroutine(GlobalHelper.levelManager.GetComponent<SpellcardManager>().ShowBonus());
         }
-
         //Goes to the next attack, and if there is none, goes away.
         if (currentAttack + 1 < template.attackPath.Count) {
             currentAttack++;
-            StartNewAttack(currentAttack);
-        } else {
+        } else { //It's done and no more attacks are left
             //If it's a boss the bossUI should become inactive when it gets defeated
             if (template.isBoss) {
-                GlobalHelper.bossUI.gameObject.SetActive(false);
+                GlobalHelper.bossUI.SetActive(false);
                 GlobalHelper.spellcardBackground.gameObject.SetActive(false);
             }
             Destroy(this.gameObject);
             return;
         }
-
-        if (template.isBoss) {
-            SetUIStarCount(template.attackPath.Count - currentAttack - 1);
-            ActivateSpellcard();
+        DoStuff();
+        foreach (TimelineInterprenter i in GetComponents<TimelineInterprenter>()) {
+            Destroy(i);
         }
+        StartCoroutine(DelayedStartNewAttack(currentAttack, delay));
     }
 
     /// <summary>
-    /// If the attack's name is nothing, it does nothing. If it is something, it starts everything associated with spellcards.
+    /// Stops all current TimelineInterprenters, effectively killing all attacks, and starts a new one.
     /// </summary>
-    /// <param name="name"></param>
-    public void ActivateSpellcard() {
-        string name = template.spellcardName[currentAttack];
-        if (name != "") {
-            GlobalHelper.bossUI.FindChild("SpellcardUI").gameObject.SetActive(true);
-            GlobalHelper.spellcardBackground.gameObject.SetActive(true);
-            setSpellcardName(name);
-        } else {
-            GlobalHelper.bossUI.FindChild("SpellcardUI").gameObject.SetActive(false);
-            GlobalHelper.spellcardBackground.gameObject.SetActive(false);
+    /// <param name="index">The index of the template.attackPath to use.</param>
+    private IEnumerator DelayedStartNewAttack(int index, int delay) {
+        midDelay = true;
+        foreach (TimelineInterprenter i in GetComponents<TimelineInterprenter>()) {
+            Destroy(i);
+        }
+        while (delay > 0) {
+            delay--;
+            yield return null;
+        }
+        midDelay = false;
+
+        foreach (TimelineInterprenter i in GetComponents<TimelineInterprenter>()) {
+            Destroy(i);
+        }
+        TimelineInterprenter newInterprenter = gameObject.AddComponent<TimelineInterprenter>();
+        newInterprenter.patternPath = template.attackPath[index];
+    }
+
+    private void DropItems() {
+        GameObject createdObject;
+        Vector3 position;
+        position = transform.position;
+        //Drop stuff depending on what's stated in the template, with a random offset, and z-value set to how important it is (+randomness to prevent z-fighting).
+        for (int i = 0; i < template.dropPowerCount; i++) {
+            createdObject = Instantiate((GameObject)Resources.Load("Prefabs/PowerItem"));
+            createdObject.transform.SetParent(itemParentTransform);
+            createdObject.transform.position = position + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble());
+        }
+        for (int i = 0; i < template.dropPowerLargeCount; i++) {
+            createdObject = Instantiate((GameObject)Resources.Load("Prefabs/PowerItemLarge"));
+            createdObject.transform.SetParent(itemParentTransform);
+            createdObject.transform.position = position + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble() - 0.02f);
+        }
+        if (template.dropPowerFullCount >= 1) {
+            createdObject = Instantiate((GameObject)Resources.Load("Prefabs/PowerItemFull"));
+            createdObject.transform.SetParent(itemParentTransform);
+            createdObject.transform.position = position + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble() - 0.03f);
+        }
+        for (int i = 0; i < template.dropScoreCount; i++) {
+            createdObject = Instantiate((GameObject)Resources.Load("Prefabs/PointItem"));
+            createdObject.transform.SetParent(itemParentTransform);
+            createdObject.transform.position = position + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble());
         }
     }
 
@@ -147,24 +169,12 @@ public class Enemy : MonoBehaviour {
     }
 
     /// <summary>
-    /// Stops all current TimelineInterprenters, effectively killing all attacks, and starts a new one.
-    /// </summary>
-    /// <param name="index">The index of the template.attackPath to use.</param>
-    private void StartNewAttack(int index) {
-        foreach (TimelineInterprenter i in GetComponents<TimelineInterprenter>()) {
-            Destroy(i);
-        }
-        TimelineInterprenter newInterprenter = gameObject.AddComponent<TimelineInterprenter>();
-        newInterprenter.patternPath = template.attackPath[index];
-    }
-
-    /// <summary>
     /// Set how many stars should be displayed below the boss name.
     /// </summary>
     /// <param name="num">The number of stars</param>
     private void SetUIStarCount(int num) {
         num = num < 0 ? 0 : num;
-        Transform uiAttacks = GlobalHelper.bossUI.Find("Attacks");
+        Transform uiAttacks = GlobalHelper.bossUI.transform.Find("Attacks");
         for (int i = 0; i < uiAttacks.childCount; i++) {
             if (i < num) {
                 uiAttacks.GetChild(i).gameObject.SetActive(true);
@@ -174,8 +184,37 @@ public class Enemy : MonoBehaviour {
         }
     }
 
-    private void setSpellcardName(string name) { //Todo: add support for storing histories
-        GlobalHelper.bossUI.FindChild("SpellcardUI").gameObject.SetActive(true);
-        GlobalHelper.bossUI.FindChild("SpellcardUI").FindChild("SpellcardName").GetComponent<Text>().text = name;
+    /// <summary>
+    /// Sets the amount of stars displayed below the boss name to the amount of spellcards left.
+    /// </summary>
+    private void SetUIStarCount() {
+        int spellcardCount = 0;
+        for (int i = currentAttack; i < template.attackPath.Count; i++) {
+            if (template.spellcardName[i] != "") {
+                spellcardCount++;
+            }
+        }
+        SetUIStarCount(spellcardCount);
+    }
+
+    /// <summary>
+    /// TODO: name...
+    /// Starts the clearing of bullets and starts UI stuff.
+    /// </summary>
+    private void DoStuff() { //Todo: sensible name ;-;
+        //Clears bullets if it's a boss
+        if (template.isBoss) {
+            StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f, 30));
+            SetUIStarCount();
+            GlobalHelper.levelManager.GetComponent<SpellcardManager>().ActivateSpellcard(template, currentAttack, this);
+        }
+
+        //Set the time of the current attack (if it exists), or 9999 if it isn't there.
+        if (currentAttack < template.spellTimers.Count) {
+            timer = template.spellTimers[currentAttack];
+        } else {
+            timer = 9999;
+        }
+
     }
 }

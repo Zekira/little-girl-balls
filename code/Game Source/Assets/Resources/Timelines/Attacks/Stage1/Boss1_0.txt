@@ -1,5 +1,4 @@
 setparenthealth(100);
-settime(1200);
 bulletproperty(atpl, scale, 0.3);
 bulletproperty(atpl, id, 0);
 bulletproperty(atpl, innercolor, 1, 1, 1, 1);

@@ -8,10 +8,10 @@ public static class GlobalHelper {
 
     //Things that make finding objects in other classes easier
     public static Transform enemyParent = GameObject.FindWithTag("EnemyParent").transform;
-    public static Transform bossUI = GameObject.FindWithTag("BossUI").transform;
     public static Transform spellcardBackground = GameObject.FindWithTag("SpellcardBackground").transform;
-    public static Transform secondCounter = bossUI.Find("TimerSeconds");
-    public static Transform msecondCounter = bossUI.Find("TimerMilliseconds");
+    public static GameObject bossUI = GameObject.FindWithTag("BossUI");
+    public static Transform secondCounter = bossUI.transform.Find("TimerSeconds");
+    public static Transform msecondCounter = bossUI.transform.Find("TimerMilliseconds");
     public static GameObject player = GameObject.FindGameObjectWithTag("Player");
     public static GameObject levelManager = GameObject.FindWithTag("LevelManager");
 
@@ -27,6 +27,7 @@ public static class GlobalHelper {
     public static int totalFiredBullets;
     public static bool paused = false;
     public static bool dialogue = false;
+    public static int stageNumber = 1;
     public enum Difficulty {EASY, NORMAL, HARD, LUNATIC, EXTRA};
     public static Difficulty difficulty = Difficulty.EASY;
     public static bool autoCollectItems = false;
@@ -56,9 +57,8 @@ public static class GlobalHelper {
     }
 
     /// <summary>
-    /// Get a reference to either the TimerSeconds or TimerMilliseconds Transform.
+    /// Get a reference to either the TimerSeconds or TimerMilliseconds Transform. True to get the TimerSeconds. False to get the TimerMilliseconds.
     /// </summary>
-    /// <param name="type">True to get the TimerSeconds. False to get the TimerMilliseconds</param>
     /// <returns>Returns TimerSeconds or TimerMilliseconds</returns>
     public static Transform GetTimer(bool type) {
         if (type) {

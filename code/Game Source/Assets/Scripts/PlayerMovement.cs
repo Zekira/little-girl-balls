@@ -15,19 +15,23 @@ public class PlayerMovement : MonoBehaviour {
     private int shotCooldown = 2;
     private DialogueManager dialogueManager;
 
+    public KeyCode keyPause = KeyCode.Escape;
+    public KeyCode keyFocus = KeyCode.LeftShift;
+    public KeyCode keyShoot = KeyCode.Z;
+    public KeyCode keyBomb = KeyCode.X;
+    public KeyCode keyLeft = KeyCode.LeftArrow;
+    public KeyCode keyRight = KeyCode.RightArrow;
+    public KeyCode keyUp = KeyCode.UpArrow;
+    public KeyCode keyDown = KeyCode.DownArrow;
+
     void Awake() {
         dialogueManager = GameObject.FindWithTag("LevelManager").GetComponent<DialogueManager>();
     }
 	
 	void Update () {
-        if (transform.position.y > 2) {
-            GlobalHelper.autoCollectItems = true;
-        } else {
-            GlobalHelper.autoCollectItems = false;
-        }
-        if (Input.GetKeyDown(KeyCode.Escape)) {
+        if (Input.GetKeyDown(keyPause)) {
             GlobalHelper.paused = !GlobalHelper.paused;
-            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) { //Updating focus is needed when unpausing
+            if (Input.GetKey(keyFocus)) { //Updating focus is needed when unpausing
                 focused = true;
                 transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
                 transform.GetChild(0).localScale = new Vector3(GlobalHelper.GetStats().hitboxRadius, GlobalHelper.GetStats().hitboxRadius, 1f);
@@ -37,23 +41,35 @@ public class PlayerMovement : MonoBehaviour {
             }
         }
         if (!GlobalHelper.paused) {
+            if (transform.position.y > 2) {
+                GlobalHelper.autoCollectItems = true;
+            } else {
+                GlobalHelper.autoCollectItems = false;
+            }
             //Check for going focused/unfocused
-            if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift)) {
+            if (Input.GetKeyDown(keyFocus)) {
                 focused = true;
                 transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
                 transform.GetChild(0).localScale = new Vector3(GlobalHelper.GetStats().hitboxRadius, GlobalHelper.GetStats().hitboxRadius, 1f);
-            } else if (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.RightShift)) {
+            } else if (Input.GetKeyUp(keyFocus)) {
                 focused = false;
                 transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
             }
 
-            //Things that shouldn't happen when in deathanimation: movement & shot
+            //Things that shouldn't happen when in deathanimation: movement, shot, and bombs
             if (!GlobalHelper.GetStats().noMovement) {
+                if (Input.GetKeyDown(keyBomb) && GlobalHelper.GetStats().bombs > 0) { //todo: graphics + damage enemies
+                    //Set the spellcard bonus to failure. Does basically nothing if there's no spell active except eat like .01ms
+                    GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
+                    GlobalHelper.GetStats().invincibility = 300;
+                    GlobalHelper.GetStats().SetBombs((byte)(GlobalHelper.GetStats().bombs - 1), GlobalHelper.GetStats().bombpieces);
+                    StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(0.3f, 300));
+                }
                 //Check what movement should happen
-                moveLeft = Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A) ? 1 : 0;
-                moveRight = Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D) ? 1 : 0;
-                moveUp = Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W) ? 1 : 0;
-                moveDown = Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S) ? 1 : 0;
+                moveLeft = Input.GetKey(keyLeft) ? 1 : 0;
+                moveRight = Input.GetKey(keyRight) ? 1 : 0;
+                moveUp = Input.GetKey(keyUp) ? 1 : 0;
+                moveDown = Input.GetKey(keyDown) ? 1 : 0;
 
                 moveDirection = new Vector2(moveRight - moveLeft, moveUp - moveDown);
 
@@ -68,7 +84,7 @@ public class PlayerMovement : MonoBehaviour {
                     transform.position.z);
 
                 //Check whether the player is shooting or advancing dialogue.
-                if (Input.GetKey(KeyCode.Z) && !GlobalHelper.dialogue && shotCooldown <= 0) {
+                if (Input.GetKey(keyShoot) && !GlobalHelper.dialogue && shotCooldown <= 0) {
                     BulletTemplate shot = new BulletTemplate();
                     shot.bulletDamage = 3;
                     shot.isHarmful = false;
@@ -81,7 +97,7 @@ public class PlayerMovement : MonoBehaviour {
                     shot.rotationSpeed = Random.Range(-0.05f, 0.05f);
                     GlobalHelper.CreateBullet(shot, transform.position);
                     shotCooldown = 10;
-                } else if (GlobalHelper.dialogue && Input.GetKeyDown(KeyCode.Z)) {
+                } else if (GlobalHelper.dialogue && Input.GetKeyDown(keyShoot)) {
                     dialogueManager.advanceDialogue();
                 }
             }
@@ -91,7 +107,7 @@ public class PlayerMovement : MonoBehaviour {
 
             //Debug stuff
             if (Input.GetKeyDown(KeyCode.Slash)) {
-                Debug.Log(GameObject.FindWithTag("BulletParent").transform.childCount);
+                Debug.Log(GameObject.FindWithTag("BulletParent").transform.childCount + "/" + GlobalHelper.totalFiredBullets);
             }
         }
     }

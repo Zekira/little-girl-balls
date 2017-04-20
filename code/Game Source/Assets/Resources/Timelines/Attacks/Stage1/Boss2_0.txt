@@ -1,6 +1,5 @@
 spellcardname("testname 1 2 3");
 setparenthealth(100);
-settime(1200);
 bulletproperty(atpl, scale, 0.3);
 bulletproperty(atpl, id, 0);
 bulletproperty(atpl, innercolor, 0, 0, 0, 1);
@@ -19,6 +18,7 @@ random(rand, -0.5, 0.5);
 add(playerangle, playerangle, rand);
 sin(movex, playerangle);
 cos(movey, playerangle);
+bulletproperty(atpl, position, movex, movey);
 random(rand,0.04,0.08);
 mul(movex, movex, rand);
 mul(movey, movey, rand);
