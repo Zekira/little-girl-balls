@@ -23,7 +23,8 @@ public class SpellcardManager : MonoBehaviour {
     /// If the attack's name is nothing, it does nothing. If it is something, it starts everything associated with spellcards.
     /// </summary>
     public void ActivateSpellcard(EnemyTemplate template, int attack, Enemy enemy) {
-        StopAllCoroutines();
+        StopCoroutine(DecreaseScore());
+        StopCoroutine(MoveSpellUI());
         failed = false;
         parentEnemy = enemy;
         startValue = (uint)(GlobalHelper.difficulty + GlobalHelper.stageNumber) * 1000000;
@@ -95,7 +96,7 @@ public class SpellcardManager : MonoBehaviour {
         }
     }
 
-    public IEnumerator ShowBonus() { //TODO: time taken + actual time taken
+    public IEnumerator ShowBonus() { //TODO: time taken + actual time taken. Also doesn't end the last time
         Transform spellcardBonus = GlobalHelper.bossUI.transform.FindChild("SpellcardBonus");
         spellcardBonus.gameObject.SetActive(true);
         if (!failed) {

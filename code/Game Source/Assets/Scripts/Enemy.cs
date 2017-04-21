@@ -80,8 +80,8 @@ public class Enemy : MonoBehaviour {
             }
             DropItems();
         }
-        //If this attack was a spellcard (or didn't exist), a bonus needs to be shown
-        if (currentAttack >= 0 && template.spellcardName[currentAttack] != "") {
+        //If this attack was a spellcard (and existed), a bonus needs to be shown
+        if (currentAttack >= 0 && template.spellcardName[currentAttack] != "") { //TODO: This if statement has nothing to do with spellbonuses not showing up after the final one.
             StartCoroutine(GlobalHelper.levelManager.GetComponent<SpellcardManager>().ShowBonus());
         }
         //Goes to the next attack, and if there is none, goes away.
