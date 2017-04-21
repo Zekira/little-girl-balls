@@ -58,7 +58,7 @@ public class PlayerMovement : MonoBehaviour {
 
             //Things that shouldn't happen when in deathanimation: movement, shot, and bombs
             if (!GlobalHelper.GetStats().noMovement) {
-                if (Input.GetKeyDown(keyBomb) && !GlobalHelper.dialogue && GlobalHelper.GetStats().bombs > 0) { //todo: graphics + damage enemies
+                if (Input.GetKeyDown(keyBomb) && GlobalHelper.GetStats().bombs > 0) { //todo: graphics + damage enemies
                     //Set the spellcard bonus to failure. Does basically nothing if there's no spell active except eat like .01ms
                     GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
                     GlobalHelper.GetStats().invincibility = 300;

@@ -78,10 +78,9 @@ public class PlayerStats : MonoBehaviour {
     /// Starts what should happen when you take damage: losing hp and starting the DeathAnimation.
     /// </summary>
     public void TakeDamage() {
-        //Stuff should only happen when not invincible
+        //Set the spellcard bonus to failure. Does basically nothing if there's no spell active except eat like .01ms
+        GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
         if (invincibility <= 0) {
-            //Set the spellcard bonus to failure. Does basically nothing if there's no spell active except eat like .01ms
-            GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
             if (lives == 0) { //Getting hit with zero lives in stock is a bad idea.
                 //Debug.Log("<b>Game over lul git good skrub</b>");
             } else {
