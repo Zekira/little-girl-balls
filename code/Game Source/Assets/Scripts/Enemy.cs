@@ -80,9 +80,9 @@ public class Enemy : MonoBehaviour {
             }
             DropItems();
         }
-        //If this attack was a spellcard (and existed), a bonus needs to be shown
-        if (currentAttack >= 0 && template.spellcardName[currentAttack] != "") { //TODO: This if statement has nothing to do with spellbonuses not showing up after the final one.
-            StartCoroutine(GlobalHelper.levelManager.GetComponent<SpellcardManager>().ShowBonus());
+        //If this boss' attack was a spellcard (and existed), a bonus needs to be shown
+        if (template.isBoss && currentAttack >= 0 && template.spellcardName[currentAttack] != "") {
+            GlobalHelper.levelManager.GetComponent<SpellcardManager>().StartShowBonus();
         }
         //Goes to the next attack, and if there is none, goes away.
         if (currentAttack + 1 < template.attackPath.Count) {
@@ -93,10 +93,23 @@ public class Enemy : MonoBehaviour {
                 GlobalHelper.bossUI.SetActive(false);
                 GlobalHelper.spellcardBackground.gameObject.SetActive(false);
             }
+            StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f, 30));
             Destroy(this.gameObject);
             return;
         }
-        DoStuff();
+        //Clears bullets if it's a boss
+        if (template.isBoss) {
+            StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f, 30));
+            SetUIStarCount();
+            GlobalHelper.levelManager.GetComponent<SpellcardManager>().ActivateSpellcard(template, currentAttack, this);
+        }
+
+        //Set the time of the current attack (if it exists), or 9999 if it isn't there.
+        if (currentAttack < template.spellTimers.Count) {
+            timer = template.spellTimers[currentAttack];
+        } else {
+            timer = 9999;
+        }
         foreach (TimelineInterprenter i in GetComponents<TimelineInterprenter>()) {
             Destroy(i);
         }
@@ -195,26 +208,5 @@ public class Enemy : MonoBehaviour {
             }
         }
         SetUIStarCount(spellcardCount);
-    }
-
-    /// <summary>
-    /// TODO: name...
-    /// Starts the clearing of bullets and starts UI stuff.
-    /// </summary>
-    private void DoStuff() { //Todo: sensible name ;-;
-        //Clears bullets if it's a boss
-        if (template.isBoss) {
-            StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f, 30));
-            SetUIStarCount();
-            GlobalHelper.levelManager.GetComponent<SpellcardManager>().ActivateSpellcard(template, currentAttack, this);
-        }
-
-        //Set the time of the current attack (if it exists), or 9999 if it isn't there.
-        if (currentAttack < template.spellTimers.Count) {
-            timer = template.spellTimers[currentAttack];
-        } else {
-            timer = 9999;
-        }
-
     }
 }

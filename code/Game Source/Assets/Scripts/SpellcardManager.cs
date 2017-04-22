@@ -12,12 +12,21 @@ public class SpellcardManager : MonoBehaviour {
     public int timeLimit = 0;
     public bool failed = false;
 
+    //private int ticksTaken = 0; //TODO: time taken
+    //private float timeTaken = 0;
     private Enemy parentEnemy;
     private GameObject spellcardUI;
+    private DialogueEntry.character portraitCharacter;
 
     void Start() {
+        portraitCharacter = DialogueEntry.character.CHARNO;
         spellcardUI = GlobalHelper.bossUI.transform.FindChild("SpellcardUI").gameObject;
     }
+
+    //void Update() {
+    //    ticksTaken++;
+    //    timeTaken += Time.deltaTime;
+    //}
 
     /// <summary>
     /// If the attack's name is nothing, it does nothing. If it is something, it starts everything associated with spellcards.
@@ -25,6 +34,9 @@ public class SpellcardManager : MonoBehaviour {
     public void ActivateSpellcard(EnemyTemplate template, int attack, Enemy enemy) {
         StopCoroutine(DecreaseScore());
         StopCoroutine(MoveSpellUI());
+        StopCoroutine(MoveCasterPortrait());
+        //ticksTaken = 0;
+        //timeTaken = 0;
         failed = false;
         parentEnemy = enemy;
         startValue = (uint)(GlobalHelper.difficulty + GlobalHelper.stageNumber) * 1000000;
@@ -37,6 +49,7 @@ public class SpellcardManager : MonoBehaviour {
             SetSpellcardName(name);
             StartCoroutine(MoveSpellUI());
             StartCoroutine(DecreaseScore());
+            StartCoroutine(MoveCasterPortrait());
         } else {
             spellcardUI.SetActive(false);
             GlobalHelper.spellcardBackground.gameObject.SetActive(false);
@@ -47,6 +60,41 @@ public class SpellcardManager : MonoBehaviour {
     private void SetSpellcardName(string name) { //Todo: add support for storing histories
         spellcardUI.SetActive(true);
         spellcardUI.transform.FindChild("SpellcardName").GetComponent<Text>().text = name;
+    }
+
+    private IEnumerator MoveCasterPortrait() { //From (-320,-80) to (230,520)
+        Vector2 startPos = new Vector2(-320f, -200f);
+        Vector2 endPos = new Vector2(130f, 100f);
+        GameObject spellcardCaster = GlobalHelper.bossUI.transform.FindChild("SpellcardCaster").gameObject;
+        spellcardCaster.SetActive(true);
+        Image spellcardCasterImage = spellcardCaster.GetComponent<Image>();
+        spellcardCasterImage.sprite = GlobalHelper.levelManager.GetComponent<CharacterPortraits>().GetSprite(portraitCharacter, DialogueEntry.emotion.HAPPY);
+        float linearProgress = 0f;
+        float progress = 0f;
+        RectTransform spellcardCasterTransform = spellcardCaster.GetComponent<RectTransform>();
+        spellcardCasterTransform.anchoredPosition = new Vector3(startPos.x, startPos.y);
+        Color color = spellcardCasterImage.color;
+        color.a = 0.75f;
+        spellcardCasterImage.color = color;
+        //how much it should move when linprogress = [0,1] is defined by f(x)=80(x-0.5)^4; the integral from 0 to 1 equals 1, so everytick add f(linprogress)'t part of the difference between start end end pos.
+        //for some reason I have to divide the thing by 100 though.
+        while (linearProgress < 1f) {
+            progress = f(linearProgress);
+            spellcardCasterTransform.anchoredPosition += progress * (endPos - startPos);
+            if (linearProgress > 0.66f) {
+                color = spellcardCasterImage.color;
+                color.a = 0.75f - (linearProgress-0.66f) * 0.75f / 0.34f;
+                spellcardCasterImage.color = color;
+            }
+            
+            linearProgress += 0.01f;
+            yield return null;
+        }
+        spellcardCaster.SetActive(false);
+    }
+
+    private float f(float f) {
+        return 0.8f * (f - 0.5f) * (f - 0.5f) * (f - 0.5f) * (f - 0.5f);
     }
 
     /// <summary>
@@ -81,7 +129,7 @@ public class SpellcardManager : MonoBehaviour {
         uiTransform.anchoredPosition = position;
     }
 
-    public IEnumerator DecreaseScore() {
+    private IEnumerator DecreaseScore() {
         uint lessPerTick = (uint)(startValue / (timeLimit * 10)) * 10;
         while (timeLimit > 0) {
             if (!GlobalHelper.paused) {
@@ -96,8 +144,16 @@ public class SpellcardManager : MonoBehaviour {
         }
     }
 
-    public IEnumerator ShowBonus() { //TODO: time taken + actual time taken. Also doesn't end the last time
-        Transform spellcardBonus = GlobalHelper.bossUI.transform.FindChild("SpellcardBonus");
+    /// <summary>
+    /// Coroutines fail when the object calling them is destroyed/inactive even though what they to is still avtive so I have to do it like this.
+    /// This shows the "Got Spell Card Bonus! [x]" or "Bonus Failed...".
+    /// </summary>
+    public void StartShowBonus() {
+        StartCoroutine(ShowBonus());
+    }
+
+    private IEnumerator ShowBonus() { //TODO: time taken + actual time taken.
+        Transform spellcardBonus = GameObject.FindWithTag("UIVariable").transform.FindChild("SpellcardBonus");
         spellcardBonus.gameObject.SetActive(true);
         if (!failed) {
             spellcardBonus.FindChild("Title").GetComponent<Text>().text = "Got Spell Card Bonus!";
@@ -114,6 +170,9 @@ public class SpellcardManager : MonoBehaviour {
         spellcardBonus.gameObject.SetActive(false);
     }
 
+    /// <summary>
+    /// The spellcard is not captured if this is called.
+    /// </summary>
     public void Fail() {
         failed = true;
         currentValue = 0;

@@ -16,6 +16,7 @@ public static class GlobalHelper {
     public static GameObject levelManager = GameObject.FindWithTag("LevelManager");
 
     public static PlayerStats stats = player.GetComponent<PlayerStats>();
+    public static CharacterPortraits characterPortraits = levelManager.GetComponent<CharacterPortraits>();
     public static System.Random random = new System.Random(); //NOTE: Handle ALL random events through this; if I want to be able to add replays, I should save the seeds and input them here.
 
     public const int enemyTextureCount = 1;

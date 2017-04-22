@@ -23,6 +23,7 @@ public class PlayerMovement : MonoBehaviour {
     public KeyCode keyRight = KeyCode.RightArrow;
     public KeyCode keyUp = KeyCode.UpArrow;
     public KeyCode keyDown = KeyCode.DownArrow;
+    public KeyCode keySkip = KeyCode.LeftControl;
 
     void Awake() {
         dialogueManager = GameObject.FindWithTag("LevelManager").GetComponent<DialogueManager>();
@@ -97,6 +98,8 @@ public class PlayerMovement : MonoBehaviour {
                     shot.rotationSpeed = Random.Range(-0.05f, 0.05f);
                     GlobalHelper.CreateBullet(shot, transform.position);
                     shotCooldown = 10;
+                } else if (GlobalHelper.dialogue && Input.GetKey(keySkip)) {
+                    dialogueManager.advanceDialogue();
                 } else if (GlobalHelper.dialogue && Input.GetKeyDown(keyShoot)) {
                     dialogueManager.advanceDialogue();
                 }

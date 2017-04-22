@@ -60,8 +60,7 @@ public class DialogueManager : MonoBehaviour {
         left.gameObject.SetActive(true);
         StartCoroutine(moveTowards(new Vector3(0f, 0f, 0f), 0.2f, left.GetComponent<RectTransform>()));
         left.FindChild("DialogueBox").gameObject.SetActive(true);
-        Texture2D charTexture = Resources.Load("Graphics/Characters/" + dialogue.currentCharacer.ToString() + "_" + dialogue.currentEmotion.ToString()) as Texture2D;
-        left.FindChild("Character").GetComponent<Image>().sprite = Sprite.Create(charTexture, new Rect(0f, 0f, charTexture.width, charTexture.height), 0.5f*Vector2.one);
+        left.FindChild("Character").GetComponent<Image>().sprite = GlobalHelper.characterPortraits.GetSprite(dialogue.currentCharacer, dialogue.currentEmotion);
         left.FindChild("Character").GetComponent<Image>().color = speakingColor;
         leftText.text = dialogue.text;
         if (showRight) {
@@ -78,8 +77,7 @@ public class DialogueManager : MonoBehaviour {
         right.gameObject.SetActive(true);
         StartCoroutine(moveTowards(new Vector3(0f, 0f, 0f), 0.2f, right.GetComponent<RectTransform>()));
         right.FindChild("DialogueBox").gameObject.SetActive(true);
-        Texture2D charTexture = Resources.Load("Graphics/Characters/" + dialogue.currentCharacer.ToString() + "_" + dialogue.currentEmotion.ToString()) as Texture2D;
-        right.FindChild("Character").GetComponent<Image>().sprite = Sprite.Create(charTexture, new Rect(0f, 0f, charTexture.width, charTexture.height), 0.5f * Vector2.one);
+        right.FindChild("Character").GetComponent<Image>().sprite = GlobalHelper.characterPortraits.GetSprite(dialogue.currentCharacer, dialogue.currentEmotion);
         right.FindChild("Character").GetComponent<Image>().color = speakingColor;
         rightText.text = dialogue.text;
         if (showLeft) {

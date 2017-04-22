@@ -56,7 +56,7 @@ public class PlayerStats : MonoBehaviour {
         SetBombs(bombs, bombpieces);
         SetHighscore(highscore);
         SetScore(score);
-        SetPower(power);
+        SetPower(power, false);
     }
 
     void Update() {
@@ -177,19 +177,29 @@ public class PlayerStats : MonoBehaviour {
     }
 
     /// <summary>
-    /// Sets the power to up to 400, or gives a bonus if it's already 400. Also updates the UI.
+    /// Sets the power to up to 400, and gives a score bonus.
     /// </summary>
     public void SetPower(int amount) {
+        SetPower(amount, true);
+    }
+
+    /// <summary>
+    /// Sets the power up to 400, and optionally gives a score bonus.
+    /// </summary>
+    public void SetPower(int amount, bool worthScore) {
         if (amount <= 400) {
             power = amount;
             UIVariable.transform.Find("PowerLarge").GetComponent<Text>().text = (power / 100).ToString();
             UIVariable.transform.Find("PowerSmall").GetComponent<Text>().text = "." + ((power % 100) / 10) + ((power % 100) % 10);
-            AddScore(100);
+            if (worthScore) {
+                AddScore(100);
+            }
         } else {
             power = 400;
-            AddScore(10000);
+            if (worthScore) {
+                AddScore(10000);
+            }
         }
-        
     }
 
     /// <summary>
