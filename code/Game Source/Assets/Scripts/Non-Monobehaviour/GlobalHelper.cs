@@ -94,7 +94,7 @@ public static class GlobalHelper {
     /// <summary>
     /// Creates an enemy from a template with appropriate settings, applies the EnemyTemplate to the created object's Enemy class, and returns the created object.
     /// </summary>
-    /// <param name="enemyTemplate">The template to base the enemy on. Needs to have at least one attackpath or everything will error. (TODO: Fix)</param>
+    /// <param name="enemyTemplate">The template to base the enemy on. Needs to have at least one attackpath or everything will error.</param>
     /// <returns>Returns a reference to the created object.</returns>
     public static GameObject CreateEnemy(EnemyTemplate enemyTemplate) {
         //If the list of enemysprites attached to GlobalHelper is empty, initialise them because they're needed here.
@@ -154,6 +154,7 @@ public static class GlobalHelper {
         if (backupBullets.Count == 0) {
             createdObject = GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Bullet"));
         } else {
+            //BIG TODO: Reset timeline interprenter
             createdObject = backupBullets[0];
             backupBullets.RemoveAt(0);
             createdObject.SetActive(true);
@@ -179,8 +180,6 @@ public static class GlobalHelper {
         bullet.posz = bulletpos.z;
         //Set the actual position
         createdObject.transform.position = bulletpos;
-
-        bullet.grazed = false;
 
         createdObject.transform.localScale = bulletTemplate.scale * Vector3.one;
         createdObject.transform.SetParent(GameObject.FindWithTag("BulletParent").transform);

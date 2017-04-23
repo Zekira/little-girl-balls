@@ -16,7 +16,9 @@ public class BulletTemplate {
     public Color outerColor = Color.white; //What color the inner color (red in the sprite) should become.
     public int bulletDamage = 1; //What damage the bullet does when hitting an enemy.
     public Vector2 position = new Vector2(0f, 0f); //What position to spawn the bullet in.
-    public bool positionIsRelative = true; //Whether position is added to its spawner's position
+    public bool positionIsRelative = true; //Whether position is added to its spawner's position.
+    public bool clearImmune = false; //Whether this bullet is immune to clearing due to deaths etc.
+    public string advancedAttackPath = "";
 
     public BulletTemplate() {
     }
@@ -33,6 +35,8 @@ public class BulletTemplate {
         bulletDamage = template.bulletDamage;
         position = template.position;
         positionIsRelative = template.positionIsRelative;
+        clearImmune = template.clearImmune; //TODO: use this
+        advancedAttackPath = template.advancedAttackPath;
     }
 
     /// <summary>

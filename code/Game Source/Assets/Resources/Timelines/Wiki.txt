@@ -65,6 +65,8 @@ enemyproperty(name, property, value[, more values]);
     The health of this enemy's first attack.
   "boss":
     Whether this enemy is a boss.
+  "bossportrait":
+    The enum name (case insensitive) of the boss' portrait to be shown when spellcards start.
   "dropvalue":
     How much value to drop. TODO: Be sure about how we manage value.
   "droppower":

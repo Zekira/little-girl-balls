@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 
 /// <summary>
-/// Made to handle spellcards, its score/history, and its animations. TODO: the latter. 
+/// Made to handle spellcards, its score/history.
 /// </summary>
 public class SpellcardManager : MonoBehaviour {
 
@@ -19,7 +19,6 @@ public class SpellcardManager : MonoBehaviour {
     private DialogueEntry.character portraitCharacter;
 
     void Start() {
-        portraitCharacter = DialogueEntry.character.CHARNO;
         spellcardUI = GlobalHelper.bossUI.transform.FindChild("SpellcardUI").gameObject;
     }
 
@@ -32,6 +31,7 @@ public class SpellcardManager : MonoBehaviour {
     /// If the attack's name is nothing, it does nothing. If it is something, it starts everything associated with spellcards.
     /// </summary>
     public void ActivateSpellcard(EnemyTemplate template, int attack, Enemy enemy) {
+        portraitCharacter = template.character;
         StopCoroutine(DecreaseScore());
         StopCoroutine(MoveSpellUI());
         StopCoroutine(MoveCasterPortrait());
@@ -162,7 +162,7 @@ public class SpellcardManager : MonoBehaviour {
             spellcardBonus.FindChild("Title").GetComponent<Text>().text = "Bonus Failed...";
             spellcardBonus.FindChild("Score").GetComponent<Text>().text = "";
         }
-        int waitTime = 90;
+        int waitTime = 150;
         while (waitTime > 0) {
             waitTime--;
             yield return null;

@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Handles the "animation" of being spawned; during that time the bullet doesn't do anything.
+/// </summary>
 public class BulletMaterialisation : MonoBehaviour {
 
     private BulletTemplate template;
@@ -32,6 +35,11 @@ public class BulletMaterialisation : MonoBehaviour {
                 transform.localScale = template.scale * Vector3.one;
                 spriteRenderer.color = Vector4.one;
                 timer = 9;
+                //If this is an advanced bullet, enable it here.
+                if (template.advancedAttackPath != "") {
+                    GetComponent<TimelineInterprenter>().enabled = true;
+                    GetComponent<TimelineInterprenter>().patternPath = template.advancedAttackPath;
+                }
                 this.enabled = false;
             } else {
                 color = spriteRenderer.color;

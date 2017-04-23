@@ -20,7 +20,7 @@ public class EnemyTemplate {
     public List<string> attackPath = new List<string>(); //NECCESSARY; should be at least one long.
     public List<string> spellcardName = new List<string>();
     public List<int> spellTimers = new List<int>();
-    public DialogueEntry.character character = DialogueEntry.character.CHARNO; //For the bosses' spellcard portrait. TODO: Make use of this in SpellcardManager, and allow it to be changed in TimelinInterprenter
+    public DialogueEntry.character character = DialogueEntry.character.RACHEL; //For the bosses' spellcard portrait.
 
 
     public EnemyTemplate() {

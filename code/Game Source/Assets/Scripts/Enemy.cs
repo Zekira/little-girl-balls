@@ -35,11 +35,11 @@ public class Enemy : MonoBehaviour {
             timer--;
             //Timeout'd attack.
             if (timer <= 0) {
-                NextPhase(false, 60);
+                NextPhase(false, 90);
             }
             //Kiled attack.
             if (health <= 0) {
-                NextPhase(true, 60);
+                NextPhase(true, 90);
             }
             //Updates the UI's timer.
             if (template.isBoss) {
@@ -79,21 +79,21 @@ public class Enemy : MonoBehaviour {
                 GlobalHelper.stats.AddScore(template.baseScore);
             }
             DropItems();
-        }
-        //If this boss' attack was a spellcard (and existed), a bonus needs to be shown
-        if (template.isBoss && currentAttack >= 0 && template.spellcardName[currentAttack] != "") {
-            GlobalHelper.levelManager.GetComponent<SpellcardManager>().StartShowBonus();
+            //If this boss' attack was a spellcard (and existed), a bonus needs to be shown
+            if (template.isBoss && currentAttack >= 0 && template.spellcardName[currentAttack] != "") {
+                GlobalHelper.levelManager.GetComponent<SpellcardManager>().StartShowBonus();
+            }
         }
         //Goes to the next attack, and if there is none, goes away.
         if (currentAttack + 1 < template.attackPath.Count) {
             currentAttack++;
         } else { //It's done and no more attacks are left
-            //If it's a boss the bossUI should become inactive when it gets defeated
+            //If it's a boss the bossUI should become inactive when it gets defeated, and only bosses should make the screen clear.
             if (template.isBoss) {
                 GlobalHelper.bossUI.SetActive(false);
                 GlobalHelper.spellcardBackground.gameObject.SetActive(false);
+                StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f, 30));
             }
-            StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f, 30));
             Destroy(this.gameObject);
             return;
         }
@@ -113,6 +113,7 @@ public class Enemy : MonoBehaviour {
         foreach (TimelineInterprenter i in GetComponents<TimelineInterprenter>()) {
             Destroy(i);
         }
+        StartCoroutine(FillHealthbar(delay));
         StartCoroutine(DelayedStartNewAttack(currentAttack, delay));
     }
 
@@ -136,6 +137,18 @@ public class Enemy : MonoBehaviour {
         }
         TimelineInterprenter newInterprenter = gameObject.AddComponent<TimelineInterprenter>();
         newInterprenter.patternPath = template.attackPath[index];
+    }
+
+    /// <summary>
+    /// Fills the healthbar from empty to full taking "time" ticks. It directly modifies the health variable.
+    /// </summary>
+    private IEnumerator FillHealthbar(int time) {
+        int currentTime = 0;
+        while (currentTime < time) {
+            UpdateHealthbar(currentTime * template.maxHealth / time);
+            currentTime++;
+            yield return null;
+        }
     }
 
     private void DropItems() {

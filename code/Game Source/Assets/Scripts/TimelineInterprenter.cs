@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
+using System;
 /// <summary>
 /// A class reading .txt's describing either enemy or bullet info. Important in those .txt's is the wait(x) function, which is in ticks and not second, because second would not allow replays.
 /// </summary>
@@ -147,6 +147,9 @@ public class TimelineInterprenter : MonoBehaviour {
                         case "relativepos":
                             bulletTemplate.positionIsRelative = ParseValue(args[2]) > 0 ? true : false;
                             break;
+                        case "advancedpath":
+                            bulletTemplate.advancedAttackPath = args[2];
+                            break;
                         default:
                             break;
                     }
@@ -194,6 +197,9 @@ public class TimelineInterprenter : MonoBehaviour {
                         case "boss": //Requires special UI stuff.
                             enemyTemplate.isBoss = ParseValue(args[2]) > 0 ? true : false;
                             break;
+                        case "bossportrait": //Enum name of the boss, used with the caster's portrait
+                            enemyTemplate.character = (DialogueEntry.character)Enum.Parse(typeof(DialogueEntry.character), args[2].ToUpperInvariant());
+                            break;
                         case "maxhealth":
                             enemyTemplate.maxHealth = Mathf.RoundToInt(ParseValue(args[2]));
                             break;
@@ -231,7 +237,13 @@ public class TimelineInterprenter : MonoBehaviour {
                     break;
                 case "moveparent":
                     args = GetArguments(instructions[currentLine]).Split(',');
-                    transform.position += new Vector3(ParseValue(args[0]), ParseValue(args[1]), 0f);
+                    if (transform.GetComponent<Bullet>() != null) { //If this is a bullet, posx,y(,z) should be modified, not its direct position
+                        Bullet bullet = transform.GetComponent<Bullet>();
+                        bullet.posx += ParseValue(args[0]);
+                        bullet.posy += ParseValue(args[1]);
+                    } else {
+                        transform.position += new Vector3(ParseValue(args[0]), ParseValue(args[1]), 0f);
+                    }
                     break;
                 case "destroyparent": //Destroys whatever this is attached to.
                     Destroy(transform.gameObject);
