@@ -75,14 +75,15 @@ public class Enemy : MonoBehaviour {
             if (template.isBoss) {
                 GlobalHelper.stats.AddScore(GlobalHelper.levelManager.GetComponent<SpellcardManager>().currentValue);
             } else {
-                GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
                 GlobalHelper.stats.AddScore(template.baseScore);
             }
             DropItems();
-            //If this boss' attack was a spellcard (and existed), a bonus needs to be shown
-            if (template.isBoss && currentAttack >= 0 && template.spellcardName[currentAttack] != "") {
-                GlobalHelper.levelManager.GetComponent<SpellcardManager>().StartShowBonus();
-            }
+        } else {
+            GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
+        }
+        //If this boss' attack was a spellcard (and existed, that's why thereý a >= 0), a bonus needs to be shown
+        if (template.isBoss && currentAttack >= 0 && template.spellcardName[currentAttack] != "") {
+            GlobalHelper.levelManager.GetComponent<SpellcardManager>().StartShowBonus();
         }
         //Goes to the next attack, and if there is none, goes away.
         if (currentAttack + 1 < template.attackPath.Count) {
@@ -145,7 +146,7 @@ public class Enemy : MonoBehaviour {
     private IEnumerator FillHealthbar(int time) {
         int currentTime = 0;
         while (currentTime < time) {
-            UpdateHealthbar(currentTime * template.maxHealth / time);
+            UpdateHealthbar(1+currentTime * template.maxHealth / time);
             currentTime++;
             yield return null;
         }
