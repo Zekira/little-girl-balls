@@ -12,11 +12,14 @@ public class Bullet : MonoBehaviour {
     public int timeUntilUpdatedPosition = 1;
     Vector3 otherpos;
 
-    public void Reset(bool alsoResetTimelineInterprenter) {
+    public void Reset() {
         bulletTemplate = new BulletTemplate();
         grazed = false;
         posx = 0; posy = 0; posz = 0; deltax = 0; deltay = 0;
         timeUntilUpdatedPosition = 1;
+        if (GetComponent<TimelineInterprenter>() != null) {
+            Destroy(GetComponent<TimelineInterprenter>());
+        }
     }
 
 	void Update () {

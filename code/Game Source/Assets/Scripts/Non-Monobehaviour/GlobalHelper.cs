@@ -154,10 +154,14 @@ public static class GlobalHelper {
         if (backupBullets.Count == 0) {
             createdObject = GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Bullet"));
         } else {
-            //BIG TODO: Reset timeline interprenter
             createdObject = backupBullets[0];
             backupBullets.RemoveAt(0);
             createdObject.SetActive(true);
+        }
+        createdObject.GetComponent<Bullet>().Reset();
+        if (bulletTemplate.advancedAttackPath != "") { //If there's advanced stuff happening
+            TimelineInterprenter interprenter = createdObject.AddComponent<TimelineInterprenter>();
+            interprenter.patternPath = bulletTemplate.advancedAttackPath;
         }
         //Modifies the bullet based on whether it's harmful (eg shot by the enemy or player). Harmful bullets can be grazed and kill you, unharmful bullets have damage attached and don't harm you.
         if (bulletTemplate.isHarmful) {

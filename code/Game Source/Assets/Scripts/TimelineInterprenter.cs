@@ -6,7 +6,7 @@ using System;
 /// A class reading .txt's describing either enemy or bullet info. Important in those .txt's is the wait(x) function, which is in ticks and not second, because second would not allow replays.
 /// </summary>
 public class TimelineInterprenter : MonoBehaviour {
-
+    //TODO: GC is horrible. Often 11ms spikes when 300 bullets have this attached.
     public string patternPath = "";
     private Dictionary<string, float> numberVars = new Dictionary<string, float>();
     private Dictionary<string, BulletTemplate> bulletTemplateVars = new Dictionary<string, BulletTemplate>();
@@ -19,12 +19,22 @@ public class TimelineInterprenter : MonoBehaviour {
     public int cooldown = 0;
     public int instructionLength;
 
+    //Vars needed within the for loop
+    private string[] functions;
+    private string[] args;
+    private int count, layers, findEndRepeatLine, lineDifference;
+    private float deltax, deltay, num1, num2;
+    private string findFunction;
+    private BulletTemplate bulletTemplate;
+    private EnemyTemplate enemyTemplate;
+    private Vector3 pos, playerpos;
+
     void Start() {
         parentEnemy = transform.GetComponent<Enemy>();
         if (patternPath == "") {
             patternPath = parentEnemy.template.attackPath[0];
         }
-        ReadAttack();
+        ReadAttack(true);
     }
 
     void Update() {
@@ -32,7 +42,7 @@ public class TimelineInterprenter : MonoBehaviour {
             if (cooldown == 0) {
                 //+1 because it would otherwise start at the line it terminated at (only "wait(x)"), resulting in an infinite loop, which is a nightmare. That is longer than 12 seconds.
                 currentLine++;
-                ReadAttack();
+                ReadAttack(false);
             }
             cooldown = cooldown >= 0 ? cooldown - 1 : 0;
         }
@@ -47,22 +57,17 @@ public class TimelineInterprenter : MonoBehaviour {
      /// The syntax of those lines is usually <functionname>([argument[,other arguments .. ]]);
      /// Any text evaluated should be all-lowercase.
      /// </summary>
-    public void ReadAttack() {
-        string file = (Instantiate((TextAsset)Resources.Load(patternPath))).text;
-        file = file.Replace(" ", ""); //Simple cleanup. This also makes ReadAttack totally inappropriate for dialogue.
-        file = file.Replace("\n", "");
-        file = file.Replace("\r", "");
-        instructions = file.Split(';'); //This splits instructions.
-        instructionLength = instructions.Length;
-        //Vars needed within the for loop
-        string function;
-        string[] args;
-        int count, layers, findEndRepeatLine, lineDifference;
-        float deltax, deltay, num1, num2;
-        string findFunction;
-        BulletTemplate bulletTemplate;
-        EnemyTemplate enemyTemplate;
-        Vector3 pos, playerpos;
+    public void ReadAttack(bool initialise) {
+        if (initialise) {
+            string file = (Instantiate((TextAsset)Resources.Load(patternPath))).text;
+            file = file.Replace(" ", ""); //Simple cleanup. This also makes ReadAttack totally inappropriate for dialogue.
+            file = file.Replace("\n", "");
+            file = file.Replace("\r", "");
+            instructions = file.Split(';'); //This splits instructions.
+            instructionLength = instructions.Length;
+
+            functions = GetFunctions(instructions);
+        }
 
         for (; currentLine < instructionLength; currentLine++) {
             //Skip if the line is a comment.
@@ -70,9 +75,8 @@ public class TimelineInterprenter : MonoBehaviour {
                 continue;
             }
 
-            function = GetFunction(instructions[currentLine]);
             //Take the part before the brackets and try to figure out what it says and do something with it.
-            switch (function) {
+            switch (functions[currentLine]) {
                 case "starttimeline":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     //Attaches ANOTHER TimelineInterprenter to this GameObject with path args[0].
@@ -90,7 +94,7 @@ public class TimelineInterprenter : MonoBehaviour {
                     count = Mathf.RoundToInt(ParseValue(args[0])) - 1;
                     layers = 0; //Goes down for every Repeat(x) line. Goes up for every Endrepeat line.
                     for (findEndRepeatLine = currentLine + 1; layers != 1; findEndRepeatLine++) {
-                        findFunction = GetFunction(instructions[findEndRepeatLine]);
+                        findFunction = functions[findEndRepeatLine];
                         if (findFunction.ToLower() == "repeat") {
                             layers--;
                         } else if (findFunction.ToLower() == "endrepeat") {
@@ -590,12 +594,16 @@ public class TimelineInterprenter : MonoBehaviour {
     }
 
     /// <summary>
-    /// Returns whatever is before the first open brace.
+    /// Returns whatever is before the first open brace for each entry in the toEvaluate array.
     /// </summary>
     /// <param name="toEvaluate">The string to find the function of.</param>
     /// <returns>Returns whatever is before the first open brace.</returns>
-    private string GetFunction(string toEvaluate) {
+    private string[] GetFunctions(string[] toEvaluate) { //TODO: THIS is where GC goes to heck.
+        string[] returnString = new string[toEvaluate.Length];
+        for (int i = 0; i < toEvaluate.Length; i++) {
+            returnString[i] = toEvaluate[i].Split('(')[0];
+        }
         //Everything before the first open brace.
-        return toEvaluate.Split('(')[0];
+        return returnString;
     }
 }
