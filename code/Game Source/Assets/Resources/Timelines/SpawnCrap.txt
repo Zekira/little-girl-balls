@@ -1,0 +1,12 @@
+wait(30);
+bulletproperty(a, scale, 0.3);
+bulletproperty(a, id, 2);
+bulletproperty(a, innercolor, 1, 1, 1, 1);
+bulletproperty(a, outercolor, 1, 0.2, 0, 1);
+bulletproperty(a, rotation, 3.14);
+repeat(10);
+random(randomx, -0.01, 0.01);
+bulletproperty(a, movement, randomx, -0.06);
+createbullet(a);
+wait(10);
+endrepeat;

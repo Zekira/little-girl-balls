@@ -1,5 +1,6 @@
 spellcardname("testname 1 2 3");
 setparenthealth(100);
+setparentmaxhealth(100);
 bulletproperty(atpl, scale, 0.3);
 bulletproperty(atpl, id, 0);
 bulletproperty(atpl, innercolor, 0, 0, 0, 1);

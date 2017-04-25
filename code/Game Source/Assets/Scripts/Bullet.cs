@@ -12,14 +12,14 @@ public class Bullet : MonoBehaviour {
     public int timeUntilUpdatedPosition = 1;
     Vector3 otherpos;
 
+    /// <summary>
+    /// Set all values to default. Does NOT affect a TimelineInterprenter attached; use its own reset for that.
+    /// </summary>
     public void Reset() {
         bulletTemplate = new BulletTemplate();
         grazed = false;
         posx = 0; posy = 0; posz = 0; deltax = 0; deltay = 0;
         timeUntilUpdatedPosition = 1;
-        if (GetComponent<TimelineInterprenter>() != null) {
-            Destroy(GetComponent<TimelineInterprenter>());
-        }
     }
 
 	void Update () {
@@ -27,8 +27,15 @@ public class Bullet : MonoBehaviour {
             //Check whether colliding with the player is lethal, and if so, either be grazed or be lethal.
             //A bullet is 1 unit long if its scale is 1.
             if (bulletTemplate.isHarmful) {
-                if (posy > GlobalHelper.destroyBulletsHeight) { //Destroy it if the clear "animation" is happening and it's above the height. TODO: Add a var to make some bullets immune to clearing.
-                    Deactivate();
+                if (posy > GlobalHelper.bulletClear.destroyBulletsHeight) { //Destroy it if the clear "animation" is happening and it's above the height. TODO: Add a var to make some bullets immune to clearing.
+                    if (GlobalHelper.bulletClear.bulletClearType == BulletClear.BulletClearType.SOME) { //If the clear is due to death/bombs...
+                        if (!bulletTemplate.clearImmune) {
+                            Deactivate();
+                        }
+                        //Here the bullet is immune to this "some" clear.
+                    } else { //It's "all" and all bullets should be cleared
+                        Deactivate();
+                    }
                 }
 
                 otherpos = GlobalHelper.GetStats().playerPosition;

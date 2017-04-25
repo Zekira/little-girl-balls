@@ -3,6 +3,7 @@ using System.Collections;
 
 /// <summary>
 /// Handles the "animation" of being spawned; during that time the bullet doesn't do anything.
+/// Also handles some stuff about spawning bullets.
 /// </summary>
 public class BulletMaterialisation : MonoBehaviour {
 
@@ -15,12 +16,12 @@ public class BulletMaterialisation : MonoBehaviour {
     public int timer;
 
 	void OnEnable () {
-        timer = 9;
+        timer = 9; //This counts down from 9 to 0.
 	}
 	
 	void Update () {
         if (!GlobalHelper.paused) {
-            if (timer == 9) { //Initialising
+            if (timer == 9) { //Initialising the process of spawning.
                 transform.position += new Vector3(0f, 0f, -5f);
                 template = GetComponent<Bullet>().bulletTemplate;
                 spriteRenderer = GetComponent<SpriteRenderer>();

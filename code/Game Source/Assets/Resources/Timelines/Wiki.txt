@@ -41,6 +41,8 @@ bulletproperty(name, property, value[, more values]);
 	Takes 2 value arguments: x and y.
   "relativepos":
     0 when "position" uses absolute coordinates, 1 when it's relative to its parent's position. Defaults to relative.
+  "clearimmune":
+    0 when the bullet goes away at bombs and deaths, 1 when it doesn't go away at bombs and deaths
 enemyproperty(name, property, value[, more values]);
   Sets the "property" of "name" to "value(s)". The following properties are recognised:
   "scale":

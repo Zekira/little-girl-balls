@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
+/// <summary>
+/// Class representing a piece of dialogue and the speaker.
+/// Did things slightly wrong and now a lot of classes uses the character and some the emotion enums.
+/// </summary>
 public class DialogueEntry {
     public enum emotion { ANNOYED, HAPPY, ALERT, THINKING, NEUTRAL, TIRED, SURPRISED, EMBARRASED };
     public enum character { RACHEL, CHARNO};
@@ -57,6 +61,9 @@ public class DialogueEntry {
         return returnEntry;
     }
 
+    /// <summary>
+    /// Parses a list of lines of dialogue seperated by >
+    /// </summary>
     public static List<DialogueEntry> ParseFile(string path) { //todo: eventually allow from outside unity
         string content = (Resources.Load(path) as TextAsset).text;
         List<DialogueEntry> returnList = new List<DialogueEntry>();

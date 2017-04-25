@@ -15,6 +15,7 @@ public class PlayerMovement : MonoBehaviour {
     private int shotCooldown = 2;
     private DialogueManager dialogueManager;
 
+    //TODO: Make these customisable
     public KeyCode keyPause = KeyCode.Escape;
     public KeyCode keyFocus = KeyCode.LeftShift;
     public KeyCode keyShoot = KeyCode.Z;
@@ -64,7 +65,7 @@ public class PlayerMovement : MonoBehaviour {
                     GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
                     GlobalHelper.GetStats().invincibility = 300;
                     GlobalHelper.GetStats().SetBombs((byte)(GlobalHelper.GetStats().bombs - 1), GlobalHelper.GetStats().bombpieces);
-                    StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(0.3f, 300));
+                    StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(0.3f, BulletClear.BulletClearType.SOME,300));
                 }
                 //Check what movement should happen
                 moveLeft = Input.GetKey(keyLeft) ? 1 : 0;
@@ -96,6 +97,7 @@ public class PlayerMovement : MonoBehaviour {
                     shot.scale = 0.3f;
                     shot.rotation = Random.Range(0f, 90f);
                     shot.rotationSpeed = Random.Range(-0.05f, 0.05f);
+                    shot.clearImmune = true;
                     GlobalHelper.CreateBullet(shot, transform.position);
                     shotCooldown = 10;
                 } else if (GlobalHelper.dialogue && Input.GetKey(keySkip)) {

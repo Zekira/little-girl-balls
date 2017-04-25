@@ -2,7 +2,7 @@
 using System;
 
 /// <summary>
-/// A class made to get those huge character portraits in memory.
+/// A class made to get those huge character portraits in memory for both dialogue and spellcard portraits.
 /// </summary>
 public class CharacterPortraits : MonoBehaviour {
 
@@ -15,6 +15,9 @@ public class CharacterPortraits : MonoBehaviour {
              DialogueEntry.character.CHARNO});
     }
 
+    /// <summary>
+    /// Gets the sprite associated with a character with an emotion. If it isn't there, it loads it, which is a laggy process which should be avoided here.
+    /// </summary>
     public Sprite GetSprite(DialogueEntry.character character, DialogueEntry.emotion emotion) {
         switch (character) {
             case DialogueEntry.character.RACHEL:
@@ -31,6 +34,9 @@ public class CharacterPortraits : MonoBehaviour {
         return null; //Should never happen
     }
 
+    /// <summary>
+    /// Loads all sprites of all characters into their respective arrays. Not doing 2D arrays because that looks less nice in code.
+    /// </summary>
     public void LoadSprites(DialogueEntry.character[] characters) {
         foreach (var character in characters) {
             switch (character) {
@@ -44,8 +50,11 @@ public class CharacterPortraits : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Sets all 8 emotions of a character as a sprite and returns the array containing those.
+    /// </summary>
     private Sprite[] SetSprites(string character) {
-        Sprite[] returnArray = new Sprite[8];
+        Sprite[] returnArray = new Sprite[8]; //There are ALWAYS at most 8 emotions.
         Texture2D texture;
         for (int i = 0; i < 8; i++) {
             texture = (Texture2D) Resources.Load("Graphics/Characters/" + character + "_" + ((DialogueEntry.emotion)i).ToString());
@@ -54,6 +63,9 @@ public class CharacterPortraits : MonoBehaviour {
         return returnArray;
     }
 
+    /// <summary>
+    /// Makes the arrays belonging to their characters empty.
+    /// </summary>
     public void UnloadSprites(DialogueEntry.character[] characters) {
         foreach (var character in characters) {
             switch (character) {

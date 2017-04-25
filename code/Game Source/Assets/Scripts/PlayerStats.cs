@@ -85,7 +85,7 @@ public class PlayerStats : MonoBehaviour {
             if (lives == 0) { //Getting hit with zero lives in stock is a bad idea.
                 //Debug.Log("<b>Game over lul git good skrub</b>");
             } else {
-                StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(0.3f));
+                StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(0.3f, BulletClear.BulletClearType.SOME));
                 SetLives(--lives, lifepieces);
                 SetBombs(2, bombpieces);
                 noMovement = true;

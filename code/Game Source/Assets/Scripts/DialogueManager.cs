@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
+/// <summary>
+/// Class made to manage a conversation.
+/// </summary>
 public class DialogueManager : MonoBehaviour {
 
     private Transform left, right;
@@ -22,12 +25,18 @@ public class DialogueManager : MonoBehaviour {
         rightText = right.FindChild("DialogueBox").FindChild("Text").GetComponent<Text>();
         Hide();
     }
-
+    
+    /// <summary>
+    /// Hides both sides.
+    /// </summary>
     public void Hide() {
         left.gameObject.SetActive(false);
         right.gameObject.SetActive(false);
     }
 
+    /// <summary>
+    /// Initialises dialogue.
+    /// </summary>
     public void startDialogue(string p) {
         GlobalHelper.dialogue = true;
         path = p;
@@ -41,6 +50,9 @@ public class DialogueManager : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Continues the dialogue. Why am I writing these obvious comments on obvious functions?
+    /// </summary>
     public void advanceDialogue() {
         currentLine++;
         if (currentLine >= dialogue.Count) {
@@ -90,7 +102,10 @@ public class DialogueManager : MonoBehaviour {
         }
     }
 
-    IEnumerator moveTowards(Vector2 to, float speed, RectTransform transform) {
+    /// <summary>
+    /// Moves "transform" from the current position to "to" with "speed".
+    /// </summary>
+    private IEnumerator moveTowards(Vector2 to, float speed, RectTransform transform) {
         Vector2 from = transform.anchoredPosition;
         float progress = 0f;
         if (from == to) {

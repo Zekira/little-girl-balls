@@ -67,7 +67,7 @@ public class Enemy : MonoBehaviour {
     }
 
     /// <summary>
-    /// Drops items, goes to the next attack / dies, optionally updates the UI (mainly if it's a boss).
+    /// Drops items, goes to the next attack / dies, optionally updates the UI (mainly if it's a boss), clears bullets.
     /// </summary>
     /// <param name="byDamage">Whether it happened by being damaged.</param>
     private void NextPhase(bool byDamage, int delay) {
@@ -89,18 +89,18 @@ public class Enemy : MonoBehaviour {
         if (currentAttack + 1 < template.attackPath.Count) {
             currentAttack++;
         } else { //It's done and no more attacks are left
-            //If it's a boss the bossUI should become inactive when it gets defeated, and only bosses should make the screen clear.
+            //If it's a boss the bossUI should become inactive when it gets defeated, and only bosses should make the screen clear at death.
             if (template.isBoss) {
                 GlobalHelper.bossUI.SetActive(false);
                 GlobalHelper.spellcardBackground.gameObject.SetActive(false);
-                StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f, 30));
+                StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f, BulletClear.BulletClearType.ALL, 30));
             }
             Destroy(this.gameObject);
             return;
         }
         //Clears bullets if it's a boss
         if (template.isBoss) {
-            StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f, 30));
+            StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f, BulletClear.BulletClearType.ALL, 30));
             SetUIStarCount();
             GlobalHelper.levelManager.GetComponent<SpellcardManager>().ActivateSpellcard(template, currentAttack, this);
         }
@@ -152,6 +152,9 @@ public class Enemy : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Drop the items specified in the EnemyTemplate.
+    /// </summary>
     private void DropItems() {
         GameObject createdObject;
         Vector3 position;

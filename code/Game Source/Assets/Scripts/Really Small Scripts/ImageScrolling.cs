@@ -3,6 +3,7 @@ using System.Collections;
 
 /// <summary>
 /// A class meant to work with the OffsetTexture shader to cause looping. All vars are meant to be set in the inspector.
+/// TODO: remove the seam at the edges of the original image.
 /// </summary>
 public class ImageScrolling : MonoBehaviour {
 

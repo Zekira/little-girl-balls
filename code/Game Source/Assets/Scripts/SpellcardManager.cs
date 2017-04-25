@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 
 /// <summary>
-/// Made to handle spellcards, its score/history.
+/// Made to handle spellcards and their score/history.
 /// </summary>
 public class SpellcardManager : MonoBehaviour {
 
@@ -77,7 +77,7 @@ public class SpellcardManager : MonoBehaviour {
         color.a = 0.75f;
         spellcardCasterImage.color = color;
         //how much it should move when linprogress = [0,1] is defined by f(x)=80(x-0.5)^4; the integral from 0 to 1 equals 1, so everytick add f(linprogress)'t part of the difference between start end end pos.
-        //for some reason I have to divide the thing by 100 though.
+        //for some reason I have to divide the thing by 100 though. Guessing it's because this isn't actually integrating it.
         while (linearProgress < 1f) {
             progress = f(linearProgress);
             spellcardCasterTransform.anchoredPosition += progress * (endPos - startPos);

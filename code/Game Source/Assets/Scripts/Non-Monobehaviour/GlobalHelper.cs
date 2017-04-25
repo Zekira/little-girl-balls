@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 /// <summary>
 /// A class made to make my life easier.
+/// Communicates with almost literally everything.
 /// </summary>
 public static class GlobalHelper {
 
@@ -16,14 +17,13 @@ public static class GlobalHelper {
     public static GameObject levelManager = GameObject.FindWithTag("LevelManager");
 
     public static PlayerStats stats = player.GetComponent<PlayerStats>();
+    public static BulletClear bulletClear = levelManager.GetComponent<BulletClear>();
     public static CharacterPortraits characterPortraits = levelManager.GetComponent<CharacterPortraits>();
     public static System.Random random = new System.Random(); //NOTE: Handle ALL random events through this; if I want to be able to add replays, I should save the seeds and input them here.
 
-    public const int enemyTextureCount = 1;
-    public const int bulletTextureCount = 3;
-    public static List<GameObject> backupBullets = new List<GameObject>();
-    public static List<Sprite> bulletSprites = new List<Sprite>();
-    public static List<Sprite> enemySprites = new List<Sprite>();
+    public static List<GameObject> backupBullets = new List<GameObject>(); //Bullets that are deactivated but can be used
+    public static List<Sprite> bulletSprites = new List<Sprite>(); //All bullet textures
+    public static List<Sprite> enemySprites = new List<Sprite>(); //All enemy textures
 
     public static int totalFiredBullets;
     public static bool paused = false;
@@ -32,9 +32,8 @@ public static class GlobalHelper {
     public enum Difficulty {EASY, NORMAL, HARD, LUNATIC, EXTRA};
     public static Difficulty difficulty = Difficulty.EASY;
     public static bool autoCollectItems = false;
-    public static float destroyBulletsHeight = 99f;
 
-    //Things used in createbullet and createenemy that differ everytime but is a waste to keep creating and better to just keep access to all the time.
+    //Things used in createbullet and createenemy that differ everytime but is a waste to keep creating and destroying and better to just keep access to all the time.
     private static GameObject createdObject;
     private static MaterialPropertyBlock bulletMatPropertyBlock = new MaterialPropertyBlock();
     private static Bullet bullet;
@@ -99,9 +98,7 @@ public static class GlobalHelper {
     public static GameObject CreateEnemy(EnemyTemplate enemyTemplate) {
         //If the list of enemysprites attached to GlobalHelper is empty, initialise them because they're needed here.
         if (enemySprites.Count == 0) {
-            Texture2D texture;
-            for (int i = 0; i < enemyTextureCount; i++) {
-                texture = (Texture2D)Resources.Load("Graphics/Enemies/Enemy" + i);
+            foreach (Texture2D texture in Resources.LoadAll<Texture2D>("Graphics/Enemies")) {
                 enemySprites.Add(Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 256));
             }
         }
@@ -142,9 +139,7 @@ public static class GlobalHelper {
     public static GameObject CreateBullet(BulletTemplate bulletTemplate, Vector2 bulletPosition) {
         //If the list of bulletsprites attached to GlobalHelper is empty, initialise them because they're needed here.
         if (bulletSprites.Count == 0) {
-            Texture2D texture;
-            for (int i = 0; i < bulletTextureCount; i++) {
-                texture = (Texture2D)Resources.Load("Graphics/Bullets/Bullet" + i);
+            foreach (Texture2D texture in Resources.LoadAll<Texture2D>("Graphics/Bullets")) {
                 bulletSprites.Add(Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 256));
             }
         }
@@ -159,9 +154,12 @@ public static class GlobalHelper {
             createdObject.SetActive(true);
         }
         createdObject.GetComponent<Bullet>().Reset();
-        if (bulletTemplate.advancedAttackPath != "") { //If there's advanced stuff happening
-            TimelineInterprenter interprenter = createdObject.AddComponent<TimelineInterprenter>();
-            interprenter.patternPath = bulletTemplate.advancedAttackPath;
+        if (bulletTemplate.advancedAttackPath != "") { //If there's advanced stuff happening, enable the TimelineInterprenter
+            TimelineInterprenter interprenter = createdObject.GetComponent<TimelineInterprenter>();
+            interprenter.enabled = true;
+            interprenter.Reset(bulletTemplate.advancedAttackPath);
+        } else {
+            createdObject.GetComponent<TimelineInterprenter>().enabled = false;
         }
         //Modifies the bullet based on whether it's harmful (eg shot by the enemy or player). Harmful bullets can be grazed and kill you, unharmful bullets have damage attached and don't harm you.
         if (bulletTemplate.isHarmful) {
@@ -169,6 +167,7 @@ public static class GlobalHelper {
         } else {
             bulletpos = new Vector3(bulletPosition.x, bulletPosition.y, 5 + totalFiredBullets / 100000f); //Player shot bullets should not cover actual harmful bullets.
         }
+        //Sets the position
         if (!bulletTemplate.positionIsRelative) {
             bulletpos.x = bulletTemplate.position.x;
             bulletpos.y = bulletTemplate.position.y;

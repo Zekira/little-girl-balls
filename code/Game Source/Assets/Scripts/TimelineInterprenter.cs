@@ -6,7 +6,7 @@ using System;
 /// A class reading .txt's describing either enemy or bullet info. Important in those .txt's is the wait(x) function, which is in ticks and not second, because second would not allow replays.
 /// </summary>
 public class TimelineInterprenter : MonoBehaviour {
-    //TODO: GC is horrible. Often 11ms spikes when 300 bullets have this attached.
+    //TODO: GC is horrible, mostly because of String.Split();
     public string patternPath = "";
     private Dictionary<string, float> numberVars = new Dictionary<string, float>();
     private Dictionary<string, BulletTemplate> bulletTemplateVars = new Dictionary<string, BulletTemplate>();
@@ -14,20 +14,32 @@ public class TimelineInterprenter : MonoBehaviour {
     private string[] instructions;
     private List<int> repeatStepback = new List<int>(); //What line to go to when encountering an endrepeat.
     private Enemy parentEnemy;
-    public int lineCount = 0;
-    public int currentLine = 0;
-    public int cooldown = 0;
-    public int instructionLength;
+    private int currentLine = 0;
+    private int cooldown = 0;
 
     //Vars needed within the for loop
+    private int instructionLength;
     private string[] functions;
     private string[] args;
     private int count, layers, findEndRepeatLine, lineDifference;
-    private float deltax, deltay, num1, num2;
+    private float num1, num2;
     private string findFunction;
     private BulletTemplate bulletTemplate;
     private EnemyTemplate enemyTemplate;
     private Vector3 pos, playerpos;
+
+    public void Reset(string newTimeLine) {
+        patternPath = newTimeLine;
+        numberVars = new Dictionary<string, float>();
+        bulletTemplateVars = new Dictionary<string, BulletTemplate>();
+        enemyTemplateVars = new Dictionary<string, EnemyTemplate>();
+        instructions = null;
+        repeatStepback = new List<int>();
+        parentEnemy = transform.GetComponent<Enemy>();
+        currentLine = 0;
+        cooldown = 0;
+        ReadAttack(true);
+    }
 
     void Start() {
         parentEnemy = transform.GetComponent<Enemy>();
@@ -49,8 +61,6 @@ public class TimelineInterprenter : MonoBehaviour {
     }
     /* TODO:
      * IF; [..] ENDIF; IF; [..] ELSE; [..] ENDIF;
-     * LABEL(name);
-     * GOTOLABEL(name);
      */
      /// <summary>
      /// Reads the text (defined in patternPath) line by line and does stuff depending on the info.
@@ -82,6 +92,7 @@ public class TimelineInterprenter : MonoBehaviour {
                     //Attaches ANOTHER TimelineInterprenter to this GameObject with path args[0].
                     TimelineInterprenter newpattern = transform.gameObject.AddComponent<TimelineInterprenter>();
                     newpattern.patternPath = args[0];
+                    args = null;
                     break;
                 case "dialogue":
                     args = GetArguments(instructions[currentLine]).Split(',');
@@ -153,6 +164,9 @@ public class TimelineInterprenter : MonoBehaviour {
                             break;
                         case "advancedpath":
                             bulletTemplate.advancedAttackPath = args[2];
+                            break;
+                        case "clearimmune":
+                            bulletTemplate.clearImmune = ParseValue(args[2]) > 0 ? true : false;
                             break;
                         default:
                             break;
@@ -277,9 +291,9 @@ public class TimelineInterprenter : MonoBehaviour {
                     args = GetArguments(instructions[currentLine]).Split(',');
                     pos = transform.position;
                     playerpos = GameObject.FindWithTag("Player").transform.position;
-                    deltax = pos.x - playerpos.x;
-                    deltay = pos.y - playerpos.y;
-                    SetNumber(args[0], Mathf.Atan2(-deltax, -deltay));
+                    num1 = pos.x - playerpos.x;
+                    num2 = pos.y - playerpos.y;
+                    SetNumber(args[0], Mathf.Atan2(-num1, -num2));
                     break;
                 case "random": //Returns a random value between args[1] and args[2]. Uses the GlobalHelper.random because everything random should do that because of replay support.
                     args = GetArguments(instructions[currentLine]).Split(',');
@@ -598,7 +612,7 @@ public class TimelineInterprenter : MonoBehaviour {
     /// </summary>
     /// <param name="toEvaluate">The string to find the function of.</param>
     /// <returns>Returns whatever is before the first open brace.</returns>
-    private string[] GetFunctions(string[] toEvaluate) { //TODO: THIS is where GC goes to heck.
+    private string[] GetFunctions(string[] toEvaluate) { 
         string[] returnString = new string[toEvaluate.Length];
         for (int i = 0; i < toEvaluate.Length; i++) {
             returnString[i] = toEvaluate[i].Split('(')[0];

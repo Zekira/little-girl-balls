@@ -19,7 +19,7 @@ enemyproperty(boss, boss, 1);
 enemyproperty(boss, bossportrait, charno);
 enemyproperty(boss, attackpath, Timelines/Attacks/Stage1/Boss1,Timelines/Attacks/Stage1/Boss2,Timelines/Attacks/Stage1/Boss3);
 enemyproperty(boss, spellcardname, , is_this_thing_on?_test_1_2_3, blue_fire_is_hotter_than_red);
-enemyproperty(boss, time, 1200, 1300, 1400);
+enemyproperty(boss, time, 2400, 1300, 1400);
 enemyproperty(boss, id, 0);
 enemyproperty(boss, droppower, 50);
 enemyproperty(boss, dropscore, 10);
