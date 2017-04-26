@@ -44,7 +44,7 @@ public class BulletMaterialisation : MonoBehaviour {
                 this.enabled = false;
             } else {
                 color = spriteRenderer.color;
-                color = new Color(color.r, color.b, color.g, ((9f - timer) / 18f)); //TODO: The transparancy stacks. That shouldn't be.
+                color = new Color(color.r, color.b, color.g, ((9f - timer) / 13f)); //TODO: The transparancy stacks. That shouldn't be.
                 spriteRenderer.color = color;
                 transform.localScale = (0.5f + scale * timer / 5f) * Vector3.one;
                 timer--;

@@ -43,6 +43,9 @@ bulletproperty(name, property, value[, more values]);
     0 when "position" uses absolute coordinates, 1 when it's relative to its parent's position. Defaults to relative.
   "clearimmune":
     0 when the bullet goes away at bombs and deaths, 1 when it doesn't go away at bombs and deaths
+  "scriptrotation":
+    The angle at which the any script attached to the bullettemplate this is attached to rotates. 
+	Eg spawning something normally at (0,1) and rotating it pi rad it spawns at (1,0).
 enemyproperty(name, property, value[, more values]);
   Sets the "property" of "name" to "value(s)". The following properties are recognised:
   "scale":

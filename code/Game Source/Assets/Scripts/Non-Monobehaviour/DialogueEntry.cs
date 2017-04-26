@@ -47,8 +47,6 @@ public class DialogueEntry {
     /// whether to show the other side: "true" or "false"|
     /// [all text]
     /// </summary>
-    /// <param name="text"></param>
-    /// <returns></returns>
     private static DialogueEntry ParseLine(string text) {
         DialogueEntry returnEntry = new DialogueEntry();
         string[] info = text.Split('|');

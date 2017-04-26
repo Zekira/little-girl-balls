@@ -27,7 +27,7 @@ public class Bullet : MonoBehaviour {
             //Check whether colliding with the player is lethal, and if so, either be grazed or be lethal.
             //A bullet is 1 unit long if its scale is 1.
             if (bulletTemplate.isHarmful) {
-                if (posy > GlobalHelper.bulletClear.destroyBulletsHeight) { //Destroy it if the clear "animation" is happening and it's above the height. TODO: Add a var to make some bullets immune to clearing.
+                if (posy > GlobalHelper.bulletClear.destroyBulletsHeight) { //Destroy it if the clear "animation" is happening and it's above the height.
                     if (GlobalHelper.bulletClear.bulletClearType == BulletClear.BulletClearType.SOME) { //If the clear is due to death/bombs...
                         if (!bulletTemplate.clearImmune) {
                             Deactivate();

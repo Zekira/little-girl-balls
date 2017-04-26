@@ -5,7 +5,7 @@ using System.Collections;
 /// </summary>
 public class BulletTemplate {
 
-    public Vector2 movement = new Vector2(0, -1 / 60f); //Tiles PER SECOND. That is, 60 ticks.
+    public Vector2 movement = new Vector2(0, 0); //Tiles PER SECOND. That is, 60 ticks.
     public bool isHarmful = true; //Whether it hurts the player and can be grazed.
 
     public float scale = 1f; //Diameter of the bullet.
@@ -19,6 +19,8 @@ public class BulletTemplate {
     public bool positionIsRelative = true; //Whether position is added to its spawner's position.
     public bool clearImmune = false; //Whether this bullet is immune to clearing due to deaths etc.
     public string advancedAttackPath = "";
+    public float scriptRotation = 0f;
+    public Vector4 scriptRotationMatrix = new Vector4(1, 0, 0, 1); //Rotates TimelineInterprenter's bulletproperty/movement,position, moveparent
 
     public BulletTemplate() {
     }
@@ -35,17 +37,22 @@ public class BulletTemplate {
         bulletDamage = template.bulletDamage;
         position = template.position;
         positionIsRelative = template.positionIsRelative;
-        clearImmune = template.clearImmune; //TODO: use this
+        clearImmune = template.clearImmune;
         advancedAttackPath = template.advancedAttackPath;
+        scriptRotationMatrix = template.scriptRotationMatrix;
+        scriptRotation = template.scriptRotation;
     }
 
     /// <summary>
-    /// Changes the length of the movement vector.
+    /// Sets the rotationMatrix to what it needs to be with angle (in rad).
+    /// This influences the reading of TimelineInterprenter with bulletproperty/movement, bulletproperty/position, and moveparent.
+    /// To make it compatible with playerangle, it's not going counter-clockwise but clockwise.
     /// </summary>
-    /// <param name="speed">The speed in units per tick.</param>
-    /// <returns>Returns the modified vector.</returns>
-    public Vector2 SetSpeed(float speed) {
-        movement = speed * movement.normalized;
-        return movement;
+    public BulletTemplate Rotate(float angle) {
+        scriptRotation = angle;
+        float cos = Mathf.Cos(angle);
+        float sin = Mathf.Sin(angle);
+        scriptRotationMatrix = new Vector4(cos, sin, -sin, cos);
+        return this;
     }
 }

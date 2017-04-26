@@ -1,11 +1,11 @@
 set(hor, 0);
-set(ver, 0.03);
+set(ver, -0.03);
 repeat(10);
 repeat(10);
 repeat(10);
 repeat(10);
 repeat(10);
-add(ver, ver, 0.0003);
+add(ver, ver, 0.0005);
 moveparent(hor, ver);
 wait(1);
 endrepeat;

@@ -153,7 +153,7 @@ public class SpellcardManager : MonoBehaviour {
     }
 
     private IEnumerator ShowBonus() { //TODO: time taken + actual time taken.
-        Transform spellcardBonus = GameObject.FindWithTag("UIVariable").transform.FindChild("SpellcardBonus");
+        Transform spellcardBonus = GameObject.FindWithTag("UI").transform.FindChild("Boss Canvas").FindChild("SpellcardBonus");
         spellcardBonus.gameObject.SetActive(true);
         if (!failed) {
             spellcardBonus.FindChild("Title").GetComponent<Text>().text = "Got Spell Card Bonus!";

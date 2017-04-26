@@ -7,10 +7,17 @@ using System;
 /// </summary>
 public class TimelineInterprenter : MonoBehaviour {
     //TODO: GC is horrible, mostly because of String.Split();
+    //TODO II: Dictionaries are expensive when called from 1500 bullets.
+    /* Also dictionary trygetvalue example from stackoverflow, slightly faster on its own:
+     *    obj item;
+     *    if(!dict.TryGetValue(name, out item))
+     *      return null;
+     *    return item;
+     */
     public string patternPath = "";
-    private Dictionary<string, float> numberVars = new Dictionary<string, float>();
-    private Dictionary<string, BulletTemplate> bulletTemplateVars = new Dictionary<string, BulletTemplate>();
-    private Dictionary<string, EnemyTemplate> enemyTemplateVars = new Dictionary<string, EnemyTemplate>();
+    private Dictionary<int, float> numberVars = new Dictionary<int, float>();
+    private Dictionary<int, BulletTemplate> bulletTemplateVars = new Dictionary<int, BulletTemplate>();
+    private Dictionary<int, EnemyTemplate> enemyTemplateVars = new Dictionary<int, EnemyTemplate>();
     private string[] instructions;
     private List<int> repeatStepback = new List<int>(); //What line to go to when encountering an endrepeat.
     private Enemy parentEnemy;
@@ -25,14 +32,16 @@ public class TimelineInterprenter : MonoBehaviour {
     private float num1, num2;
     private string findFunction;
     private BulletTemplate bulletTemplate;
+    private BulletTemplate parentTemplate;
     private EnemyTemplate enemyTemplate;
     private Vector3 pos, playerpos;
+    private int stringHash;
 
     public void Reset(string newTimeLine) {
         patternPath = newTimeLine;
-        numberVars = new Dictionary<string, float>();
-        bulletTemplateVars = new Dictionary<string, BulletTemplate>();
-        enemyTemplateVars = new Dictionary<string, EnemyTemplate>();
+        numberVars.Clear();
+        bulletTemplateVars.Clear();
+        enemyTemplateVars.Clear();
         instructions = null;
         repeatStepback = new List<int>();
         parentEnemy = transform.GetComponent<Enemy>();
@@ -54,19 +63,18 @@ public class TimelineInterprenter : MonoBehaviour {
             if (cooldown == 0) {
                 //+1 because it would otherwise start at the line it terminated at (only "wait(x)"), resulting in an infinite loop, which is a nightmare. That is longer than 12 seconds.
                 currentLine++;
-                ReadAttack(false);
+                ReadAttack();
             }
             cooldown = cooldown >= 0 ? cooldown - 1 : 0;
         }
     }
-    /* TODO:
-     * IF; [..] ENDIF; IF; [..] ELSE; [..] ENDIF;
-     */
-     /// <summary>
-     /// Reads the text (defined in patternPath) line by line and does stuff depending on the info.
-     /// The syntax of those lines is usually <functionname>([argument[,other arguments .. ]]);
-     /// Any text evaluated should be all-lowercase.
-     /// </summary>
+
+    /// <summary>
+    /// Reads the text (defined in patternPath) line by line and does stuff depending on the info.
+    /// The syntax of those lines is usually <functionname>([argument[,other arguments .. ]]);
+    /// Any text evaluated should be all-lowercase.
+    /// Set "initialise" to true to reset all values before starting reading.
+    /// </summary>
     public void ReadAttack(bool initialise) {
         if (initialise) {
             string file = (Instantiate((TextAsset)Resources.Load(patternPath))).text;
@@ -78,10 +86,21 @@ public class TimelineInterprenter : MonoBehaviour {
 
             functions = GetFunctions(instructions);
         }
+        ReadAttack();
+    }
 
+    /* TODO:
+     * IF; [..] ENDIF; IF; [..] ELSE; [..] ENDIF;
+     */
+     /// <summary>
+     /// Reads the text (defined in patternPath) line by line and does stuff depending on the info.
+     /// The syntax of those lines is usually <functionname>([argument[,other arguments .. ]]);
+     /// Any text evaluated should be all-lowercase.
+     /// </summary>
+    public void ReadAttack() { //Somehow the self ms is 25ms with 1300 calls. Unacceptable. TODO.
         for (; currentLine < instructionLength; currentLine++) {
-            //Skip if the line is a comment.
-            if (instructions[currentLine] == "" ||  instructions[currentLine][0] == '/' && instructions[currentLine][1] == '/' || instructions[currentLine][0] == '#') {
+            //Skip if the line is a comment or empty.
+            if (instructions[currentLine].Length == 0 ||  instructions[currentLine][0] == '/' || instructions[currentLine][0] == '#') {
                 continue;
             }
 
@@ -93,7 +112,7 @@ public class TimelineInterprenter : MonoBehaviour {
                     TimelineInterprenter newpattern = transform.gameObject.AddComponent<TimelineInterprenter>();
                     newpattern.patternPath = args[0];
                     args = null;
-                    break;
+                    continue;
                 case "dialogue":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     GlobalHelper.levelManager.GetComponent<DialogueManager>().startDialogue(args[0]);
@@ -106,9 +125,9 @@ public class TimelineInterprenter : MonoBehaviour {
                     layers = 0; //Goes down for every Repeat(x) line. Goes up for every Endrepeat line.
                     for (findEndRepeatLine = currentLine + 1; layers != 1; findEndRepeatLine++) {
                         findFunction = functions[findEndRepeatLine];
-                        if (findFunction.ToLower() == "repeat") {
+                        if (findFunction == "repeat") {
                             layers--;
-                        } else if (findFunction.ToLower() == "endrepeat") {
+                        } else if (findFunction == "endrepeat") {
                             layers++;
                         }
                     }
@@ -117,17 +136,48 @@ public class TimelineInterprenter : MonoBehaviour {
                     for (int i = 0; i < count; i++) {
                         repeatStepback.Add(lineDifference);
                     }
-                    break;
+                    continue;
                 case "endrepeat":
                     currentLine += repeatStepback[repeatStepback.Count - 1];
                     repeatStepback.RemoveAt(repeatStepback.Count - 1);
-                    break;
+                    continue;
                 case "bulletproperty":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     bulletTemplate = new BulletTemplate(GetBulletTemplate(args[0]));
-                    switch (args[1].ToLower()) {
+                    switch (args[1]) {
+                        case "scriptrotation":
+                            if (GetComponent<Bullet>() != null) { //If the parent is a bullet also add its angle.
+                                bulletTemplate.Rotate(GetComponent<Bullet>().bulletTemplate.scriptRotation + ParseValue(args[2]));
+                                break;
+                            } else {
+                                bulletTemplate.Rotate(ParseValue(args[2]));
+                                break;
+                            }
                         case "movement":
-                            bulletTemplate.movement = new Vector2(ParseValue(args[2]), ParseValue(args[3]));
+                            num1 = ParseValue(args[2]);
+                            num2 = ParseValue(args[3]);
+                            if (GetComponent<Bullet>() != null) { //If the parent is a bullet, change its movement to be rotated
+                                parentTemplate = GetComponent<Bullet>().bulletTemplate;
+                                pos.x = num1 * parentTemplate.scriptRotationMatrix.x + num2 * parentTemplate.scriptRotationMatrix.y;
+                                pos.y = num1 * parentTemplate.scriptRotationMatrix.z + num2 * parentTemplate.scriptRotationMatrix.w;
+                            } else {
+                                pos.x = num1;
+                                pos.y = num2;
+                            }
+                            bulletTemplate.movement = pos;
+                            break;
+                        case "position":
+                            num1 = ParseValue(args[2]);
+                            num2 = ParseValue(args[3]);
+                            if (GetComponent<Bullet>() != null) { //If the parent is a bullet, change its position to be rotated 
+                                parentTemplate = GetComponent<Bullet>().bulletTemplate;
+                                pos.x = num1 * parentTemplate.scriptRotationMatrix.x + num2 * parentTemplate.scriptRotationMatrix.y;
+                                pos.y = num1 * parentTemplate.scriptRotationMatrix.z + num2 * parentTemplate.scriptRotationMatrix.w;
+                            } else {
+                                pos.x = num1;
+                                pos.y = num2;
+                            }
+                            bulletTemplate.position = pos;
                             break;
                         case "isharmful":
                             bulletTemplate.isHarmful = ParseValue(args[2]) > 0 ? true : false;
@@ -153,12 +203,6 @@ public class TimelineInterprenter : MonoBehaviour {
                         case "rotation":
                             bulletTemplate.rotation = ParseValue(args[2]);
                             break;
-                        case "position":
-                            Vector2 position = new Vector2();
-                            position.x = ParseValue(args[2]);
-                            position.y = ParseValue(args[3]);
-                            bulletTemplate.position = position;
-                            break;
                         case "relativepos":
                             bulletTemplate.positionIsRelative = ParseValue(args[2]) > 0 ? true : false;
                             break;
@@ -172,11 +216,11 @@ public class TimelineInterprenter : MonoBehaviour {
                             break;
                     }
                     SetBulletTemplate(args[0], bulletTemplate);
-                    break;
+                    continue;
                 case "enemyproperty":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     enemyTemplate = new EnemyTemplate(GetEnemyTemplate(args[0]));
-                    switch (args[1].ToLower()) {
+                    switch (args[1]) {
                         case "scale":
                             enemyTemplate.scale = ParseValue(args[2]);
                             break;
@@ -244,28 +288,35 @@ public class TimelineInterprenter : MonoBehaviour {
                             break;
                     }
                     SetEnemyTemplate(args[0], enemyTemplate);
-                    break;
+                    continue;
                 case "createbullet":
+                    if (GetComponent<Bullet>() != null) { //If a bulet is firing this, pass the script rotation data onto the new bullet.
+                        bulletTemplate.Rotate(GetComponent<Bullet>().bulletTemplate.scriptRotation + bulletTemplate.rotation);
+                    }
                     args = GetArguments(instructions[currentLine]).Split(',');
                     GlobalHelper.CreateBullet(GetBulletTemplate(args[0]), transform.position);
-                    break;
+                    continue;
                 case "createenemy":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     GlobalHelper.CreateEnemy(GetEnemyTemplate(args[0]));
-                    break;
+                    continue;
                 case "moveparent":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     if (transform.GetComponent<Bullet>() != null) { //If this is a bullet, posx,y(,z) should be modified, not its direct position
                         Bullet bullet = transform.GetComponent<Bullet>();
-                        bullet.posx += ParseValue(args[0]);
-                        bullet.posy += ParseValue(args[1]);
+                        num1 = ParseValue(args[0]);
+                        num2 = ParseValue(args[1]);
+                        pos.x = num1 * bullet.bulletTemplate.scriptRotationMatrix.x + num2 * bullet.bulletTemplate.scriptRotationMatrix.y;
+                        pos.y = num1 * bullet.bulletTemplate.scriptRotationMatrix.z + num2 * bullet.bulletTemplate.scriptRotationMatrix.w;
+                        bullet.posx += pos.x;
+                        bullet.posy += pos.y;
                     } else {
                         transform.position += new Vector3(ParseValue(args[0]), ParseValue(args[1]), 0f);
                     }
-                    break;
+                    continue;
                 case "destroyparent": //Destroys whatever this is attached to.
                     Destroy(transform.gameObject);
-                    break;
+                    continue;
                 case "wait":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     cooldown = Mathf.RoundToInt(ParseValue(args[0]));
@@ -277,16 +328,16 @@ public class TimelineInterprenter : MonoBehaviour {
                         parentEnemy.template.maxHealth = parentEnemy.health;
                     }
                     parentEnemy.UpdateHealthbar();
-                    break;
+                    continue;
                 case "setparentmaxhealth":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     parentEnemy.template.maxHealth = Mathf.RoundToInt(ParseValue(args[0]));
                     parentEnemy.UpdateHealthbar();
-                    break;
+                    continue;
                 case "setparentscore":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     parentEnemy.template.baseScore = (uint)Mathf.RoundToInt(ParseValue(args[0]));
-                    break;
+                    continue;
                 case "angletoplayer": //Returns the angle to the player.
                     args = GetArguments(instructions[currentLine]).Split(',');
                     pos = transform.position;
@@ -294,71 +345,71 @@ public class TimelineInterprenter : MonoBehaviour {
                     num1 = pos.x - playerpos.x;
                     num2 = pos.y - playerpos.y;
                     SetNumber(args[0], Mathf.Atan2(-num1, -num2));
-                    break;
+                    continue;
                 case "random": //Returns a random value between args[1] and args[2]. Uses the GlobalHelper.random because everything random should do that because of replay support.
                     args = GetArguments(instructions[currentLine]).Split(',');
                     num1 = ParseValue(args[1]);
                     num2 = ParseValue(args[2]);
                     SetNumber(args[0], ((float)GlobalHelper.random.NextDouble()) * (num2 - num1) + num1);
-                    break;
+                    continue;
                 case "set": //What follows are a bunch of selfexplanatory math functions: set, addition, subtraction, multiplication, division, modulo, power, trig functions, absolute
                     args = GetArguments(instructions[currentLine]).Split(',');
                     SetNumber(args[0], ParseValue(args[1]));
-                    break;
+                    continue;
                 case "add":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     SetNumber(args[0], ParseValue(args[1]) + ParseValue(args[2]));
-                    break;
+                    continue;
                 case "sub":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     SetNumber(args[0], ParseValue(args[1]) - ParseValue(args[2]));
-                    break;
+                    continue;
                 case "mul":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     SetNumber(args[0], ParseValue(args[1]) * ParseValue(args[2]));
-                    break;
+                    continue;
                 case "div":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     SetNumber(args[0], ParseValue(args[1]) / ParseValue(args[2]));
-                    break;
+                    continue;
                 case "mod":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     SetNumber(args[0], ParseValue(args[1]) % ParseValue(args[2]));
-                    break;
+                    continue;
                 case "pow":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     SetNumber(args[0], Mathf.Pow(ParseValue(args[1]), ParseValue(args[2])));
-                    break;
+                    continue;
                 case "sin":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     SetNumber(args[0], Mathf.Sin(ParseValue(args[1])));
-                    break;
+                    continue;
                 case "asin":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     SetNumber(args[0], Mathf.Asin(ParseValue(args[1])));
-                    break;
+                    continue;
                 case "cos":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     SetNumber(args[0], Mathf.Cos(ParseValue(args[1])));
-                    break;
+                    continue;
                 case "acos":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     SetNumber(args[0], Mathf.Acos(ParseValue(args[1])));
-                    break;
+                    continue;
                 case "tan":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     SetNumber(args[0], Mathf.Tan(ParseValue(args[1])));
-                    break;
+                    continue;
                 case "atan":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     SetNumber(args[0], Mathf.Atan(ParseValue(args[1])));
-                    break;
+                    continue;
                 case "abs":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     SetNumber(args[0], Mathf.Abs(ParseValue(args[1])));
-                    break;
+                    continue;
                 default:
-                    break;
+                    continue;
             }
         }
 
@@ -371,10 +422,11 @@ public class TimelineInterprenter : MonoBehaviour {
     /// <param name="name">The name of the var</param>
     /// <param name="value">The value of the var</param>
     private void SetNumber(string name, float value) {
-        if (numberVars.ContainsKey(name)) {
-            numberVars[name] = value;
+        stringHash = name.GetHashCode();
+        if (numberVars.ContainsKey(stringHash)) {
+            numberVars[stringHash] = value;
         } else {
-            numberVars.Add(name, value);
+            numberVars.Add(stringHash, value);
         }
     }
 
@@ -383,13 +435,14 @@ public class TimelineInterprenter : MonoBehaviour {
     /// </summary>
     /// <param name="name">The var name to retrieve</param>
     /// <returns></returns>
-    private float GetNumber(string name) {
-        if (!numberVars.ContainsKey(name)) {
-            numberVars.Add(name, 0f);
+    private float GetNumber(string name) { //4000 calls from 1300 interprenters, 9 ms. Maybe optimisable? TODO
+        stringHash = name.GetHashCode();
+        float returnFloat;
+        if (!numberVars.TryGetValue(stringHash, out returnFloat)) {
+            numberVars.Add(stringHash, 0f);
             return 0f;
-        } else {
-            return numberVars[name];
         }
+        return returnFloat;
     }
     /// <summary>
     /// Parses value - whether it's a number or numberVars var name.
@@ -407,10 +460,10 @@ public class TimelineInterprenter : MonoBehaviour {
     }
 
     private float ParseFloat(string value) {
-        int negative = 1;
-        if (value[0] == '-') {
-            negative = -1;
-            value.Remove(0);
+        bool negative = false;
+        if (value[0] == '-') { //Remember the minus sign and remove it from the string.
+            negative = true;
+            value = value.Substring(1);
         }
         float returnValue = 0f;
         int stringLength = value.Length;
@@ -423,75 +476,17 @@ public class TimelineInterprenter : MonoBehaviour {
                 break;
             }
         }
-        //Evaluate before the dot.
+        //Evaluate before the dot. UTF-16 '0' = 48, '9' = 57, so '0' - 48 = 0, and '9' - 48 = 9.
         for (i = 0; i < dotPosition; i++) {
-            switch (value[i]) {
-                case '0':
-                    break;
-                case '1':
-                    returnValue += tenPower(1f, dotPosition - i - 1);
-                    break;
-                case '2':
-                    returnValue += tenPower(2f, dotPosition - i - 1);
-                    break;
-                case '3':
-                    returnValue += tenPower(3f, dotPosition - i - 1);
-                    break;
-                case '4':
-                    returnValue += tenPower(4f, dotPosition - i - 1);
-                    break;
-                case '5':
-                    returnValue += tenPower(5f, dotPosition - i - 1);
-                    break;
-                case '6':
-                    returnValue += tenPower(6f, dotPosition - i - 1);
-                    break;
-                case '7':
-                    returnValue += tenPower(7f, dotPosition - i - 1);
-                    break;
-                case '8':
-                    returnValue += tenPower(8f, dotPosition - i - 1);
-                    break;
-                case '9':
-                    returnValue += tenPower(9f, dotPosition - i - 1);
-                    break;
-            }
+            returnValue += tenPower(value[i] - 48, dotPosition - i - 1);
         }
         //Evaluate behind the dot.
         for (i = dotPosition + 1; i < stringLength; i++) {
-            switch (value[i]) {
-                case '0':
-                    break;
-                case '1':
-                    returnValue += tenPower(1f, dotPosition - i);
-                    break;
-                case '2':
-                    returnValue += tenPower(2f, dotPosition - i);
-                    break;
-                case '3':
-                    returnValue += tenPower(3f, dotPosition - i);
-                    break;
-                case '4':
-                    returnValue += tenPower(4f, dotPosition - i);
-                    break;
-                case '5':
-                    returnValue += tenPower(5f, dotPosition - i);
-                    break;
-                case '6':
-                    returnValue += tenPower(6f, dotPosition - i);
-                    break;
-                case '7':
-                    returnValue += tenPower(7f, dotPosition - i);
-                    break;
-                case '8':
-                    returnValue += tenPower(8f, dotPosition - i);
-                    break;
-                case '9':
-                    returnValue += tenPower(9f, dotPosition - i);
-                    break;
-            }
+            returnValue += tenPower(value[i] - 48, dotPosition - i);
         }
-        returnValue *= negative;
+        if (negative) {
+            returnValue = 0 - returnValue;
+        }
         return returnValue;
     }
 
@@ -500,15 +495,13 @@ public class TimelineInterprenter : MonoBehaviour {
     /// </summary>
     private float tenPower(float f, int power) {
         if (power > 0) {
-            float factor = 10f;
-            for (int i = 0; i < Mathf.Abs(power); i++) {
-                f *= factor;
+            for (int i = 0; i < power; i++) {
+                f *= 10f;
             }
             return f;
         } else {
-            float factor = 10f;
-            for (int i = 0; i < Mathf.Abs(power); i++) {
-                f /= factor;
+            for (int i = 0; i < -power; i++) {
+                f /= 10f;
             }
             return f;
         }
@@ -520,11 +513,12 @@ public class TimelineInterprenter : MonoBehaviour {
     /// <param name="name">The var name to retrieve</param>
     /// <returns></returns>
     private BulletTemplate GetBulletTemplate(string name) {
-        if (!bulletTemplateVars.ContainsKey(name)) {
-            bulletTemplateVars.Add(name, new BulletTemplate());
+        stringHash = name.GetHashCode();
+        if (!bulletTemplateVars.ContainsKey(stringHash)) {
+            bulletTemplateVars.Add(stringHash, new BulletTemplate());
             return new BulletTemplate();
         } else {
-            return bulletTemplateVars[name];
+            return bulletTemplateVars[stringHash];
         }
     }
 
@@ -534,10 +528,11 @@ public class TimelineInterprenter : MonoBehaviour {
     /// <param name="name">The name of the var</param>
     /// <param name="value">The value of the var</param>
     private void SetBulletTemplate(string name, BulletTemplate value) {
-        if (bulletTemplateVars.ContainsKey(name)) {
-            bulletTemplateVars[name] = value;
+        stringHash = name.GetHashCode();
+        if (bulletTemplateVars.ContainsKey(stringHash)) {
+            bulletTemplateVars[stringHash] = value;
         } else {
-            bulletTemplateVars.Add(name, value);
+            bulletTemplateVars.Add(stringHash, value);
         }
     }
 
@@ -547,11 +542,12 @@ public class TimelineInterprenter : MonoBehaviour {
     /// <param name="name">The var name to retrieve</param>
     /// <returns></returns>
     private EnemyTemplate GetEnemyTemplate(string name) {
-        if (!enemyTemplateVars.ContainsKey(name)) {
-            enemyTemplateVars.Add(name, new EnemyTemplate());
+        stringHash = name.GetHashCode();
+        if (!enemyTemplateVars.ContainsKey(stringHash)) {
+            enemyTemplateVars.Add(stringHash, new EnemyTemplate());
             return new EnemyTemplate();
         } else {
-            return enemyTemplateVars[name];
+            return enemyTemplateVars[stringHash];
         }
     }
 
@@ -561,10 +557,11 @@ public class TimelineInterprenter : MonoBehaviour {
     /// <param name="name">The name of the var</param>
     /// <param name="value">The value of the var</param>
     private void SetEnemyTemplate(string name, EnemyTemplate value) {
-        if (enemyTemplateVars.ContainsKey(name)) {
-            enemyTemplateVars[name] = value;
+        stringHash = name.GetHashCode();
+        if (enemyTemplateVars.ContainsKey(stringHash)) {
+            enemyTemplateVars[stringHash] = value;
         } else {
-            enemyTemplateVars.Add(name, value);
+            enemyTemplateVars.Add(stringHash, value);
         }
     }
 
@@ -574,17 +571,9 @@ public class TimelineInterprenter : MonoBehaviour {
     /// <param name="toEvaluate">The string to check if it has letters.</param>
     /// <returns>True if it contains any of a-z or A-Z.</returns>
     private bool ContainsLetters(string toEvaluate) {
-        //The point is that I'm NOT using regex; it's slow. This is sorted by the most common occurance in the english language, as per https://en.wikipedia.org/wiki/Letter_frequency#/media/File:English_letter_frequency_(frequency).svg
         for (int i = 0; i < toEvaluate.Length; i++) {
-            if (toEvaluate[i] == '0' || toEvaluate[i] == '1' || toEvaluate[i] == '2' || toEvaluate[i] == '3' || toEvaluate[i] == '4' ||
-                toEvaluate[i] == '5' || toEvaluate[i] == '6' || toEvaluate[i] == '7' || toEvaluate[i] == '8' || toEvaluate[i] == '9') {
-                continue;
-            }
-            if (toEvaluate[i] == 'e' || toEvaluate[i] == 't' || toEvaluate[i] == 'a' || toEvaluate[i] == 'o' || toEvaluate[i] == 'i' ||
-            toEvaluate[i] == 'n' || toEvaluate[i] == 's' || toEvaluate[i] == 'h' || toEvaluate[i] == 'r' || toEvaluate[i] == 'd' ||
-            toEvaluate[i] == 'l' || toEvaluate[i] == 'c' || toEvaluate[i] == 'u' || toEvaluate[i] == 'm' || toEvaluate[i] == 'w' ||
-            toEvaluate[i] == 'f' || toEvaluate[i] == 'g' || toEvaluate[i] == 'y' || toEvaluate[i] == 'p' || toEvaluate[i] == 'b' ||
-            toEvaluate[i] == 'v' || toEvaluate[i] == 'k' || toEvaluate[i] == 'j' || toEvaluate[i] == 'x' || toEvaluate[i] == 'q' || toEvaluate[i] == 'z') {
+            int charNumber = toEvaluate[i];
+            if (charNumber >= 65 && charNumber <= 122) { //All letters in UTF-16 from A to Z to a to z
                 return true;
             }
         }
@@ -596,7 +585,7 @@ public class TimelineInterprenter : MonoBehaviour {
     /// </summary>
     /// <param name="toEvaluate">The string to evaluate.</param>
     /// <returns>Everything that was originally between braces in <function>(args[0],args[1] ... )</returns>
-    private string GetArguments(string toEvaluate) {
+    private string GetArguments(string toEvaluate) { //5ms with 4000 calls from 1300 bullets. TODO?
         //Assuming only one set of braces
         int i = 0;
         while (toEvaluate[i] != '(') {

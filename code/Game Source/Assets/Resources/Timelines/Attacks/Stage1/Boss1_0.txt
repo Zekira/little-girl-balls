@@ -1,3 +1,4 @@
+wait(30);
 setparenthealth(300);
 setparentmaxhealth(300);
 bulletproperty(atpl, scale, 0.6);
@@ -11,17 +12,36 @@ wait(15);
 repeat(20);
 repeat(20);
 repeat(20);
+
 angletoplayer(playerangle);
 repeat(16);
 sin(movex, playerangle);
 cos(movey, playerangle);
 mul(movex, movex, 0.075);
 mul(movey, movey, 0.075);
+bulletproperty(atpl, scriptrotation, playerangle);
 bulletproperty(atpl, movement, movex, movey);
 createbullet(atpl);
 add(playerangle, playerangle, 0.39);
 wait(1);
 endrepeat;
+wait(4);
+//wait(60);
+
+//angletoplayer(playerangle);
+//repeat(16);
+//sin(movex, playerangle);
+//cos(movey, playerangle);
+//mul(movex, movex, 0.075);
+//mul(movey, movey, 0.075);
+//bulletproperty(atpl, scriptrotation, playerangle);
+//bulletproperty(atpl, movement, movex, movey);
+//createbullet(atpl);
+//add(playerangle, playerangle, -0.39);
+//wait(1);
+//endrepeat;
+//wait(60);
+
 endrepeat;
 endrepeat;
 endrepeat;
