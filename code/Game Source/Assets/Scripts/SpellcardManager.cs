@@ -79,15 +79,17 @@ public class SpellcardManager : MonoBehaviour {
         //how much it should move when linprogress = [0,1] is defined by f(x)=80(x-0.5)^4; the integral from 0 to 1 equals 1, so everytick add f(linprogress)'t part of the difference between start end end pos.
         //for some reason I have to divide the thing by 100 though. Guessing it's because this isn't actually integrating it.
         while (linearProgress < 1f) {
-            progress = f(linearProgress);
-            spellcardCasterTransform.anchoredPosition += progress * (endPos - startPos);
-            if (linearProgress > 0.66f) {
-                color = spellcardCasterImage.color;
-                color.a = 0.75f - (linearProgress-0.66f) * 0.75f / 0.34f;
-                spellcardCasterImage.color = color;
+            if (!GlobalHelper.paused) {
+                progress = f(linearProgress);
+                spellcardCasterTransform.anchoredPosition += progress * (endPos - startPos);
+                if (linearProgress > 0.66f) {
+                    color = spellcardCasterImage.color;
+                    color.a = 0.75f - (linearProgress - 0.66f) * 0.75f / 0.34f;
+                    spellcardCasterImage.color = color;
+                }
+
+                linearProgress += 0.01f;
             }
-            
-            linearProgress += 0.01f;
             yield return null;
         }
         spellcardCaster.SetActive(false);
@@ -106,9 +108,11 @@ public class SpellcardManager : MonoBehaviour {
         float progress = 0f;
         Vector3 position = new Vector3(-640, -340, 0);
         while (progress <= 1f) { //The first bit: move right
-            position.x = Mathf.Lerp(-640, 33, progress);
-            progress += 0.05f;
-            uiTransform.anchoredPosition = position;
+            if (!GlobalHelper.paused) {
+                position.x = Mathf.Lerp(-640, 33, progress);
+                progress += 0.05f;
+                uiTransform.anchoredPosition = position;
+            }
             yield return null;
         }
         position = new Vector3(33, -340, 0);
@@ -116,13 +120,17 @@ public class SpellcardManager : MonoBehaviour {
         progress = 0f;
         //Wait a bit
         while (progress <= 1f) {
-            progress += 0.2f;
+            if (!GlobalHelper.paused) {
+                progress += 0.2f;
+            }
         }
         progress = 0f;
         while (progress <= 1f) { //The second bit: move up
-            position.y = Mathf.Lerp(-340, 320, progress);
-            progress += 0.015f;
-            uiTransform.anchoredPosition = position;
+            if (!GlobalHelper.paused) {
+                position.y = Mathf.Lerp(-340, 320, progress);
+                progress += 0.015f;
+                uiTransform.anchoredPosition = position;
+            }
             yield return null;
         }
         position = new Vector3(33, 320, 0);
@@ -164,7 +172,9 @@ public class SpellcardManager : MonoBehaviour {
         }
         int waitTime = 150;
         while (waitTime > 0) {
-            waitTime--;
+            if (!GlobalHelper.paused) {
+                waitTime--;
+            }
             yield return null;
         }
         spellcardBonus.gameObject.SetActive(false);

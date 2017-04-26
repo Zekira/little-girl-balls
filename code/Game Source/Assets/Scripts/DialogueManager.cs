@@ -113,8 +113,10 @@ public class DialogueManager : MonoBehaviour {
         }
         Vector2 delta = to - from;
         while (progress < 1f) {
-            transform.anchoredPosition = from + progress * delta;
-            progress += speed;
+            if (!GlobalHelper.paused) {
+                transform.anchoredPosition = from + progress * delta;
+                progress += speed;
+            }
             yield return null;
         }
         transform.anchoredPosition = to;

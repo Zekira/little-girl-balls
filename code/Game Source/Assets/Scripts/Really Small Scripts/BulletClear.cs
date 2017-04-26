@@ -17,8 +17,10 @@ public class BulletClear : MonoBehaviour {
         bulletClearType = type;
         float currentHeight = 5f; //The top of the screen
         while (currentHeight > -5f) {
-            currentHeight -= speed;
-            destroyBulletsHeight = currentHeight;
+            if (!GlobalHelper.paused) {
+                currentHeight -= speed;
+                destroyBulletsHeight = currentHeight;
+            }
             yield return null;
         }
         destroyBulletsHeight = 99f; //Reset it after having cleared.
@@ -32,9 +34,11 @@ public class BulletClear : MonoBehaviour {
         float currentHeight = 5f;
         int currentTime = 0;
         while (currentTime < time) {
-            currentHeight -= speed;
-            currentTime++;
-            destroyBulletsHeight = currentHeight;
+            if (!GlobalHelper.paused) {
+                currentHeight -= speed;
+                currentTime++;
+                destroyBulletsHeight = currentHeight;
+            }
             yield return null;
         }
         destroyBulletsHeight = 99f;

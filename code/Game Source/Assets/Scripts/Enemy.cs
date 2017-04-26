@@ -128,7 +128,9 @@ public class Enemy : MonoBehaviour {
             Destroy(i);
         }
         while (delay > 0) {
-            delay--;
+            if (!GlobalHelper.paused) {
+                delay--;
+            }
             yield return null;
         }
         midDelay = false;
@@ -146,8 +148,10 @@ public class Enemy : MonoBehaviour {
     private IEnumerator FillHealthbar(int time) {
         int currentTime = 0;
         while (currentTime < time) {
-            UpdateHealthbar(1+currentTime * template.maxHealth / time);
-            currentTime++;
+            if (!GlobalHelper.paused) {
+                UpdateHealthbar(1 + currentTime * template.maxHealth / time);
+                currentTime++;
+            }
             yield return null;
         }
     }
