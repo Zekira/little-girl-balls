@@ -324,14 +324,7 @@ public class TimelineInterprenter : MonoBehaviour {
                 case "setparenthealth":
                     args = GetArguments(instructions[currentLine]).Split(',');
                     parentEnemy.health = Mathf.RoundToInt(ParseValue(args[0]));
-                    if (parentEnemy.health > parentEnemy.template.maxHealth) {
-                        parentEnemy.template.maxHealth = parentEnemy.health;
-                    }
-                    parentEnemy.UpdateHealthbar();
-                    continue;
-                case "setparentmaxhealth":
-                    args = GetArguments(instructions[currentLine]).Split(',');
-                    parentEnemy.template.maxHealth = Mathf.RoundToInt(ParseValue(args[0]));
+                    parentEnemy.template.maxHealth = parentEnemy.health;
                     parentEnemy.UpdateHealthbar();
                     continue;
                 case "setparentscore":
@@ -435,7 +428,7 @@ public class TimelineInterprenter : MonoBehaviour {
     /// </summary>
     /// <param name="name">The var name to retrieve</param>
     /// <returns></returns>
-    private float GetNumber(string name) { //4000 calls from 1300 interprenters, 9 ms. Maybe optimisable? TODO
+    private float GetNumber(string name) { 
         stringHash = name.GetHashCode();
         float returnFloat;
         if (!numberVars.TryGetValue(stringHash, out returnFloat)) {
@@ -585,7 +578,7 @@ public class TimelineInterprenter : MonoBehaviour {
     /// </summary>
     /// <param name="toEvaluate">The string to evaluate.</param>
     /// <returns>Everything that was originally between braces in <function>(args[0],args[1] ... )</returns>
-    private string GetArguments(string toEvaluate) { //5ms with 4000 calls from 1300 bullets. TODO?
+    private string GetArguments(string toEvaluate) { 
         //Assuming only one set of braces
         int i = 0;
         while (toEvaluate[i] != '(') {

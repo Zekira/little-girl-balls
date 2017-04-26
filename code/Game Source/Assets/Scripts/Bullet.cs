@@ -28,7 +28,7 @@ public class Bullet : MonoBehaviour {
             //A bullet is 1 unit long if its scale is 1.
             if (bulletTemplate.isHarmful) {
                 if (posy > GlobalHelper.bulletClear.destroyBulletsHeight) { //Destroy it if the clear "animation" is happening and it's above the height.
-                    if (GlobalHelper.bulletClear.bulletClearType == BulletClear.BulletClearType.SOME) { //If the clear is due to death/bombs...
+                    if ((int)GlobalHelper.bulletClear.bulletClearType <= 1) { //If the clear is due to death/bombs...
                         if (!bulletTemplate.clearImmune) {
                             Deactivate();
                         }
@@ -80,7 +80,7 @@ public class Bullet : MonoBehaviour {
     /// <summary>
     /// Sets the bullet to inactive and into GlobalHelper's bullet queue.
     /// </summary>
-    private void Deactivate() {
+    public void Deactivate() {
         GlobalHelper.backupBullets.Add(gameObject);
         gameObject.SetActive(false);
     }

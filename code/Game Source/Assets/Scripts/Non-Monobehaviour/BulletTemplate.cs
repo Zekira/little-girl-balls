@@ -17,7 +17,7 @@ public class BulletTemplate {
     public int bulletDamage = 1; //What damage the bullet does when hitting an enemy.
     public Vector2 position = new Vector2(0f, 0f); //What position to spawn the bullet in.
     public bool positionIsRelative = true; //Whether position is added to its spawner's position.
-    public bool clearImmune = false; //Whether this bullet is immune to clearing due to deaths etc.
+    public bool clearImmune = false; //Whether this bullet is immune to clearing due to deaths/bombs/player on its spawn etc.
     public string advancedAttackPath = "";
     public float scriptRotation = 0f;
     public Vector4 scriptRotationMatrix = new Vector4(1, 0, 0, 1); //Rotates TimelineInterprenter's bulletproperty/movement,position, moveparent

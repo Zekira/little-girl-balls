@@ -30,12 +30,19 @@ public class BulletMaterialisation : MonoBehaviour {
                 scale = template.scale;
             }
             if (timer == 0) { //Stopping and spawning the actual bullet
+                timer = 9; //For the next time this gets spawned
+                //If it's close to the player, prevent it from spawning if it is able to be cleared by bombs (and thus generally unimportant).
+                Bullet bullet = GetComponent<Bullet>();
+                if (!bullet.bulletTemplate.clearImmune && Vector2.Distance(transform.position, GlobalHelper.GetPlayer().transform.position) < bullet.bulletTemplate.scale/2) {
+                    bullet.enabled = true;
+                    this.enabled = false;
+                    bullet.Deactivate();
+                }
                 transform.position -= new Vector3(0f, 0f, -5f);
-                GetComponent<Bullet>().enabled = true;
+                bullet.enabled = true;
                 spriteRenderer.sprite = actualSprite;
                 transform.localScale = template.scale * Vector3.one;
                 spriteRenderer.color = Vector4.one;
-                timer = 9;
                 //If this is an advanced bullet, enable it here.
                 if (template.advancedAttackPath != "") {
                     GetComponent<TimelineInterprenter>().enabled = true;

@@ -1,6 +1,5 @@
 wait(30);
-setparenthealth(300);
-setparentmaxhealth(300);
+setparenthealth(100);
 bulletproperty(atpl, scale, 0.6);
 bulletproperty(atpl, id, 0);
 bulletproperty(atpl, innercolor, 1, 1, 1, 1);

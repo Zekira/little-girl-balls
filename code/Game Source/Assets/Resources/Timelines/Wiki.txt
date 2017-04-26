@@ -42,7 +42,7 @@ bulletproperty(name, property, value[, more values]);
   "relativepos":
     0 when "position" uses absolute coordinates, 1 when it's relative to its parent's position. Defaults to relative.
   "clearimmune":
-    0 when the bullet goes away at bombs and deaths, 1 when it doesn't go away at bombs and deaths
+    0 when the bullet goes away at bombs, deaths and spawning on the player, 1 when it doesn't go away at bombs and deaths, and can spawn on the player.
   "scriptrotation":
     The angle at which the any script attached to the bullettemplate this is attached to rotates. 
 	Eg spawning something normally at (0,1) and rotating it pi rad it spawns at (1,0).
@@ -89,9 +89,7 @@ moveparent(value, value);
 destroyparent;
   Destroys whatever the TimelineInterprenter is attached to.
 setparenthealth(value);
-  Sets the parent's current health, and if it exceeds the max health, also sets the max health to it.
-setparentmaxhealth(value);
-  Sets the parent's max health. Usually unneccessary due to setparenthealth's functionality.
+  Sets the parent's current health and max health.
 setparentscore(value);
   Sets the score that is immediatly added to the score when you kill this enemy.
 angletoplayer(value);

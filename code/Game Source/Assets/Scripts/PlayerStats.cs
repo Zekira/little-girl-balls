@@ -82,7 +82,7 @@ public class PlayerStats : MonoBehaviour {
         if (invincibility <= 0) {
             //Set the spellcard bonus to failure. Does basically nothing if there's no spell active except eat like .01ms
             GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
-            StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(0.3f, BulletClear.BulletClearType.SOME));
+            StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(0.3f, BulletClear.BulletClearType.DEATH));
             noMovement = true;
             transform.Find("DeathAnimation").gameObject.SetActive(true);
             invincibility = 210;

@@ -12,8 +12,8 @@ public class SpellcardManager : MonoBehaviour {
     public int timeLimit = 0;
     public bool failed = false;
 
-    //private int ticksTaken = 0; //TODO: time taken
-    //private float timeTaken = 0;
+    private int ticksTaken = 0;
+    private float timeTaken = 0;
     private Enemy parentEnemy;
     private GameObject spellcardUI;
     private DialogueEntry.character portraitCharacter;
@@ -22,10 +22,10 @@ public class SpellcardManager : MonoBehaviour {
         spellcardUI = GlobalHelper.bossUI.transform.FindChild("SpellcardUI").gameObject;
     }
 
-    //void Update() {
-    //    ticksTaken++;
-    //    timeTaken += Time.deltaTime;
-    //}
+    void Update() {
+        ticksTaken++;
+        timeTaken += Time.deltaTime;
+    }
 
     /// <summary>
     /// If the attack's name is nothing, it does nothing. If it is something, it starts everything associated with spellcards.
@@ -35,8 +35,8 @@ public class SpellcardManager : MonoBehaviour {
         StopCoroutine(DecreaseScore());
         StopCoroutine(MoveSpellUI());
         StopCoroutine(MoveCasterPortrait());
-        //ticksTaken = 0;
-        //timeTaken = 0;
+        ticksTaken = 0;
+        timeTaken = 0;
         failed = false;
         parentEnemy = enemy;
         startValue = (uint)(GlobalHelper.difficulty + GlobalHelper.stageNumber) * 1000000;
@@ -160,7 +160,7 @@ public class SpellcardManager : MonoBehaviour {
         StartCoroutine(ShowBonus());
     }
 
-    private IEnumerator ShowBonus() { //TODO: time taken + actual time taken.
+    private IEnumerator ShowBonus() {
         Transform spellcardBonus = GameObject.FindWithTag("UI").transform.FindChild("Boss Canvas").FindChild("SpellcardBonus");
         spellcardBonus.gameObject.SetActive(true);
         if (!failed) {
@@ -170,6 +170,15 @@ public class SpellcardManager : MonoBehaviour {
             spellcardBonus.FindChild("Title").GetComponent<Text>().text = "Bonus Failed...";
             spellcardBonus.FindChild("Score").GetComponent<Text>().text = "";
         }
+        spellcardBonus.FindChild("Time Taken").GetComponent<Text>().text = ticksTaken / 600 + "" + (ticksTaken / 60) % 10 + ":" + (ticksTaken % 60) / 6 + "" + (ticksTaken % 60) % 10;
+        spellcardBonus.FindChild("Actual Time").GetComponent<Text>().text = ((int)timeTaken/10)+ "" + ((int)timeTaken%10) + ":" + ((int)(10*timeTaken%10)) + "" + ((int)(100*timeTaken%10));
+        float slowdown;
+        if (timeTaken == 0) { //Prevent division by zero if it happens somehow
+            slowdown = 6.66f;
+        } else { //What usually happens ie not killing the spellcard the tick it starts.
+            slowdown = Mathf.Max((60 * timeTaken - ticksTaken) / (60 * timeTaken), 0f);
+        }
+        spellcardBonus.FindChild("Slowdown").GetComponent<Text>().text = ((int)(100*slowdown)) + "%";
         int waitTime = 150;
         while (waitTime > 0) {
             if (!GlobalHelper.paused) {

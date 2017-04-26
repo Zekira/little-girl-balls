@@ -7,8 +7,8 @@ using System.Collections;
 public class BulletClear : MonoBehaviour {
 
     public float destroyBulletsHeight = 99f;
-    public enum BulletClearType { SOME, ALL }; //"Some" with things such as deaths / bombs, "all" when switching spellcards.
-    public BulletClearType bulletClearType = BulletClearType.ALL;
+    public enum BulletClearType { BOMB, DEATH, FULLCLEAR }; //"Some" with things such as deaths / bombs, "all" when switching spellcards.
+    public BulletClearType bulletClearType = BulletClearType.FULLCLEAR;
 
     /// <summary>
     /// Clears the bullets from top to bottom, lowering "speed" units per second.

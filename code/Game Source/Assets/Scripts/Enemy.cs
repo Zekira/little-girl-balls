@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 /// <summary>
-/// A class representing the physical instance of both enemies and bosses (stored in EnemyTemplate.isBoss).
+/// A class representing the physical instance of both enemies and bosses (stored in EnemyTemplate.isBoss), and for bosses some spellcard stuff.
 /// </summary>
 public class Enemy : MonoBehaviour {
 
@@ -13,6 +13,7 @@ public class Enemy : MonoBehaviour {
     public int timer = 9999;
     public int currentAttack = 0;
 
+    private int bombTimer = 5;
     private bool midDelay = false;
     private int temptimer;
 
@@ -31,24 +32,40 @@ public class Enemy : MonoBehaviour {
     }
 
 	void Update () {
-        if (!GlobalHelper.paused && !midDelay) {
-            timer--;
-            //Timeout'd attack.
-            if (timer <= 0) {
-                NextPhase(false, 90);
+        if (!GlobalHelper.paused) {
+            //Checking collision with the player. This can happen inbetween phases, so outside the !midDelay part, but getting hit during dialogue is stupid, so not there.
+            if (!GlobalHelper.dialogue && Vector2.Distance(transform.position, GlobalHelper.GetPlayer().transform.position) < template.scale/2.5f) {
+                GlobalHelper.GetStats().TakeDamage();
             }
-            //Kiled attack.
-            if (health <= 0) {
-                NextPhase(true, 90);
-            }
-            //Updates the UI's timer.
-            if (template.isBoss) {
-                GlobalHelper.GetTimer(true).GetComponent<Text>().text = (Mathf.Min(timer / 60, 99)).ToString();
-                temptimer = timer % 60 * 100 / 60;
-                if (timer < 6000) {
-                    GlobalHelper.GetTimer(false).GetComponent<Text>().text = (temptimer / 10).ToString() + (temptimer % 10).ToString();
-                } else {
-                    GlobalHelper.GetTimer(false).GetComponent<Text>().text = "99";
+            //Things that should not happen inbetween phases.
+            if (!midDelay) {
+                //Bomb damage. Going through phases by bombs is cheap so you can't do that.
+                if (GlobalHelper.bulletClear.bulletClearType == BulletClear.BulletClearType.BOMB && GlobalHelper.bulletClear.destroyBulletsHeight < 5f) {
+                    if (bombTimer <= 0 && health > 1) {
+                        TakeDamage(1);
+                        bombTimer = 5;
+                    }
+                    bombTimer--;
+                }
+
+                timer--;
+                //Timeout'd attack.
+                if (timer <= 0) {
+                    NextPhase(false, 90);
+                }
+                //Kiled attack.
+                if (health <= 0) {
+                    NextPhase(true, 90);
+                }
+                //Updates the UI's timer.
+                if (template.isBoss) {
+                    GlobalHelper.GetTimer(true).GetComponent<Text>().text = (Mathf.Min(timer / 60, 99)).ToString();
+                    temptimer = timer % 60 * 100 / 60;
+                    if (timer < 6000) {
+                        GlobalHelper.GetTimer(false).GetComponent<Text>().text = (temptimer / 10).ToString() + (temptimer % 10).ToString();
+                    } else {
+                        GlobalHelper.GetTimer(false).GetComponent<Text>().text = "99";
+                    }
                 }
             }
         }
@@ -93,14 +110,14 @@ public class Enemy : MonoBehaviour {
             if (template.isBoss) {
                 GlobalHelper.bossUI.SetActive(false);
                 GlobalHelper.spellcardBackground.gameObject.SetActive(false);
-                StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f, BulletClear.BulletClearType.ALL, 30));
+                StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f, BulletClear.BulletClearType.FULLCLEAR, 30));
             }
             Destroy(this.gameObject);
             return;
         }
         //Clears bullets if it's a boss
         if (template.isBoss) {
-            StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f, BulletClear.BulletClearType.ALL, 30));
+            StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f, BulletClear.BulletClearType.FULLCLEAR, 30));
             SetUIStarCount();
             GlobalHelper.levelManager.GetComponent<SpellcardManager>().ActivateSpellcard(template, currentAttack, this);
         }
