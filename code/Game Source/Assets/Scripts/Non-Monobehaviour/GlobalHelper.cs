@@ -25,6 +25,8 @@ public static class GlobalHelper {
     public static List<Sprite> bulletSprites = new List<Sprite>(); //All bullet textures
     public static List<Sprite> enemySprites = new List<Sprite>(); //All enemy textures
 
+    public static Dictionary<int, List<TimelineCommand>> commandLists = new Dictionary<int, List<TimelineCommand>>(); //All different files that TimelineInterprenter can read. The int keys are (usually) unique hashes of the entire file.
+
     public static int totalFiredBullets;
     public static bool paused = false;
     public static bool dialogue = false;

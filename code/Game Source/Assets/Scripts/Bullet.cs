@@ -45,7 +45,7 @@ public class Bullet : MonoBehaviour {
                     GlobalHelper.GetStats().TakeDamage();
                     Deactivate();
                 } else if (!GlobalHelper.GetStats().noMovement && !grazed && deltax * deltax + deltay * deltay < GlobalHelper.GetStats().grazeRadius * GlobalHelper.GetStats().grazeRadius) {
-                    GlobalHelper.GetStats().IncrementGraze();
+                    GlobalHelper.GetStats().grazeInATick++;
                     grazed = true;
                 }
             } else { //If the bullet is not harmful to the player, it should check enemies and damage them.

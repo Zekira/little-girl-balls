@@ -14,6 +14,7 @@ public class PlayerMovement : MonoBehaviour {
     private float totalSpeedMultiplier;
     private int shotCooldown = 2;
     private DialogueManager dialogueManager;
+    private BulletTemplate mainShot = new BulletTemplate();
 
     //TODO: Make these customisable
     public KeyCode keyPause = KeyCode.Escape;
@@ -28,6 +29,15 @@ public class PlayerMovement : MonoBehaviour {
 
     void Awake() {
         dialogueManager = GameObject.FindWithTag("LevelManager").GetComponent<DialogueManager>();
+
+        mainShot.bulletDamage = 2;
+        mainShot.isHarmful = false;
+        mainShot.innerColor = new Color(0.9f, 1f, 1f);
+        mainShot.outerColor = new Color(0.2f, 0.7f, 0.7f);
+        mainShot.bulletID = 3;
+        mainShot.movement = new Vector2(0f, 0.2f);
+        mainShot.scale = 0.4f;
+        mainShot.clearImmune = true;
     }
 	
 	void Update () {
@@ -87,23 +97,12 @@ public class PlayerMovement : MonoBehaviour {
 
                 //Check whether the player is shooting or advancing dialogue.
                 if (Input.GetKey(keyShoot) && !GlobalHelper.dialogue && shotCooldown <= 0) {
-                    BulletTemplate shot = new BulletTemplate();
-                    shot.bulletDamage = 3;
-                    shot.isHarmful = false;
-                    shot.innerColor = new Color(0.2f, 0.5f, 1f);
-                    shot.outerColor = new Color(0.2f, 0.5f, 1f);
-                    shot.bulletID = 1;
-                    shot.movement = new Vector2(Random.Range(-0.1f, 0.1f), 1f).normalized / 5f;
-                    shot.scale = 0.3f;
-                    shot.rotation = Random.Range(0f, 90f);
-                    shot.rotationSpeed = Random.Range(-0.05f, 0.05f);
-                    shot.clearImmune = true;
-                    GlobalHelper.CreateBullet(shot, transform.position);
-                    shotCooldown = 10;
+                    GlobalHelper.CreateBullet(mainShot, transform.position);
+                    shotCooldown = 6;
                 } else if (GlobalHelper.dialogue && Input.GetKey(keySkip)) {
-                    dialogueManager.advanceDialogue();
+                    dialogueManager.AdvanceDialogue();
                 } else if (GlobalHelper.dialogue && Input.GetKeyDown(keyShoot)) {
-                    dialogueManager.advanceDialogue();
+                    dialogueManager.AdvanceDialogue();
                 }
             }
             if (shotCooldown > 0) {

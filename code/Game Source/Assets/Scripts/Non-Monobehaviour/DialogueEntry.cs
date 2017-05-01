@@ -10,6 +10,7 @@ public class DialogueEntry {
     public enum character { RACHEL, CHARNO};
     public emotion currentEmotion;
     public character currentCharacer;
+    public string[] special;
     public string text;
     public bool leftSpeaking = true;
     public bool showOther = true;
@@ -45,7 +46,8 @@ public class DialogueEntry {
     /// emotion|
     /// who is speaking: "left" or "right"|
     /// whether to show the other side: "true" or "false"|
-    /// [all text]
+    /// [all text] |
+    /// other modifiers seperated by |, such as "timelinetick", 
     /// </summary>
     private static DialogueEntry ParseLine(string text) {
         DialogueEntry returnEntry = new DialogueEntry();
@@ -55,6 +57,10 @@ public class DialogueEntry {
         returnEntry.leftSpeaking = info[2].ToUpperInvariant().Replace("\n", "").Replace("\r", "") == "LEFT" ? true : false;
         returnEntry.showOther = info[3].ToUpperInvariant().Replace("\n", "").Replace("\r", "") == "TRUE" ? true : false;
         returnEntry.text = info[4];
+        returnEntry.special = new string[info.Length-5];
+        for (int i = 0; i < info.Length-5; i++) {
+            returnEntry.special[i] = info[i + 5];
+        }
 
         return returnEntry;
     }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2015
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game Source", "Game Source.csproj", "{C5FE930A-A58E-92A1-7415-B0908E8D1617}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game Source.CSharp", "Game Source.CSharp.csproj", "{1A4A57BC-7EC2-EA0F-6D31-34F8B23E2C70}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +9,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C5FE930A-A58E-92A1-7415-B0908E8D1617}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C5FE930A-A58E-92A1-7415-B0908E8D1617}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C5FE930A-A58E-92A1-7415-B0908E8D1617}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C5FE930A-A58E-92A1-7415-B0908E8D1617}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A4A57BC-7EC2-EA0F-6D31-34F8B23E2C70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A4A57BC-7EC2-EA0F-6D31-34F8B23E2C70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A4A57BC-7EC2-EA0F-6D31-34F8B23E2C70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A4A57BC-7EC2-EA0F-6D31-34F8B23E2C70}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

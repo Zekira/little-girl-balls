@@ -47,13 +47,19 @@ public class SpellcardManager : MonoBehaviour {
             spellcardUI.SetActive(true);
             GlobalHelper.spellcardBackground.gameObject.SetActive(true);
             SetSpellcardName(name);
+            spellcardUI.transform.FindChild("Bonus").GetComponent<Text>().text = currentValue.ToString();
             StartCoroutine(MoveSpellUI());
-            StartCoroutine(DecreaseScore());
             StartCoroutine(MoveCasterPortrait());
+            if (!enemy.timeoutAttack) { //Score should only decrease when it's a survival card
+                StartCoroutine(DecreaseScore());
+            }
         } else {
             spellcardUI.SetActive(false);
             GlobalHelper.spellcardBackground.gameObject.SetActive(false);
             currentValue = template.baseScore;
+        }
+        if (enemy.timeoutAttack) { //Healthbar shouldn't show when it's a survival attack.
+            enemy.transform.FindChild("Healthbar").gameObject.SetActive(false);
         }
     }
 

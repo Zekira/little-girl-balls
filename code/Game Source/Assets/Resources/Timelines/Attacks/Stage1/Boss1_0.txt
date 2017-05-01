@@ -22,9 +22,9 @@ bulletproperty(atpl, scriptrotation, playerangle);
 bulletproperty(atpl, movement, movex, movey);
 createbullet(atpl);
 add(playerangle, playerangle, 0.39);
-wait(1);
 endrepeat;
-wait(4);
+wait(10);
+//wait(4);
 //wait(60);
 
 //angletoplayer(playerangle);

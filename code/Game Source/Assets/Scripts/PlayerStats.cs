@@ -22,7 +22,8 @@ public class PlayerStats : MonoBehaviour {
     [Range(0,400)]
     public int power = 0;
     public uint value = 10000;
-    public ushort graze = 0;
+    public int graze = 0;
+    public int grazeInATick = 0;
 
     public int invincibility = 0;
     public bool noMovement = false;
@@ -61,6 +62,10 @@ public class PlayerStats : MonoBehaviour {
 
     void Update() {
         if (!GlobalHelper.paused) {
+            if (grazeInATick > 0) {
+                SetGraze(graze + grazeInATick);
+                grazeInATick = 0;
+            }
             playerPosition = transform.position;
             //Invincibility cooldown.
             if (invincibility > 0) {
@@ -145,7 +150,7 @@ public class PlayerStats : MonoBehaviour {
     /// <summary>
     /// Sets the graze and updates the UI.
     /// </summary
-    public void SetGraze(ushort amount) {
+    public void SetGraze(int amount) {
         graze = amount;
         UIVariable.transform.Find("Graze").GetComponent<Text>().text = GlobalHelper.Commafy(graze);
     }

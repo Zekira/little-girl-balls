@@ -12,6 +12,7 @@ public class Enemy : MonoBehaviour {
     public Transform itemParentTransform;
     public int timer = 9999;
     public int currentAttack = 0;
+    public bool timeoutAttack = false; //This makes the boss immune until the end.
 
     private int bombTimer = 5;
     private bool midDelay = false;
@@ -37,8 +38,8 @@ public class Enemy : MonoBehaviour {
             if (!GlobalHelper.dialogue && Vector2.Distance(transform.position, GlobalHelper.GetPlayer().transform.position) < template.scale/2.5f) {
                 GlobalHelper.GetStats().TakeDamage();
             }
-            //Things that should not happen inbetween phases.
-            if (!midDelay) {
+            //Things that should not happen inbetween phases or during dialogue.
+            if (!midDelay && !GlobalHelper.dialogue) {
                 //Bomb damage. Going through phases by bombs is cheap so you can't do that.
                 if (GlobalHelper.bulletClear.bulletClearType == BulletClear.BulletClearType.BOMB && GlobalHelper.bulletClear.destroyBulletsHeight < 5f) {
                     if (bombTimer <= 0 && health > 1) {
@@ -51,7 +52,11 @@ public class Enemy : MonoBehaviour {
                 timer--;
                 //Timeout'd attack.
                 if (timer <= 0) {
-                    NextPhase(false, 90);
+                    if (timeoutAttack) {
+                        NextPhase(true, 90);
+                    } else {
+                        NextPhase(false, 90);
+                    }
                 }
                 //Kiled attack.
                 if (health <= 0) {
@@ -77,7 +82,9 @@ public class Enemy : MonoBehaviour {
     /// <param name="amount">The amount of damage dealt.</param>
     public void TakeDamage(int amount) {
         if (template.isBoss) {
-            UpdateHealthbar(health-amount);
+            if (!timeoutAttack) {
+                UpdateHealthbar(health - amount);
+            }
         } else {
             health -= amount;
         }
@@ -88,6 +95,7 @@ public class Enemy : MonoBehaviour {
     /// </summary>
     /// <param name="byDamage">Whether it happened by being damaged.</param>
     private void NextPhase(bool byDamage, int delay) {
+        timeoutAttack = false;
         if (byDamage) {
             if (template.isBoss) {
                 GlobalHelper.stats.AddScore(GlobalHelper.levelManager.GetComponent<SpellcardManager>().currentValue);
@@ -115,23 +123,28 @@ public class Enemy : MonoBehaviour {
             Destroy(this.gameObject);
             return;
         }
-        //Clears bullets if it's a boss
+        //Set the time of the current attack (if it exists), 9999 if it isn't there, and set it to a timeout attack if it's negative.
+        if (currentAttack < template.spellTimers.Count) {
+            timer = template.spellTimers[currentAttack];
+            if (timer < 0) {
+                timeoutAttack = true;
+                timer = 0 - timer;
+            }
+        } else {
+            timer = 9999;
+        }
+        //Clears bullets if it's a boss, updates the UI, and starts the next spellcard
         if (template.isBoss) {
             StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f, BulletClear.BulletClearType.FULLCLEAR, 30));
             SetUIStarCount();
             GlobalHelper.levelManager.GetComponent<SpellcardManager>().ActivateSpellcard(template, currentAttack, this);
         }
-
-        //Set the time of the current attack (if it exists), or 9999 if it isn't there.
-        if (currentAttack < template.spellTimers.Count) {
-            timer = template.spellTimers[currentAttack];
-        } else {
-            timer = 9999;
-        }
         foreach (TimelineInterprenter i in GetComponents<TimelineInterprenter>()) {
             Destroy(i);
         }
-        StartCoroutine(FillHealthbar(delay));
+        if (template.isBoss && !timeoutAttack) {
+            StartCoroutine(FillHealthbar(delay));
+        }
         StartCoroutine(DelayedStartNewAttack(currentAttack, delay));
     }
 
@@ -151,10 +164,6 @@ public class Enemy : MonoBehaviour {
             yield return null;
         }
         midDelay = false;
-
-        foreach (TimelineInterprenter i in GetComponents<TimelineInterprenter>()) {
-            Destroy(i);
-        }
         TimelineInterprenter newInterprenter = gameObject.AddComponent<TimelineInterprenter>();
         newInterprenter.patternPath = template.attackPath[index];
     }
@@ -163,6 +172,7 @@ public class Enemy : MonoBehaviour {
     /// Fills the healthbar from empty to full taking "time" ticks. It directly modifies the health variable.
     /// </summary>
     private IEnumerator FillHealthbar(int time) {
+        transform.FindChild("Healthbar").gameObject.SetActive(true);
         int currentTime = 0;
         while (currentTime < time) {
             if (!GlobalHelper.paused) {
