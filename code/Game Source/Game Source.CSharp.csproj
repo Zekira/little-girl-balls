@@ -83,6 +83,7 @@
     <Compile Include="Assets\Scripts\Really Small Scripts\HideObjectsOnStart.cs" />
     <Compile Include="Assets\Scripts\Really Small Scripts\ImageScrolling.cs" />
     <Compile Include="Assets\Scripts\Really Small Scripts\Item.cs" />
+    <Compile Include="Assets\Scripts\Really Small Scripts\SpriteAnimator.cs" />
     <Compile Include="Assets\Scripts\SpellcardManager.cs" />
     <Compile Include="Assets\Scripts\TimelineInterprenter.cs" />
   </ItemGroup>
