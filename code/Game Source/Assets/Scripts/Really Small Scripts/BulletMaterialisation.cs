@@ -48,6 +48,10 @@ public class BulletMaterialisation : MonoBehaviour {
                     GetComponent<TimelineInterprenter>().enabled = true;
                     GetComponent<TimelineInterprenter>().patternPath = template.advancedAttackPath;
                 }
+                //If this actually is a laser and has a laser component, enable it here.
+                if (GetComponent<Laser>() != null) {
+                    GetComponent<Laser>().enabled = true;
+                }
                 this.enabled = false;
             } else {
                 color = spriteRenderer.color;

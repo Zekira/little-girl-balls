@@ -6,8 +6,7 @@ using System;
 /// A class reading .txt's describing either enemy or bullet info. Important in those .txt's is the wait(x) function, which is in ticks and not second, because second would not allow replays.
 /// </summary>
 public class TimelineInterprenter : MonoBehaviour {
-    //TODO: GC is horrible, mostly because of String.Split();
-    //TODO II: Dictionaries are expensive when called from 1500 bullets.
+    //TODO: Dictionaries are expensive when called from 1500 bullets.
     /* Also dictionary trygetvalue example from stackoverflow, slightly faster on its own:
      *    obj item;
      *    if(!dict.TryGetValue(name, out item))
@@ -18,6 +17,7 @@ public class TimelineInterprenter : MonoBehaviour {
     private Dictionary<int, float> numberVars = new Dictionary<int, float>();
     private Dictionary<int, BulletTemplate> bulletTemplateVars = new Dictionary<int, BulletTemplate>();
     private Dictionary<int, EnemyTemplate> enemyTemplateVars = new Dictionary<int, EnemyTemplate>();
+    private Dictionary<int, LaserTemplate> laserTemplateVars = new Dictionary<int, LaserTemplate>();
     private string[] instructions;
     private List<int> repeatStepback = new List<int>(); //What line to go to when encountering an endrepeat.
     private Enemy parentEnemy;
@@ -25,7 +25,6 @@ public class TimelineInterprenter : MonoBehaviour {
     private int cooldown = 0;
 
     //Vars needed within the for loop
-    private int instructionLength;
     private List<TimelineCommand> commands = new List<TimelineCommand>();
     private int count, layers, findEndRepeatLine, lineDifference;
     private float num1, num2;
@@ -50,6 +49,15 @@ public class TimelineInterprenter : MonoBehaviour {
         ReadAttack(true);
     }
 
+    //OnEnable() to add the TickTimeline to the tick all timelines delegate, OnDisable() to remove them.
+    void OnEnable() {
+        GlobalHelper.Tick += TickTimeline;
+    }
+
+    void OnDisable() {
+        GlobalHelper.Tick -= TickTimeline;
+    }
+
     void Start() {
         parentEnemy = transform.GetComponent<Enemy>();
         if (patternPath == "") {
@@ -70,6 +78,14 @@ public class TimelineInterprenter : MonoBehaviour {
     }
 
     /// <summary>
+    /// Increases the currentLine by one and ReadAttack()'s.
+    /// </summary>
+    public void TickTimeline() {
+        currentLine++;
+        ReadAttack();
+    }
+
+    /// <summary>
     /// Reads the text (defined in patternPath) line by line and does stuff depending on the info.
     /// The syntax of those lines is usually <functionname>([argument[,other arguments .. ]]);
     /// Any text evaluated should be all-lowercase.
@@ -78,14 +94,13 @@ public class TimelineInterprenter : MonoBehaviour {
     public void ReadAttack(bool initialise) {
         if (initialise) {
             string file = (Instantiate((TextAsset)Resources.Load(patternPath))).text;
-            file = file.Replace(" ", ""); //Simple cleanup. This also makes ReadAttack totally inappropriate for dialogue.
-            file = file.Replace("\n", "");
-            file = file.Replace("\r", "");
-            instructions = file.Split(';'); //This splits instructions.
-            instructionLength = instructions.Length;
             int hash = file.GetHashCode();
 
             if (!GlobalHelper.commandLists.TryGetValue(hash, out commands)) { //If it's already a list of commands recognised, no need to parse it again. Otherwise, parse is needed.
+                file = file.Replace(" ", ""); //Simple cleanup. This also makes ReadAttack totally inappropriate for dialogue.
+                file = file.Replace("\n", "");
+                file = file.Replace("\r", "");
+                instructions = file.Split(';'); //This splits instructions.
                 string function;
                 List<string> args;
                 commands = new List<TimelineCommand>();
@@ -101,7 +116,6 @@ public class TimelineInterprenter : MonoBehaviour {
                         function = args[1];
                         args.RemoveAt(1);
                         commands.Add(new TimelineCommand(
-                            TimelineCommand.Command.BULLETPROPERTY,
                             (TimelineCommand.BulletProperty)Enum.Parse(typeof(TimelineCommand.BulletProperty), function.ToUpperInvariant()),
                             args
                             ));
@@ -110,11 +124,17 @@ public class TimelineInterprenter : MonoBehaviour {
                         function = args[1];
                         args.RemoveAt(1);
                         commands.Add(new TimelineCommand(
-                            TimelineCommand.Command.ENEMYPROPERTY,
                             (TimelineCommand.EnemyProperty)Enum.Parse(typeof(TimelineCommand.EnemyProperty), function.ToUpperInvariant()),
                             args
                             ));
                         continue;
+                    } else if (function == "laserproperty") {
+                        function = args[1];
+                        args.RemoveAt(1);
+                        commands.Add(new TimelineCommand(
+                            (TimelineCommand.LaserProperty)Enum.Parse(typeof(TimelineCommand.LaserProperty), function.ToUpperInvariant()),
+                            args
+                            ));
                     } else { //At this point no bullet/enemy properties are being set so it's just parsing the TimelineCommand.Command
                         commands.Add(new TimelineCommand(
                             (TimelineCommand.Command)Enum.Parse(typeof(TimelineCommand.Command), function.ToUpperInvariant()),
@@ -137,7 +157,7 @@ public class TimelineInterprenter : MonoBehaviour {
      /// The syntax of those lines is usually <functionname>([argument[,other arguments .. ]]);
      /// Any text evaluated should be all-lowercase.
      /// </summary>
-    public void ReadAttack() { //Somehow the self ms is 25ms with 1300 calls. Unacceptable. TODO.
+    public void ReadAttack() { 
         for (; currentLine < commands.Count; currentLine++) {
             currentCommand = commands[currentLine];
             //Take the part before the brackets and try to figure out what it says and do something with it.
@@ -210,8 +230,8 @@ public class TimelineInterprenter : MonoBehaviour {
                             }
                             bulletTemplate.position = pos;
                             break;
-                        case TimelineCommand.BulletProperty.ISHARMFUL:
-                            bulletTemplate.isHarmful = ParseValue(currentCommand.args[1]) > 0 ? true : false;
+                        case TimelineCommand.BulletProperty.ENEMYSHOT:
+                            bulletTemplate.enemyShot = ParseValue(currentCommand.args[1]) > 0 ? true : false;
                             break;
                         case TimelineCommand.BulletProperty.SCALE:
                             bulletTemplate.scale = ParseValue(currentCommand.args[1]);
@@ -243,7 +263,8 @@ public class TimelineInterprenter : MonoBehaviour {
                         case TimelineCommand.BulletProperty.CLEARIMMUNE:
                             bulletTemplate.clearImmune = ParseValue(currentCommand.args[1]) > 0 ? true : false;
                             break;
-                        default:
+                        case TimelineCommand.BulletProperty.HARMLESS:
+                            bulletTemplate.harmless = ParseValue(currentCommand.args[1]) > 0 ? true : false;
                             break;
                     }
                     SetBulletTemplate(currentCommand.args[0], bulletTemplate);
@@ -319,6 +340,33 @@ public class TimelineInterprenter : MonoBehaviour {
                     }
                     SetEnemyTemplate(currentCommand.args[0], enemyTemplate);
                     continue;
+                case TimelineCommand.Command.LASERPROPERTY:
+                    LaserTemplate laserTemplate = new LaserTemplate(GetLaserTemplate(currentCommand.args[0]));
+                    switch (currentCommand.laserProperty) {
+                        case TimelineCommand.LaserProperty.WARNDURATION:
+                            laserTemplate.warnDuration = Mathf.RoundToInt(ParseValue(currentCommand.args[1]));
+                            break;
+                        case TimelineCommand.LaserProperty.SHOTDURATION:
+                            laserTemplate.shotDuration = Mathf.RoundToInt(ParseValue(currentCommand.args[1]));
+                            break;
+                        case TimelineCommand.LaserProperty.INNERCOLOR:
+                            laserTemplate.innerColor.r = ParseValue(currentCommand.args[1]);
+                            laserTemplate.innerColor.g = ParseValue(currentCommand.args[2]);
+                            laserTemplate.innerColor.b = ParseValue(currentCommand.args[3]);
+                            laserTemplate.innerColor.a = ParseValue(currentCommand.args[4]);
+                            break;
+                        case TimelineCommand.LaserProperty.OUTERCOLOR:
+                            laserTemplate.outerColor.r = ParseValue(currentCommand.args[1]);
+                            laserTemplate.outerColor.g = ParseValue(currentCommand.args[2]);
+                            laserTemplate.outerColor.b = ParseValue(currentCommand.args[3]);
+                            laserTemplate.outerColor.a = ParseValue(currentCommand.args[4]);
+                            break;
+                        case TimelineCommand.LaserProperty.BULLET:
+                            laserTemplate.shotBullet = GetBulletTemplate(currentCommand.args[1]);
+                            break;
+                    }
+                    SetLaserTemplate(currentCommand.args[0], laserTemplate);
+                    continue;
                 case TimelineCommand.Command.CREATEBULLET:
                     if (GetComponent<Bullet>() != null) { //If a bulet is firing this, pass the script rotation data onto the new bullet.
                         bulletTemplate.Rotate(GetComponent<Bullet>().bulletTemplate.scriptRotation + bulletTemplate.rotation);
@@ -327,6 +375,9 @@ public class TimelineInterprenter : MonoBehaviour {
                     continue;
                 case TimelineCommand.Command.CREATEENEMY:
                     GlobalHelper.CreateEnemy(GetEnemyTemplate(currentCommand.args[0]));
+                    continue;
+                case TimelineCommand.Command.CREATELASER:
+                    GlobalHelper.CreateLaser(GetLaserTemplate(currentCommand.args[0]), transform.position); //todo: test
                     continue;
                 case TimelineCommand.Command.MOVEPARENT:
                     if (transform.GetComponent<Bullet>() != null) { //If this is a bullet, posx,y(,z) should be modified, not its direct position
@@ -561,6 +612,25 @@ public class TimelineInterprenter : MonoBehaviour {
             enemyTemplateVars[stringHash] = value;
         } else {
             enemyTemplateVars.Add(stringHash, value);
+        }
+    }
+
+    private LaserTemplate GetLaserTemplate(string name) {
+        stringHash = name.GetHashCode();
+        if (!laserTemplateVars.ContainsKey(stringHash)) {
+            laserTemplateVars.Add(stringHash, new LaserTemplate());
+            return new LaserTemplate();
+        } else {
+            return laserTemplateVars[stringHash];
+        }
+    }
+
+    private void SetLaserTemplate(string name, LaserTemplate value) {
+        stringHash = name.GetHashCode();
+        if (laserTemplateVars.ContainsKey(stringHash)) {
+            laserTemplateVars[stringHash] = value;
+        } else {
+            laserTemplateVars.Add(stringHash, value);
         }
     }
 

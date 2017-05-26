@@ -1,7 +1,7 @@
 wait(30);
 repeat(3);
 bulletproperty(a, scale, 0.3);
-bulletproperty(a, id, 0);
+bulletproperty(a, id, 4);
 bulletproperty(a, innercolor, 1, 1, 1, 1);
 bulletproperty(a, outercolor, 1, 0.2, 0, 1);
 bulletproperty(a, advancedpath, Timelines/Movement/MoveUp);

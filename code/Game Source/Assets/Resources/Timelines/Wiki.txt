@@ -48,6 +48,8 @@ bulletproperty(name, property, value[, more values]);
   "scriptrotation":
     The angle at which the any script attached to the bullettemplate this is attached to rotates. 
 	Eg spawning something normally at (0,1) and rotating it pi rad it spawns at (1,0).
+  "harmless":
+    If set to 1 it can't harm anything. Not the player, nor enemies.
 enemyproperty(name, property, value[, more values]);
   Sets the "property" of "name" to "value(s)". The following properties are recognised:
   "scale":
@@ -83,10 +85,21 @@ enemyproperty(name, property, value[, more values]);
     How many score items to drop. Every score item is worth whatever the Value on the UI says.
   "startpos":
     Where to intially spawn the enemy.
+laserproperty(name, property, value[, more values]);
+  Sets the "property" of "name" to "value(s)". The following properties are recognised:
+  "warnduration":
+    How many ticks the laser shows a thin line showing where the bullets will go to.
+  "shotduration":
+    How many ticks the laser will be firing bullets for.
+  "bullet":
+    The name of the bullet to shoot.
+  "innercolor"/"outercolor": Colors of the laser sprite, done the same way as bullets.
 createbullet(name);
   Creates the bullet stored and modified as "name" with all of its properties.
 createenemy(name);
   Creates the enemy stored and modified as "name" with all of its properties.
+createlaser(name);
+  Creates the laser stored and modified as "name" with all of its properties.
 moveparent(value, value);
   Moves whatever the TimelineInterprenter is attached to.
 destroyparent;

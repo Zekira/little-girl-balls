@@ -31,9 +31,9 @@ public class PlayerMovement : MonoBehaviour {
         dialogueManager = GameObject.FindWithTag("LevelManager").GetComponent<DialogueManager>();
 
         mainShot.bulletDamage = 2;
-        mainShot.isHarmful = false;
-        mainShot.innerColor = new Color(0.9f, 1f, 1f);
-        mainShot.outerColor = new Color(0.2f, 0.7f, 0.7f);
+        mainShot.enemyShot = false;
+        mainShot.innerColor = new Color(0.9f, 1f, 1f, 0.6f);
+        mainShot.outerColor = new Color(0.2f, 0.7f, 0.7f, 0.6f);
         mainShot.bulletID = 3;
         mainShot.movement = new Vector2(0f, 0.2f);
         mainShot.scale = 0.4f;
@@ -70,7 +70,7 @@ public class PlayerMovement : MonoBehaviour {
 
             //Things that shouldn't happen when in deathanimation: movement, shot, and bombs
             if (!GlobalHelper.GetStats().noMovement) {
-                if (Input.GetKeyDown(keyBomb) && !GlobalHelper.dialogue && GlobalHelper.GetStats().bombs > 0) { //todo: graphics + damage enemies
+                if (Input.GetKeyDown(keyBomb) && !GlobalHelper.dialogue && GlobalHelper.GetStats().bombs > 0) { //todo: graphics
                     //Set the spellcard bonus to failure. Does basically nothing if there's no spell active except eat like .01ms
                     GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
                     GlobalHelper.GetStats().invincibility = 300;

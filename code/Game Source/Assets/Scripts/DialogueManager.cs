@@ -114,7 +114,7 @@ public class DialogueManager : MonoBehaviour {
         foreach (string s in text) {
             switch (s.ToLower()) {
                 case "timelinetick":
-                    StartCoroutine(DialogueTick());
+                    GlobalHelper.TickInterprenters();
                     continue;
                 default:
                     continue;

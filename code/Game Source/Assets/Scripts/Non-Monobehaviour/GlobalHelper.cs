@@ -35,6 +35,15 @@ public static class GlobalHelper {
     public static Difficulty difficulty = Difficulty.EASY;
     public static bool autoCollectItems = false;
 
+    //Event to tick all timelineinterprenters
+    public delegate void TickTimelineInterprenters();
+    public static event TickTimelineInterprenters Tick;
+    public static void TickInterprenters() {
+        if (Tick != null) {
+            Tick();
+        }
+    }
+
     //Things used in createbullet and createenemy that differ everytime but is a waste to keep creating and destroying and better to just keep access to all the time.
     private static GameObject createdObject;
     private static MaterialPropertyBlock bulletMatPropertyBlock = new MaterialPropertyBlock();
@@ -164,7 +173,7 @@ public static class GlobalHelper {
             createdObject.GetComponent<TimelineInterprenter>().enabled = false;
         }
         //Modifies the bullet based on whether it's harmful (eg shot by the enemy or player). Harmful bullets can be grazed and kill you, unharmful bullets have damage attached and don't harm you.
-        if (bulletTemplate.isHarmful) {
+        if (bulletTemplate.enemyShot) {
             bulletpos = new Vector3(bulletPosition.x, bulletPosition.y, totalFiredBullets / 100000f);
         } else {
             bulletpos = new Vector3(bulletPosition.x, bulletPosition.y, 5 + totalFiredBullets / 100000f); //Player shot bullets should not cover actual harmful bullets.
@@ -203,6 +212,20 @@ public static class GlobalHelper {
         //Start the animation of the bullet spawning by disabling the Bullet thing and enabling the Materialisation.
         bullet.enabled = false;
         createdObject.GetComponent<BulletMaterialisation>().enabled = true;
+        return createdObject;
+    }
+
+    public static GameObject CreateLaser(LaserTemplate template, Vector2 position) {
+        BulletTemplate laserBullet = new BulletTemplate();
+        laserBullet.harmless = true;
+        laserBullet.scale = 1.5f * template.shotBullet.scale;
+        laserBullet.bulletID = 0; //TODO seperate laser graphics
+        laserBullet.innerColor = template.innerColor;
+        laserBullet.outerColor = template.outerColor;
+        laserBullet.clearImmune = true;
+        createdObject = CreateBullet(laserBullet, position);
+        Laser laser = createdObject.AddComponent<Laser>();
+        laser.enabled = false;
         return createdObject;
     }
 }

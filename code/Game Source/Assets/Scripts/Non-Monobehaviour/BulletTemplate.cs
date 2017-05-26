@@ -6,8 +6,8 @@ using System.Collections;
 public class BulletTemplate {
 
     public Vector2 movement = new Vector2(0, 0); //Tiles PER SECOND. That is, 60 ticks.
-    public bool isHarmful = true; //Whether it hurts the player and can be grazed.
-
+    public bool enemyShot = true; //Whether it hurts the player and can be grazed.
+    public bool harmless = false; //Whether it can actually hurt anything.
     public float scale = 1f; //Diameter of the bullet.
     public float rotation = 0f; //Z-axis rotation of the bullet.
     public float rotationSpeed = 0f;
@@ -27,7 +27,7 @@ public class BulletTemplate {
 
     public BulletTemplate(BulletTemplate template) {
         movement = template.movement;
-        isHarmful = template.isHarmful;
+        enemyShot = template.enemyShot;
         scale = template.scale;
         rotation = template.rotation;
         rotationSpeed = template.rotationSpeed;

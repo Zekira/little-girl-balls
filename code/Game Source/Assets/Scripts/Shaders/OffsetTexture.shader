@@ -70,20 +70,8 @@
 
 	fixed4 SampleSpriteTexture(float2 uv)
 	{
-		uv.x = uv.x + _AmountX; //Added this entire block. Everything's [-1,1] because of the Range limit on _AmountX and Y. And I make sure the input is [-1,1].
-		if (uv.x > 1) {
-			uv.x--;
-		}
-		else if (uv.x < 0) {
-			uv.x++;
-		}
-		uv.y = uv.y + _AmountY;
-		if (uv.y > 1) {
-			uv.y--;
-		}
-		else if (uv.y < 0) {
-			uv.y++;
-		}
+		uv.x = uv.x + _AmountX; //Added. Assuming the sprite's wrapmode is "Repeat", not "Clamp".
+		uv.y = uv.y + _AmountY; //Added
 
 
 		fixed4 color = tex2D(_MainTex, uv);
