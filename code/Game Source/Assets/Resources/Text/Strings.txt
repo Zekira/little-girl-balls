@@ -1,0 +1,13 @@
+HIGHSCORE=Hi-Score
+SCORE=Score
+LIVES=Lives
+BOMBS=Spellcard
+PIECES=(pieces)
+POWER=Power
+VALUE=Value
+GRAZE=Graze
+SPELLBONUS=Got Spell Card Bonus!
+BONUSFAILED=Bonus Failed...
+TICKTIME=Time Taken:
+SECONDSTIME=Actual Time:
+SLOWDOWN=Slowdown:

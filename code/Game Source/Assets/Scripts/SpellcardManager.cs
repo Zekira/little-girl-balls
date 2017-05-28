@@ -170,10 +170,10 @@ public class SpellcardManager : MonoBehaviour {
         Transform spellcardBonus = GameObject.FindWithTag("UI").transform.FindChild("Boss Canvas").FindChild("SpellcardBonus");
         spellcardBonus.gameObject.SetActive(true);
         if (!failed) {
-            spellcardBonus.FindChild("Title").GetComponent<Text>().text = "Got Spell Card Bonus!";
+            spellcardBonus.FindChild("Title").GetComponent<Text>().text = StringFetcher.GetString("SPELLBONUS");
             spellcardBonus.FindChild("Score").GetComponent<Text>().text = GlobalHelper.Commafy(currentValue);
         } else {
-            spellcardBonus.FindChild("Title").GetComponent<Text>().text = "Bonus Failed...";
+            spellcardBonus.FindChild("Title").GetComponent<Text>().text = StringFetcher.GetString("BONUSFAILED");
             spellcardBonus.FindChild("Score").GetComponent<Text>().text = "";
         }
         spellcardBonus.FindChild("Time Taken").GetComponent<Text>().text = ticksTaken / 600 + "" + (ticksTaken / 60) % 10 + ":" + (ticksTaken % 60) / 6 + "" + (ticksTaken % 60) % 10;

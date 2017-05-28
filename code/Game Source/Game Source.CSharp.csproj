@@ -84,11 +84,13 @@
     <Compile Include="Assets\Scripts\Really Small Scripts\ImageScrolling.cs" />
     <Compile Include="Assets\Scripts\Really Small Scripts\Item.cs" />
     <Compile Include="Assets\Scripts\Really Small Scripts\SpriteAnimator.cs" />
+    <Compile Include="Assets\Scripts\Really Small Scripts\StringFetcher.cs" />
     <Compile Include="Assets\Scripts\SpellcardManager.cs" />
     <Compile Include="Assets\Scripts\TimelineInterprenter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Resources\Dialogue\Stage1.txt" />
+    <None Include="Assets\Resources\Text\Strings.txt" />
     <None Include="Assets\Resources\Timelines\Attacks\Charno.txt" />
     <None Include="Assets\Resources\Timelines\Attacks\Empty.txt" />
     <None Include="Assets\Resources\Timelines\Attacks\GenericCircleLeft_0.txt" />
