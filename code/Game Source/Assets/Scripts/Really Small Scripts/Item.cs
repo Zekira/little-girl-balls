@@ -12,6 +12,12 @@ public class Item : MonoBehaviour {
     private Vector3 pos;
     public bool autoCollected = false;
 
+    void OnEnable() {
+        cooldown = 1;
+        pos = transform.position;
+        autoCollected = false;
+    }
+
 	void Update () {
         if (!GlobalHelper.paused) {
             if (transform.position.y < -4.75) {
@@ -41,7 +47,8 @@ public class Item : MonoBehaviour {
                             GlobalHelper.GetStats().AddScore(GlobalHelper.GetStats().value);
                             break;
                     }
-                    Destroy(this.gameObject);
+                    GlobalHelper.backupItems.Add(this.gameObject);
+                    gameObject.SetActive(false);
                 } else if (!GlobalHelper.GetStats().noMovement && (distance < 4 || autoCollected)) { //Close enough to be attracted or autocollected. You also can't attract stuff if you're dead.
                     Vector2 travel = new Vector2(deltax, deltay).normalized / 10f;
                     transform.position += new Vector3(travel.x, travel.y, 0f);

@@ -189,29 +189,24 @@ public class Enemy : MonoBehaviour {
     /// Drop the items specified in the EnemyTemplate.
     /// </summary>
     private void DropItems() {
-        GameObject createdObject;
         Vector3 position;
         position = transform.position;
         //Drop stuff depending on what's stated in the template, with a random offset, and z-value set to how important it is (+randomness to prevent z-fighting).
         for (int i = 0; i < template.dropPowerCount; i++) {
-            createdObject = Instantiate((GameObject)Resources.Load("Prefabs/PowerItem"));
-            createdObject.transform.SetParent(itemParentTransform);
-            createdObject.transform.position = position + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble());
+            position += new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble() - 0.01f);
+            GlobalHelper.CreateItem(Item.ItemType.POWER, position);
         }
         for (int i = 0; i < template.dropPowerLargeCount; i++) {
-            createdObject = Instantiate((GameObject)Resources.Load("Prefabs/PowerItemLarge"));
-            createdObject.transform.SetParent(itemParentTransform);
-            createdObject.transform.position = position + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble() - 0.02f);
+            position += new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble() - 0.02f);
+            GlobalHelper.CreateItem(Item.ItemType.LARGEPOWER, position);
         }
         if (template.dropPowerFullCount >= 1) {
-            createdObject = Instantiate((GameObject)Resources.Load("Prefabs/PowerItemFull"));
-            createdObject.transform.SetParent(itemParentTransform);
-            createdObject.transform.position = position + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble() - 0.03f);
+            position += new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble() - 0.03f);
+            GlobalHelper.CreateItem(Item.ItemType.FULLPOWER, position);
         }
         for (int i = 0; i < template.dropScoreCount; i++) {
-            createdObject = Instantiate((GameObject)Resources.Load("Prefabs/PointItem"));
-            createdObject.transform.SetParent(itemParentTransform);
-            createdObject.transform.position = position + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble());
+            position += new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble());
+            GlobalHelper.CreateItem(Item.ItemType.POINT, position);
         }
     }
 

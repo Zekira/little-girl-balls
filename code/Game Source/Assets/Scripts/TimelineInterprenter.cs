@@ -377,7 +377,7 @@ public class TimelineInterprenter : MonoBehaviour {
                     GlobalHelper.CreateEnemy(GetEnemyTemplate(currentCommand.args[0]));
                     continue;
                 case TimelineCommand.Command.CREATELASER:
-                    GlobalHelper.CreateLaser(GetLaserTemplate(currentCommand.args[0]), transform.position); //todo: test
+                    //TODO GlobalHelper.CreateLaser(GetLaserTemplate(currentCommand.args[0]), transform.position); //todo: test
                     continue;
                 case TimelineCommand.Command.MOVEPARENT:
                     if (transform.GetComponent<Bullet>() != null) { //If this is a bullet, posx,y(,z) should be modified, not its direct position

@@ -9,6 +9,7 @@ public static class GlobalHelper {
 
     //Things that make finding objects in other classes easier
     public static Transform enemyParent = GameObject.FindWithTag("EnemyParent").transform;
+    public static Transform itemParent = GameObject.FindWithTag("ItemParent").transform;
     public static Transform spellcardBackground = GameObject.FindWithTag("SpellcardBackground").transform;
     public static GameObject bossUI = GameObject.FindWithTag("BossUI");
     public static Transform secondCounter = bossUI.transform.Find("TimerSeconds");
@@ -21,7 +22,10 @@ public static class GlobalHelper {
     public static CharacterPortraits characterPortraits = levelManager.GetComponent<CharacterPortraits>();
     public static System.Random random = new System.Random(); //NOTE: Handle ALL random events through this; if I want to be able to add replays, I should save the seeds and input them here.
 
-    public static List<GameObject> backupBullets = new List<GameObject>(); //Bullets that are deactivated but can be used
+    public static List<GameObject> backupBullets = new List<GameObject>(); //Bullet objects that are deactivated but can be used
+    public static List<GameObject> backupItems = new List<GameObject>(); //Item objects that are deactivated but can be used
+
+    public static List<Sprite> itemSprites = new List<Sprite>(); //All sprite textures
     public static List<Sprite> bulletSprites = new List<Sprite>(); //All bullet textures
     public static List<Sprite> enemySprites = new List<Sprite>(); //All enemy textures
 
@@ -220,7 +224,53 @@ public static class GlobalHelper {
         return createdObject;
     }
 
-    public static GameObject CreateLaser(LaserTemplate template, Vector2 position) {
+    private static Vector3 smallItemSize = new Vector3(0.45f, 0.45f, 1f);
+
+    public static GameObject CreateItem(Item.ItemType type, Vector3 position) {
+        //If the list of itemsprites attached to GlobalHelper is empty, initialise them because they're needed here.
+        if (itemSprites.Count == 0) {
+            foreach (Texture2D texture in Resources.LoadAll<Texture2D>("Graphics/Items")) {
+                itemSprites.Add(Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100));
+            }
+        }
+        if (backupItems.Count == 0) {
+            createdObject = GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Item"));
+            createdObject.transform.SetParent(itemParent);
+        } else {
+            createdObject = backupItems[0];
+            backupItems.RemoveAt(0);
+            createdObject.SetActive(true);
+        }
+        Item item = createdObject.GetComponent<Item>();
+        item.type = type;
+        switch (type) {
+            case Item.ItemType.POINT:
+            case Item.ItemType.POWER:
+                createdObject.transform.localScale = smallItemSize;
+                break;
+            default: //Fullpower, largepower, 
+                createdObject.transform.localScale = Vector3.one;
+                break;
+        }
+        //TODO: Update this whenever a new texture is added to Resources/Graphics/Items
+        switch (type) {
+            case Item.ItemType.FULLPOWER:
+                createdObject.GetComponent<SpriteRenderer>().sprite = itemSprites[0];
+                break;
+            case Item.ItemType.POINT:
+                createdObject.GetComponent<SpriteRenderer>().sprite = itemSprites[1];
+                break;
+            case Item.ItemType.POWER:
+            case Item.ItemType.LARGEPOWER:
+                createdObject.GetComponent<SpriteRenderer>().sprite = itemSprites[2];
+                break;
+        }
+        createdObject.transform.position = position;
+        return createdObject;
+
+    }
+
+    /*public static GameObject CreateLaser(LaserTemplate template, Vector2 position) {
         BulletTemplate laserBullet = new BulletTemplate();
         laserBullet.harmless = true;
         laserBullet.scale = 1.5f * template.shotBullet.scale;
@@ -232,5 +282,5 @@ public static class GlobalHelper {
         Laser laser = createdObject.AddComponent<Laser>();
         laser.enabled = false;
         return createdObject;
-    }
+    }*/
 }
