@@ -22,8 +22,8 @@ createbullet(atpl);
 add(playerangle, playerangle, 0.39);
 endrepeat;
 wait(10);
-//wait(4);
-//wait(60);
+wait(4);
+wait(60);
 
 //angletoplayer(playerangle);
 //repeat(16);

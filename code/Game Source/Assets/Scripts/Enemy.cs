@@ -23,6 +23,7 @@ public class Enemy : MonoBehaviour {
         healthbarTransform = transform.Find("Healthbar");
         itemParentTransform = GameObject.FindWithTag("ItemParent").transform;
         if (template.isBoss) {
+            GlobalHelper.activeBosses++;
             healthbarTransform.gameObject.SetActive(true);
             GlobalHelper.bossUI.gameObject.SetActive(true);
             SetUIStarCount();
@@ -116,9 +117,10 @@ public class Enemy : MonoBehaviour {
         } else { //It's done and no more attacks are left
             //If it's a boss the bossUI should become inactive when it gets defeated, and only bosses should make the screen clear at death.
             if (template.isBoss) {
+                GlobalHelper.activeBosses--;
                 GlobalHelper.bossUI.SetActive(false);
                 GlobalHelper.spellcardBackground.gameObject.SetActive(false);
-                StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f, BulletClear.BulletClearType.FULLCLEAR, 30));
+                GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f, BulletClear.BulletClearType.FULLCLEAR, 30);
             }
             Destroy(this.gameObject);
             return;
@@ -135,7 +137,7 @@ public class Enemy : MonoBehaviour {
         }
         //Clears bullets if it's a boss, updates the UI, and starts the next spellcard
         if (template.isBoss) {
-            StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f, BulletClear.BulletClearType.FULLCLEAR, 30));
+            GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f, BulletClear.BulletClearType.FULLCLEAR, 30);
             SetUIStarCount();
             GlobalHelper.levelManager.GetComponent<SpellcardManager>().ActivateSpellcard(template, currentAttack, this);
         }

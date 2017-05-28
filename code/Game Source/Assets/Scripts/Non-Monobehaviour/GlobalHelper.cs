@@ -34,6 +34,7 @@ public static class GlobalHelper {
     public enum Difficulty {EASY, NORMAL, HARD, LUNATIC, EXTRA};
     public static Difficulty difficulty = Difficulty.EASY;
     public static bool autoCollectItems = false;
+    public static int activeBosses = 0;
 
     //Event to tick all timelineinterprenters
     public delegate void TickTimelineInterprenters();
@@ -107,6 +108,10 @@ public static class GlobalHelper {
     /// <param name="enemyTemplate">The template to base the enemy on. Needs to have at least one attackpath or everything will error.</param>
     /// <returns>Returns a reference to the created object.</returns>
     public static GameObject CreateEnemy(EnemyTemplate enemyTemplate) {
+        //No regular enemies are allowed to be created when there is a boss on screen.
+        if (activeBosses > 0 && !enemyTemplate.isBoss) {
+            return null;
+        }
         //If the list of enemysprites attached to GlobalHelper is empty, initialise them because they're needed here.
         if (enemySprites.Count == 0) {
             foreach (Texture2D texture in Resources.LoadAll<Texture2D>("Graphics/Enemies")) {

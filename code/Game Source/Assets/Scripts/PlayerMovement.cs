@@ -75,7 +75,7 @@ public class PlayerMovement : MonoBehaviour {
                     GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
                     GlobalHelper.GetStats().invincibility = 300;
                     GlobalHelper.GetStats().SetBombs((byte)(GlobalHelper.GetStats().bombs - 1), GlobalHelper.GetStats().bombpieces);
-                    StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(0.3f, BulletClear.BulletClearType.BOMB,300));
+                    GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(0.3f, BulletClear.BulletClearType.BOMB,300);
                 }
                 //Check what movement should happen
                 moveLeft = Input.GetKey(keyLeft) ? 1 : 0;

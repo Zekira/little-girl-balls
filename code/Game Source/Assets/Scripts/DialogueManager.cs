@@ -13,6 +13,7 @@ public class DialogueManager : MonoBehaviour {
     private Color speakingColor = new Color(1f, 1f, 1f, 1f);
     private Color silentColor = new Color(0.4f, 0.4f, 0.4f, 1f);
     private List<DialogueEntry> dialogue = new List<DialogueEntry>();
+    private int waitTime = 0; //Whether the current active dialogue entry is timed and cannot be skipped.
     public string path;
 
     private int currentLine = 0;
@@ -54,6 +55,10 @@ public class DialogueManager : MonoBehaviour {
     /// Continues the dialogue. Why am I writing these obvious comments on obvious functions?
     /// </summary>
     public void AdvanceDialogue() {
+        if (waitTime>0) { //Prevent advancement if it's timed dialogue that's not yet to be continued
+            return;
+        }
+
         currentLine++;
         if (currentLine >= dialogue.Count) {
             Hide();
@@ -108,13 +113,18 @@ public class DialogueManager : MonoBehaviour {
     /// Uses any data set after the text in the dialogue.
     /// Things it can add: 
     ///   "timelinetick": allows all timelines to tick for a single frame.
-    ///   TODO: "timed"
+    ///   "timed|<amount>": the dialogue is unskippable, but timed and continues after <amount> ticks.
     /// </summary>
     private void ParseSpecial(string[] text) {
-        foreach (string s in text) {
-            switch (s.ToLower()) {
+        for (int i = 0; i < text.Length; i++) {
+            switch (text[i].ToLower()) {
                 case "timelinetick":
                     GlobalHelper.TickInterprenters();
+                    continue;
+                case "timed":
+                    int waitTime = 0;
+                    int.TryParse(text[i + 1], out waitTime);
+                    StartCoroutine(DialogueWait(waitTime));
                     continue;
                 default:
                     continue;
@@ -143,12 +153,14 @@ public class DialogueManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// Makes it seem like dialogue is off for a single tick.
+    /// Stalls the dialogue for "time" ticks.
     /// </summary>
-    /// <returns></returns>
-    private IEnumerator DialogueTick() {
-        GlobalHelper.dialogue = false;
-        yield return null;
-        GlobalHelper.dialogue = true;
+    private IEnumerator DialogueWait(int waitTime) {
+        this.waitTime = waitTime;
+        while (this.waitTime >= 0) {
+            this.waitTime--;
+            yield return null;
+        }
+        AdvanceDialogue();
     }
 }
