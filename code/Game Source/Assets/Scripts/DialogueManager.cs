@@ -158,7 +158,9 @@ public class DialogueManager : MonoBehaviour {
     private IEnumerator DialogueWait(int waitTime) {
         this.waitTime = waitTime;
         while (this.waitTime >= 0) {
-            this.waitTime--;
+            if (!GlobalHelper.paused) {
+                this.waitTime--;
+            }
             yield return null;
         }
         AdvanceDialogue();

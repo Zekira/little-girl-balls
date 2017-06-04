@@ -278,17 +278,17 @@ public class TimelineInterprenter : MonoBehaviour {
                         case TimelineCommand.EnemyProperty.ATTACKPATH: //Sets one or more attackpaths of this enemy. Clears previous attackpaths.
                             enemyTemplate.attackPath.Clear();
                             for (int i = 1; i < currentCommand.args.Count; i++) {
-                                enemyTemplate.attackPath.Add(currentCommand.args[i] + "_" + (int)GlobalHelper.difficulty);
+                                enemyTemplate.attackPath.Add(currentCommand.args[i]/* + "_" + (int)GlobalHelper.difficulty*/);
                             }
                             break;
-                        case TimelineCommand.EnemyProperty.SPELLCARDNAME:
+                        /*case TimelineCommand.EnemyProperty.SPELLCARDNAME:
                             //States the name of every spellcard. Sadly neccessary to do this way because of how I built the system.
                             //.. I mean, you have to say what you're casting before the duel! Just like in canon!
                             enemyTemplate.spellcardName.Clear();
                             for (int i = 1; i < currentCommand.args.Count; i++) {
                                 enemyTemplate.spellcardName.Add(currentCommand.args[i].Replace('_', ' '));
                             }
-                            break;
+                            break;*/
                         case TimelineCommand.EnemyProperty.TIME: //States the time for each spellcard. ..probably best off making spellcards a class at this point.
                             enemyTemplate.spellTimers.Clear();
                             for (int i = 1; i < currentCommand.args.Count; i++) {

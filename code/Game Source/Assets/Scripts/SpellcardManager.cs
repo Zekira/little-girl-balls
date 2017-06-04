@@ -42,7 +42,7 @@ public class SpellcardManager : MonoBehaviour {
         startValue = (uint)(GlobalHelper.difficulty + GlobalHelper.stageNumber) * 1000000;
         currentValue = startValue;
         timeLimit = template.spellTimers[attack];
-        string name = template.spellcardName[attack];
+        string name = Enemy.GetSpell(template.attackPath[attack]);
         if (name != "") {
             spellcardUI.SetActive(true);
             GlobalHelper.spellcardBackground.gameObject.SetActive(true);

@@ -1,0 +1,3 @@
+rachel|happy|left|false|yay my first incident|timed|90
+>rachel|happy|left|false|nothing happens|timed|90
+>charno|happy|right|true|now seomthing doesb|timelinetick|timed|90

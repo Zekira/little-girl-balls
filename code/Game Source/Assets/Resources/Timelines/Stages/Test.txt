@@ -15,12 +15,12 @@ wait(84);
 //endrepeat;
 wait (240);
 
-dialogue(Dialogue/Stage1);
+dialogue(Text/Dialogue/Stage1);
 enemyproperty(boss, scale, 1);
 enemyproperty(boss, boss, 1);
 enemyproperty(boss, bossportrait, charno);
-enemyproperty(boss, attackpath, Timelines/Attacks/Stage1/Boss1,Timelines/Attacks/Stage1/Boss2,Timelines/Attacks/Stage1/Boss3);
-enemyproperty(boss, spellcardname, stupid_shaders_never_work, is_this_thing_on?_test_1_2_3, blue_fire_is_hotter_than_red);
+enemyproperty(boss, attackpath, Timelines/Attacks/Stage1/Spellcard1,Timelines/Attacks/Stage1/Spellcard2,Timelines/Attacks/Stage1/Spellcard3);
+//enemyproperty(boss, spellcardname, stupid_shaders_never_work, is_this_thing_on?_test_1_2_3, blue_fire_is_hotter_than_red);
 enemyproperty(boss, time, 1200, -700, 1400);
 enemyproperty(boss, id, 0);
 enemyproperty(boss, droppower, 50);

@@ -61,6 +61,12 @@
     <Reference Include="UnityEditor">
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEditor.iOS.Extensions.Xcode">
+      <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.iOS.Extensions.Common">
+      <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.Common.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\BackgroundMovement.cs" />
@@ -80,6 +86,7 @@
     <Compile Include="Assets\Scripts\Really Small Scripts\BulletMaterialisation.cs" />
     <Compile Include="Assets\Scripts\Really Small Scripts\CharacterPortraits.cs" />
     <Compile Include="Assets\Scripts\Really Small Scripts\DeathAnimation.cs" />
+    <Compile Include="Assets\Scripts\Really Small Scripts\FramerateCounter.cs" />
     <Compile Include="Assets\Scripts\Really Small Scripts\HideObjectsOnStart.cs" />
     <Compile Include="Assets\Scripts\Really Small Scripts\ImageScrolling.cs" />
     <Compile Include="Assets\Scripts\Really Small Scripts\Item.cs" />
@@ -89,16 +96,16 @@
     <Compile Include="Assets\Scripts\TimelineInterprenter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Resources\Dialogue\Stage1.txt" />
+    <None Include="Assets\Resources\Text\Dialogue\Stage1.txt" />
     <None Include="Assets\Resources\Text\Strings.txt" />
     <None Include="Assets\Resources\Timelines\Attacks\Charno.txt" />
     <None Include="Assets\Resources\Timelines\Attacks\Empty.txt" />
-    <None Include="Assets\Resources\Timelines\Attacks\GenericCircleLeft_0.txt" />
-    <None Include="Assets\Resources\Timelines\Attacks\GenericCircleRight_0.txt" />
+    <None Include="Assets\Resources\Timelines\Attacks\GenericCircleLeft.txt" />
+    <None Include="Assets\Resources\Timelines\Attacks\GenericCircleRight.txt" />
     <None Include="Assets\Resources\Timelines\Attacks\GenericDown.txt" />
-    <None Include="Assets\Resources\Timelines\Attacks\Stage1\Boss1_0.txt" />
-    <None Include="Assets\Resources\Timelines\Attacks\Stage1\Boss2_0.txt" />
-    <None Include="Assets\Resources\Timelines\Attacks\Stage1\Boss3_0.txt" />
+    <None Include="Assets\Resources\Timelines\Attacks\Stage1\Spellcard1.txt" />
+    <None Include="Assets\Resources\Timelines\Attacks\Stage1\Spellcard2.txt" />
+    <None Include="Assets\Resources\Timelines\Attacks\Stage1\Spellcard3.txt" />
     <None Include="Assets\Resources\Timelines\Movement\ArcLeft.txt" />
     <None Include="Assets\Resources\Timelines\Movement\ArcRight.txt" />
     <None Include="Assets\Resources\Timelines\Movement\MoveUp.txt" />

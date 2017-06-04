@@ -20,7 +20,9 @@ public class SpriteAnimator : MonoBehaviour {
 
     void Update() {
         if (sprites != null) {
-            currentDelay--;
+            if (!GlobalHelper.paused) {
+                currentDelay--;
+            }
             if (currentDelay <= 0) {
                 SetFrame(currentFrame + 1);
                 currentDelay = delay;

@@ -32,7 +32,6 @@ public class StringFetcher : MonoBehaviour {
         }
         return returnDict;
 	}
-
     /// <summary>
     /// Returns the string with key "s" if it exists, or itself if it doesn't exist.
     /// </summary>

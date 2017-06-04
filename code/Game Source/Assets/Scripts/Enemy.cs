@@ -108,7 +108,7 @@ public class Enemy : MonoBehaviour {
             GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
         }
         //If this boss' attack was a spellcard (and existed, that's why thereý a >= 0), a bonus needs to be shown
-        if (template.isBoss && currentAttack >= 0 && template.spellcardName[currentAttack] != "") {
+        if (template.isBoss && currentAttack >= 0 && GetSpell(template.attackPath[currentAttack]) != "") {
             GlobalHelper.levelManager.GetComponent<SpellcardManager>().StartShowBonus();
         }
         //Goes to the next attack, and if there is none, goes away.
@@ -248,10 +248,23 @@ public class Enemy : MonoBehaviour {
     private void SetUIStarCount() {
         int spellcardCount = 0;
         for (int i = currentAttack; i < template.attackPath.Count; i++) {
-            if (template.spellcardName[i] != "") {
+            if (GetSpell(template.attackPath[i]) != "") {
                 spellcardCount++;
             }
         }
         SetUIStarCount(spellcardCount);
+    }
+
+    /// <summary>
+    /// Gets the name of the spell-file if it's a spellcard, or returns an empty string if it isn't a spellcard.
+    /// </summary>
+    public static string GetSpell(string path) {
+        string returnString = "";
+        int idIndex = path.IndexOf("Spellcard");
+        if (idIndex != -1) {
+            returnString = path.Substring(idIndex).ToUpperInvariant();
+            returnString = StringFetcher.GetString(returnString);
+        }
+        return returnString;
     }
 }

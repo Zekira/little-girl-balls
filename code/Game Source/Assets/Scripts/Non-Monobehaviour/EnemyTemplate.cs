@@ -18,7 +18,7 @@ public class EnemyTemplate {
     public Vector2 startpostion = new Vector2(0f, 0f);
     public uint baseScore = 0;
     public List<string> attackPath = new List<string>(); //NECCESSARY; should be at least one long.
-    public List<string> spellcardName = new List<string>();
+    //public List<string> spellcardName = new List<string>();
     public List<int> spellTimers = new List<int>();
     public DialogueEntry.character character = DialogueEntry.character.RACHEL; //For the bosses' spellcard portrait.
 
@@ -41,7 +41,7 @@ public class EnemyTemplate {
         startpostion = template.startpostion;
         baseScore = template.baseScore;
         dropPowerFullCount = template.dropPowerFullCount;
-        spellcardName = template.spellcardName;
+        //spellcardName = template.spellcardName;
         spellTimers = template.spellTimers;
         character = template.character;
     }
