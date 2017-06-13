@@ -27,7 +27,7 @@ public static class GlobalHelper {
 
     public static List<Sprite> itemSprites = new List<Sprite>(); //All sprite textures
     public static List<Sprite> bulletSprites = new List<Sprite>(); //All bullet textures
-    public static List<Sprite> enemySprites = new List<Sprite>(); //All enemy textures
+    public static List<Sprite[]> enemySprites = new List<Sprite[]>(); //All enemy textures
 
     public static int totalFiredBullets;
     public static bool paused = false;
@@ -117,7 +117,7 @@ public static class GlobalHelper {
         //If the list of enemysprites attached to GlobalHelper is empty, initialise them because they're needed here.
         if (enemySprites.Count == 0) {
             foreach (Texture2D texture in Resources.LoadAll<Texture2D>("Graphics/Enemies")) {
-                enemySprites.Add(Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 256));
+                enemySprites.Add(SpriteAnimator.GetSprites(texture));
             }
         }
         //Create the object and set the settings.
@@ -129,7 +129,7 @@ public static class GlobalHelper {
 
         createdObject.GetComponent<Enemy>().health = enemyTemplate.maxHealth;
 
-        createdObject.transform.GetComponent<SpriteRenderer>().sprite = enemySprites[enemyTemplate.enemyID];
+        createdObject.transform.GetComponent<SpriteAnimator>().SetSprites(enemySprites[enemyTemplate.enemyID]);
         if (enemyTemplate.colorise) {
             createdObject.transform.GetComponent<SpriteRenderer>().color = enemyTemplate.color;
         } else {
@@ -268,17 +268,20 @@ public static class GlobalHelper {
 
     }
 
-    /*public static GameObject CreateLaser(LaserTemplate template, Vector2 position) {
-        BulletTemplate laserBullet = new BulletTemplate();
-        laserBullet.harmless = true;
-        laserBullet.scale = 1.5f * template.shotBullet.scale;
-        laserBullet.bulletID = 0; //TODO seperate laser graphics
-        laserBullet.innerColor = template.innerColor;
-        laserBullet.outerColor = template.outerColor;
-        laserBullet.clearImmune = true;
-        createdObject = CreateBullet(laserBullet, position);
-        Laser laser = createdObject.AddComponent<Laser>();
-        laser.enabled = false;
+    public static GameObject CreateLaser(LaserTemplate template, Vector2 position) {
+        createdObject = GameObject.Instantiate(Resources.Load("Prefabs/Laser") as GameObject);
+        createdObject.transform.position = new Vector3(position.x, position.y, 1);
+        createdObject.transform.localScale = new Vector3(0.06f, 99f, 1f);
+        createdObject.GetComponent<Laser>().template = template;
+
+        spriteRenderer = createdObject.transform.GetComponent<SpriteRenderer>();
+        //If the property block is empty, initalise it here because it's needed.
+        spriteRenderer.GetPropertyBlock(bulletMatPropertyBlock);
+        //Change the color the sprites should render
+        bulletMatPropertyBlock.SetColor("_Color1", template.innerColor);
+        bulletMatPropertyBlock.SetColor("_Color2", template.outerColor);
+        spriteRenderer.SetPropertyBlock(bulletMatPropertyBlock);
+        
         return createdObject;
-    }*/
+    }
 }

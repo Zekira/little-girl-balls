@@ -7,19 +7,24 @@ public class Laser : MonoBehaviour {
     public int timer = 0;
     Vector3 playerPos;
     float sin, cos, angle;
+    Vector3 rotationVector;
+    Vector3 movementVector;
 
     void Start() {
-        template.width = 0.5f;
-        template.shotDuration = 60;
-        template.warnDuration = 60;
+        transform.Rotate(new Vector3(0f, 0f, template.rotation * Mathf.Rad2Deg));
+        movementVector = new Vector3(template.movement.x, template.movement.y, 0f);
+        rotationVector = new Vector3(0f, 0f, template.rotationSpeed * Mathf.Rad2Deg);
     }
 
     void Update() {
         if (!GlobalHelper.paused) {
-            if (timer < template.warnDuration) {
-                //widening animation
-                transform.localScale = new Vector3(Mathf.Lerp(0.03f, template.width, timer / (1f * template.warnDuration)), 99f, 1f);
-            } else if (timer > template.warnDuration) {
+            transform.position += movementVector;
+            transform.Rotate(rotationVector);
+
+            if (timer < template.warnDuration && timer > template.warnDuration - 10) {
+                //widening animation that lasts for 10 ticks
+                transform.localScale = new Vector3(Mathf.Lerp(0.06f, template.width, (timer-template.warnDuration+10) / 10f), 99f, 1f);
+            } else if (timer > template.warnDuration && timer < template.warnDuration + template.shotDuration) {
                 //collision check
                 playerPos = GlobalHelper.GetPlayer().transform.position; //The player position in the regular coordinate system
                 playerPos -= transform.position; //The player position in a coordinate system through this object, parallel with the previous one

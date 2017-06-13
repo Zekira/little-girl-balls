@@ -42,7 +42,7 @@ public class SpriteAnimator : MonoBehaviour {
         int frames = texture.width / texture.height;
         Sprite[] sprites = new Sprite[frames];
         for (int i = 0; i < frames; i++) {
-            sprites[i] = Sprite.Create(texture, new Rect(i * texture.height, 0, texture.height, texture.height), Vector2.one * 0.5f);
+            sprites[i] = Sprite.Create(texture, new Rect(i * texture.height, 0, texture.height, texture.height), Vector2.one * 0.5f, texture.height);
         }
         return sprites;
     }

@@ -294,6 +294,15 @@ public class TimelineInterprenter : MonoBehaviour {
                         case TimelineCommand.LaserProperty.WIDTH:
                             laserTemplate.width = ParseValue(currentCommand.args[1]);
                             break;
+                        case TimelineCommand.LaserProperty.MOVEMENT:
+                            laserTemplate.movement = new Vector2(ParseValue(currentCommand.args[1]), ParseValue(currentCommand.args[2]));
+                            break;
+                        case TimelineCommand.LaserProperty.ROTATION:
+                            laserTemplate.rotation = ParseValue(currentCommand.args[1]);
+                            break;
+                        case TimelineCommand.LaserProperty.ROTATIONSPEED:
+                            laserTemplate.rotationSpeed = ParseValue(currentCommand.args[1]);
+                            break;
                     }
                     SetLaserTemplate(currentCommand.args[0], laserTemplate);
                     continue;
@@ -307,7 +316,7 @@ public class TimelineInterprenter : MonoBehaviour {
                     GlobalHelper.CreateEnemy(GetEnemyTemplate(currentCommand.args[0]));
                     continue;
                 case TimelineCommand.Command.CREATELASER:
-                    //TODO GlobalHelper.CreateLaser(GetLaserTemplate(currentCommand.args[0]), transform.position); //todo: test
+                    GlobalHelper.CreateLaser(GetLaserTemplate(currentCommand.args[0]), transform.position);
                     continue;
                 case TimelineCommand.Command.MOVEPARENT:
                     if (transform.GetComponent<Bullet>() != null) { //If this is a bullet, posx,y(,z) should be modified, not its direct position
