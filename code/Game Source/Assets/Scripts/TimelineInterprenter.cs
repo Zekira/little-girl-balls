@@ -7,18 +7,11 @@ using System;
 /// </summary>
 public class TimelineInterprenter : MonoBehaviour {
     //TODO: Dictionaries are expensive when called from 1500 bullets.
-    /* Also dictionary trygetvalue example from stackoverflow, slightly faster on its own:
-     *    obj item;
-     *    if(!dict.TryGetValue(name, out item))
-     *      return null;
-     *    return item;
-     */
     public string patternPath = "";
     private Dictionary<int, float> numberVars = new Dictionary<int, float>();
     private Dictionary<int, BulletTemplate> bulletTemplateVars = new Dictionary<int, BulletTemplate>();
     private Dictionary<int, EnemyTemplate> enemyTemplateVars = new Dictionary<int, EnemyTemplate>();
     private Dictionary<int, LaserTemplate> laserTemplateVars = new Dictionary<int, LaserTemplate>();
-    private string[] instructions;
     private List<int> repeatStepback = new List<int>(); //What line to go to when encountering an endrepeat.
     private Enemy parentEnemy;
     private int currentLine = 0;
@@ -34,14 +27,13 @@ public class TimelineInterprenter : MonoBehaviour {
     private BulletTemplate parentTemplate;
     private EnemyTemplate enemyTemplate;
     private Vector3 pos, playerpos;
-    private int stringHash;
+    private static int stringHash;
 
     public void Reset(string newTimeLine) {
         patternPath = newTimeLine;
         numberVars.Clear();
         bulletTemplateVars.Clear();
         enemyTemplateVars.Clear();
-        instructions = null;
         repeatStepback = new List<int>();
         parentEnemy = transform.GetComponent<Enemy>();
         currentLine = 0;
@@ -49,16 +41,13 @@ public class TimelineInterprenter : MonoBehaviour {
         ReadAttack(true);
     }
 
-    //OnEnable() to add the TickTimeline to the tick all timelines delegate, OnDisable() to remove them.
-    void OnEnable() {
-        GlobalHelper.Tick += TickTimeline;
-    }
-
-    void OnDisable() {
+    void OnDestroy() {
+        //Start() to add the TickTimeline to the tick all timelines delegate, OnDestroy() to remove them.
         GlobalHelper.Tick -= TickTimeline;
     }
 
     void Start() {
+        GlobalHelper.Tick += TickTimeline;
         parentEnemy = transform.GetComponent<Enemy>();
         if (patternPath == "") {
             patternPath = parentEnemy.template.attackPath[0];
@@ -93,58 +82,7 @@ public class TimelineInterprenter : MonoBehaviour {
     /// </summary>
     public void ReadAttack(bool initialise) {
         if (initialise) {
-            string file = (Instantiate((TextAsset)Resources.Load(patternPath))).text;
-            int hash = file.GetHashCode();
-
-            if (!GlobalHelper.commandLists.TryGetValue(hash, out commands)) { //If it's already a list of commands recognised, no need to parse it again. Otherwise, parse is needed.
-                file = file.Replace(" ", ""); //Simple cleanup. This also makes ReadAttack totally inappropriate for dialogue.
-                file = file.Replace("\n", "");
-                file = file.Replace("\r", "");
-                instructions = file.Split(';'); //This splits instructions.
-                string function;
-                List<string> args;
-                commands = new List<TimelineCommand>();
-                foreach (string instruction in instructions) { //Turn the file into a list of commands
-                    //If the first thing is a comment, skip it.
-                    if (instruction.Length == 0 || instruction[0] == '/' || instruction[0] == '#') {
-                        continue;
-                    }
-
-                    function = GetFunction(instruction).ToLowerInvariant();
-                    args = GetArguments(instruction);
-                    if (function == "bulletproperty") { //If this command sets a bullet property...
-                        function = args[1];
-                        args.RemoveAt(1);
-                        commands.Add(new TimelineCommand(
-                            (TimelineCommand.BulletProperty)Enum.Parse(typeof(TimelineCommand.BulletProperty), function.ToUpperInvariant()),
-                            args
-                            ));
-                        continue;
-                    } else if (function == "enemyproperty") { //Or an enemy's property
-                        function = args[1];
-                        args.RemoveAt(1);
-                        commands.Add(new TimelineCommand(
-                            (TimelineCommand.EnemyProperty)Enum.Parse(typeof(TimelineCommand.EnemyProperty), function.ToUpperInvariant()),
-                            args
-                            ));
-                        continue;
-                    } else if (function == "laserproperty") {
-                        function = args[1];
-                        args.RemoveAt(1);
-                        commands.Add(new TimelineCommand(
-                            (TimelineCommand.LaserProperty)Enum.Parse(typeof(TimelineCommand.LaserProperty), function.ToUpperInvariant()),
-                            args
-                            ));
-                    } else { //At this point no bullet/enemy properties are being set so it's just parsing the TimelineCommand.Command
-                        commands.Add(new TimelineCommand(
-                            (TimelineCommand.Command)Enum.Parse(typeof(TimelineCommand.Command), function.ToUpperInvariant()),
-                            args
-                            ));
-                        continue;
-                    }
-                }
-                GlobalHelper.commandLists.Add(hash, commands);
-            }
+            commands = TimelineCommand.GetCommands(patternPath);
         }
         ReadAttack();
     }
@@ -278,18 +216,10 @@ public class TimelineInterprenter : MonoBehaviour {
                         case TimelineCommand.EnemyProperty.ATTACKPATH: //Sets one or more attackpaths of this enemy. Clears previous attackpaths.
                             enemyTemplate.attackPath.Clear();
                             for (int i = 1; i < currentCommand.args.Count; i++) {
-                                enemyTemplate.attackPath.Add(currentCommand.args[i]/* + "_" + (int)GlobalHelper.difficulty*/);
+                                enemyTemplate.attackPath.Add(currentCommand.args[i]);
                             }
                             break;
-                        /*case TimelineCommand.EnemyProperty.SPELLCARDNAME:
-                            //States the name of every spellcard. Sadly neccessary to do this way because of how I built the system.
-                            //.. I mean, you have to say what you're casting before the duel! Just like in canon!
-                            enemyTemplate.spellcardName.Clear();
-                            for (int i = 1; i < currentCommand.args.Count; i++) {
-                                enemyTemplate.spellcardName.Add(currentCommand.args[i].Replace('_', ' '));
-                            }
-                            break;*/
-                        case TimelineCommand.EnemyProperty.TIME: //States the time for each spellcard. ..probably best off making spellcards a class at this point.
+                        case TimelineCommand.EnemyProperty.TIME: //States the time for each spellcard.
                             enemyTemplate.spellTimers.Clear();
                             for (int i = 1; i < currentCommand.args.Count; i++) {
                                 enemyTemplate.spellTimers.Add(Mathf.RoundToInt(ParseValue(currentCommand.args[i])));
@@ -361,8 +291,8 @@ public class TimelineInterprenter : MonoBehaviour {
                             laserTemplate.outerColor.b = ParseValue(currentCommand.args[3]);
                             laserTemplate.outerColor.a = ParseValue(currentCommand.args[4]);
                             break;
-                        case TimelineCommand.LaserProperty.BULLET:
-                            laserTemplate.shotBullet = GetBulletTemplate(currentCommand.args[1]);
+                        case TimelineCommand.LaserProperty.WIDTH:
+                            laserTemplate.width = ParseValue(currentCommand.args[1]);
                             break;
                     }
                     SetLaserTemplate(currentCommand.args[0], laserTemplate);
@@ -509,7 +439,7 @@ public class TimelineInterprenter : MonoBehaviour {
         }
     }
 
-    private float ParseFloat(string value) {
+    private static float ParseFloat(string value) {
         bool negative = false;
         if (value[0] == '-') { //Remember the minus sign and remove it from the string.
             negative = true;
@@ -543,7 +473,7 @@ public class TimelineInterprenter : MonoBehaviour {
     /// <summary>
     /// Returns f * 10^power.
     /// </summary>
-    private float tenPower(float f, int power) {
+    private static float tenPower(float f, int power) {
         if (power > 0) {
             for (int i = 0; i < power; i++) {
                 f *= 10f;
@@ -639,7 +569,7 @@ public class TimelineInterprenter : MonoBehaviour {
     /// </summary>
     /// <param name="toEvaluate">The string to check if it has letters.</param>
     /// <returns>True if it contains any of a-z or A-Z.</returns>
-    private bool ContainsLetters(string toEvaluate) {
+    private static bool ContainsLetters(string toEvaluate) {
         foreach (char c in toEvaluate) {
             if (c >= 65 && c <= 122) { //All letters in UTF-16 from A to Z to a to z
                 return true;
@@ -653,7 +583,7 @@ public class TimelineInterprenter : MonoBehaviour {
     /// </summary>
     /// <param name="toEvaluate">The string to evaluate.</param>
     /// <returns>Everything that was originally between braces in <function>(args[0],args[1] ... )</returns>
-    private List<string> GetArguments(string toEvaluate) {
+    public static List<string> GetArguments(string toEvaluate) {
         //Assuming only one set of braces
         int i = 0;
         while (toEvaluate[i] != '(') {
@@ -675,7 +605,7 @@ public class TimelineInterprenter : MonoBehaviour {
     /// </summary>
     /// <param name="toEvaluate">The string to find the function of.</param>
     /// <returns>Returns whatever is before the first open brace.</returns>
-    private string GetFunction(string toEvaluate) { 
+    public static string GetFunction(string toEvaluate) { 
         string returnString = toEvaluate.Split('(')[0];
         return returnString;
     }

@@ -11,6 +11,7 @@ repeat(20);
 repeat(20);
 
 angletoplayer(playerangle);
+add(playerangle,playerangle,-0.4);
 repeat(16);
 sin(movex, playerangle);
 cos(movey, playerangle);
@@ -19,11 +20,25 @@ mul(movey, movey, 0.075);
 bulletproperty(atpl, scriptrotation, playerangle);
 bulletproperty(atpl, movement, movex, movey);
 createbullet(atpl);
-add(playerangle, playerangle, 0.39);
+add(playerangle, playerangle, 0.20);
+wait(2);
 endrepeat;
+
 wait(10);
-wait(4);
-wait(60);
+
+angletoplayer(playerangle);
+add(playerangle, playerangle,0.4);
+repeat(16);
+sin(movex, playerangle);
+cos(movey, playerangle);
+mul(movex, movex, 0.075);
+mul(movey, movey, 0.075);
+bulletproperty(atpl, scriptrotation, playerangle);
+bulletproperty(atpl, movement, movex, movey);
+createbullet(atpl);
+add(playerangle, playerangle, -0.20);
+wait(2);
+endrepeat;
 
 //angletoplayer(playerangle);
 //repeat(16);

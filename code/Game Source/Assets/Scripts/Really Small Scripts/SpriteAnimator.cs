@@ -30,22 +30,25 @@ public class SpriteAnimator : MonoBehaviour {
         }
     }
 
-    public Sprite[] SetSprite(Texture2D texture) {
-        int frames = texture.width/texture.height;
-        sprites = new Sprite[frames];
-        for (int i = 0; i < frames; i++) {
-            sprites[i] = Sprite.Create(texture, new Rect(i * texture.height, 0, texture.height, texture.height), Vector2.one * 0.5f);
-        }
-        return sprites;
-
-    }
-
     public void SetSprites(Sprite[] sprites) {
         this.sprites = sprites;
     }
 
+    public void SetSprite(Texture2D texture) {
+        sprites = GetSprites(texture);
+    }
+
+    public static Sprite[] GetSprites(Texture2D texture) {
+        int frames = texture.width / texture.height;
+        Sprite[] sprites = new Sprite[frames];
+        for (int i = 0; i < frames; i++) {
+            sprites[i] = Sprite.Create(texture, new Rect(i * texture.height, 0, texture.height, texture.height), Vector2.one * 0.5f);
+        }
+        return sprites;
+    }
+
     public void SetFrame(int frame) {
-        if (frame >= sprites.Length) {
+        while (frame >= sprites.Length) {
             frame -= sprites.Length;
         }
         currentFrame = frame;

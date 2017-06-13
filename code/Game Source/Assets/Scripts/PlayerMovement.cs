@@ -15,6 +15,9 @@ public class PlayerMovement : MonoBehaviour {
     private int shotCooldown = 2;
     private DialogueManager dialogueManager;
     private BulletTemplate mainShot = new BulletTemplate();
+    private SpriteAnimator animator;
+
+    public Sprite[] moveLeftSprites, moveRightSprites,stationairySprites;
 
     //TODO: Make these customisable
     public KeyCode keyPause = KeyCode.Escape;
@@ -28,6 +31,11 @@ public class PlayerMovement : MonoBehaviour {
     public KeyCode keySkip = KeyCode.LeftControl;
 
     void Awake() {
+        animator = GetComponent<SpriteAnimator>();
+        moveLeftSprites = SpriteAnimator.GetSprites(Resources.Load("Graphics/Sprites/Rachel_Left") as Texture2D);
+        moveRightSprites = SpriteAnimator.GetSprites(Resources.Load("Graphics/Sprites/Rachel_Right") as Texture2D); //TODO: Not just have this as a flipped left.
+        stationairySprites = SpriteAnimator.GetSprites(Resources.Load("Graphics/Sprites/Rachel_Stationairy") as Texture2D);
+
         dialogueManager = GameObject.FindWithTag("LevelManager").GetComponent<DialogueManager>();
 
         mainShot.bulletDamage = 2;
@@ -84,6 +92,14 @@ public class PlayerMovement : MonoBehaviour {
                 moveDown = Input.GetKey(keyDown) ? 1 : 0;
 
                 moveDirection = new Vector2(moveRight - moveLeft, moveUp - moveDown);
+
+                //Set relevant sprites
+                animator.SetSprites(stationairySprites);
+                if (moveDirection.x < 0) {
+                    animator.SetSprites(moveLeftSprites);
+                } else if (moveDirection.x > 0) {
+                    animator.SetSprites(moveRightSprites);
+                }
 
                 //Apply focused speed
                 totalSpeedMultiplier = focused ? focusedSpeed : unfocusedSpeed;
