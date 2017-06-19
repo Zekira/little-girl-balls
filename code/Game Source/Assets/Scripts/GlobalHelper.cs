@@ -5,38 +5,64 @@ using System.Collections.Generic;
 /// A class made to make my life easier.
 /// Communicates with almost literally everything.
 /// </summary>
-public static class GlobalHelper {
+public class GlobalHelper : MonoBehaviour {
 
-    //Things that make finding objects in other classes easier
-    public static Transform enemyParent = GameObject.FindWithTag("EnemyParent").transform;
-    public static Transform itemParent = GameObject.FindWithTag("ItemParent").transform;
-    public static Transform spellcardBackground = GameObject.FindWithTag("SpellcardBackground").transform;
-    public static GameObject bossUI = GameObject.FindWithTag("BossUI");
-    public static Transform secondCounter = bossUI.transform.Find("TimerSeconds");
-    public static Transform msecondCounter = bossUI.transform.Find("TimerMilliseconds");
-    public static GameObject player = GameObject.FindGameObjectWithTag("Player");
-    public static GameObject levelManager = GameObject.FindWithTag("LevelManager");
-
-    public static PlayerStats stats = player.GetComponent<PlayerStats>();
-    public static BulletClear bulletClear = levelManager.GetComponent<BulletClear>();
-    public static CharacterPortraits characterPortraits = levelManager.GetComponent<CharacterPortraits>();
+    //Things needed all the time that make (some) sense even when not in a level.
     public static System.Random random = new System.Random(); //NOTE: Handle ALL random events through this; if I want to be able to add replays, I should save the seeds and input them here.
+    public static int totalFiredBullets; //Fun statistic to keep track of.
 
-    public static List<GameObject> backupBullets = new List<GameObject>(); //Bullet objects that are deactivated but can be used
-    public static List<GameObject> backupItems = new List<GameObject>(); //Item objects that are deactivated but can be used
-
-    public static List<Sprite> itemSprites = new List<Sprite>(); //All sprite textures
-    public static List<Sprite> bulletSprites = new List<Sprite>(); //All bullet textures
-    public static List<Sprite[]> enemySprites = new List<Sprite[]>(); //All enemy textures
-
-    public static int totalFiredBullets;
-    public static bool paused = false;
-    public static bool dialogue = false;
     public static int stageNumber = 1;
-    public enum Difficulty {EASY, NORMAL, HARD, LUNATIC, EXTRA};
+    public enum Difficulty { EASY, NORMAL, HARD, LUNATIC, EXTRA };
     public static Difficulty difficulty = Difficulty.EASY;
-    public static bool autoCollectItems = false;
-    public static int activeBosses = 0;
+
+    //These things only make sense in a level, so they're defined, but initialised in Awake()
+    public static Transform enemyParent, itemParent, spellcardBackground, secondCounter, msecondCounter;
+    public static GameObject bossUI, player, levelManager;
+    public static List<GameObject> backupBullets, backupItems;
+    public static List<Sprite> itemSprites, bulletSprites;
+    public static List<Sprite[]> enemySprites;
+    public static PlayerStats stats;
+    public static BulletClear bulletClear;
+    public static CharacterPortraits characterPortraits;
+    public static bool paused, dialogue, autoCollectItems;
+    public static int activeBosses;
+
+    //Things used in createbullet and createenemy that differ everytime but is a waste to keep creating and destroying and better to just keep access to all the time.
+    private static GameObject createdObject;
+    private static MaterialPropertyBlock bulletMatPropertyBlock;
+    private static Bullet bullet;
+    private static Vector3 bulletpos;
+    private static SpriteRenderer spriteRenderer;
+
+    //Things that make finding objects in other classes easier, but only make sense when in a level: the only time GlobalHelper is a script attached to an object.
+    void Awake() {
+        enemyParent = GameObject.FindWithTag("EnemyParent").transform;
+        itemParent = GameObject.FindWithTag("ItemParent").transform;
+        spellcardBackground = GameObject.FindWithTag("SpellcardBackground").transform;
+        bossUI = GameObject.FindWithTag("BossUI");
+        secondCounter = bossUI.transform.Find("TimerSeconds");
+        msecondCounter = bossUI.transform.Find("TimerMilliseconds");
+        player = GameObject.FindGameObjectWithTag("Player");
+        levelManager = GameObject.FindWithTag("LevelManager");
+
+        stats = player.GetComponent<PlayerStats>();
+        bulletClear = levelManager.GetComponent<BulletClear>();
+        characterPortraits = levelManager.GetComponent<CharacterPortraits>();
+
+        backupBullets = new List<GameObject>(); //Bullet objects that are deactivated but can be used
+        backupItems = new List<GameObject>(); //Item objects that are deactivated but can be used
+
+        itemSprites = new List<Sprite>(); //All sprite textures
+        bulletSprites = new List<Sprite>(); //All bullet textures
+        enemySprites = new List<Sprite[]>(); //All enemy textures
+
+        bulletMatPropertyBlock = new MaterialPropertyBlock();
+
+        paused = false;
+        dialogue = false;
+        autoCollectItems = false;
+        activeBosses = 0;  
+    }
 
     //Event to tick all timelineinterprenters
     public delegate void TickTimelineInterprenters();
@@ -46,13 +72,6 @@ public static class GlobalHelper {
             Tick();
         }
     }
-
-    //Things used in createbullet and createenemy that differ everytime but is a waste to keep creating and destroying and better to just keep access to all the time.
-    private static GameObject createdObject;
-    private static MaterialPropertyBlock bulletMatPropertyBlock = new MaterialPropertyBlock();
-    private static Bullet bullet;
-    private static Vector3 bulletpos;
-    private static SpriteRenderer spriteRenderer;
 
     /// <summary>
     /// Get a reference to the Player GameObject.

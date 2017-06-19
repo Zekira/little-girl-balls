@@ -73,11 +73,12 @@
     <Compile Include="Assets\Scripts\Bullet.cs" />
     <Compile Include="Assets\Scripts\DialogueManager.cs" />
     <Compile Include="Assets\Scripts\Enemy.cs" />
+    <Compile Include="Assets\Scripts\GlobalHelper.cs" />
     <Compile Include="Assets\Scripts\Laser.cs" />
+    <Compile Include="Assets\Scripts\MainMenu.cs" />
     <Compile Include="Assets\Scripts\Non-Monobehaviour\BulletTemplate.cs" />
     <Compile Include="Assets\Scripts\Non-Monobehaviour\DialogueEntry.cs" />
     <Compile Include="Assets\Scripts\Non-Monobehaviour\EnemyTemplate.cs" />
-    <Compile Include="Assets\Scripts\Non-Monobehaviour\GlobalHelper.cs" />
     <Compile Include="Assets\Scripts\Non-Monobehaviour\LaserTemplate.cs" />
     <Compile Include="Assets\Scripts\Non-Monobehaviour\TimelineCommand.cs" />
     <Compile Include="Assets\Scripts\PlayerMovement.cs" />

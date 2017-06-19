@@ -8,7 +8,7 @@ using System.Collections.Generic;
 /// </summary>
 public class StringFetcher : MonoBehaviour {
 
-    private static Dictionary<string, string> strings = GetFromFile();
+    private static Dictionary<string, string> strings;
 
     void Start() {
         if (GetComponent<Text>() != null) {
@@ -36,6 +36,9 @@ public class StringFetcher : MonoBehaviour {
     /// Returns the string with key "s" if it exists, or itself if it doesn't exist.
     /// </summary>
     public static string GetString(string s) {
+        if (strings == null || strings.Count == 0) {
+            strings = GetFromFile();
+        }
         strings.TryGetValue(s, out s);
         return s;
     }

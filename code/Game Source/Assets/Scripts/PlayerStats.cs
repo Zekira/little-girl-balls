@@ -37,7 +37,7 @@ public class PlayerStats : MonoBehaviour {
 
     private GameObject UIVariable;
 
-    void Awake() {
+    void Start() {
         UIVariable = GameObject.FindWithTag("UIVariable");
         //Setting the startposition
         startPosition = transform.position;
