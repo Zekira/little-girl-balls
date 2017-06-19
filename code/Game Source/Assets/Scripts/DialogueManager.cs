@@ -8,7 +8,7 @@ using UnityEngine.UI;
 /// </summary>
 public class DialogueManager : MonoBehaviour {
 
-    private Transform left, right;
+    private Transform left, right, leftTitle, rightTitle;
     private Text leftText, rightText;
     private Color speakingColor = new Color(1f, 1f, 1f, 1f);
     private Color silentColor = new Color(0.4f, 0.4f, 0.4f, 1f);
@@ -24,6 +24,8 @@ public class DialogueManager : MonoBehaviour {
         right = GameObject.FindWithTag("Dialogue").transform.FindChild("Right").transform;
         leftText = left.FindChild("DialogueBox").FindChild("Text").GetComponent<Text>();
         rightText = right.FindChild("DialogueBox").FindChild("Text").GetComponent<Text>();
+        leftTitle = left.FindChild("Title").transform;
+        rightTitle = right.FindChild("Title").transform;
         Hide();
     }
     
@@ -126,6 +128,21 @@ public class DialogueManager : MonoBehaviour {
                     int.TryParse(text[i + 1], out waitTime);
                     StartCoroutine(DialogueWait(waitTime));
                     continue;
+                case "introduction":
+                    Transform transform;
+                    if (currentDialogue.leftSpeaking) {
+                        transform = leftTitle;
+                        transform.gameObject.SetActive(true);
+                        StartCoroutine(MoveSmooth(transform.GetComponent<RectTransform>(), new Vector2(-380, -227), new Vector2(-280, -227)));
+                    } else {
+                        transform = rightTitle;
+                        transform.gameObject.SetActive(true);
+                        StartCoroutine(MoveSmooth(transform.GetComponent<RectTransform>(), new Vector2(70, -227), new Vector2(170, -227)));
+                    }
+                    transform.FindChild("Name").GetComponent<Text>().text = text[i + 1];
+                    transform.FindChild("Title").GetComponent<Text>().text = text[i + 2];
+                    //todo: smooth movement animation
+                    continue;
                 default:
                     continue;
             }
@@ -164,5 +181,38 @@ public class DialogueManager : MonoBehaviour {
             yield return null;
         }
         AdvanceDialogue();
+    }
+
+    private IEnumerator MoveSmooth(RectTransform transform, Vector2 startPos, Vector2 endPos) {
+        float linearProgress = 0f;
+        float progress = 0f;;
+        transform.anchoredPosition = new Vector3(startPos.x, startPos.y);
+        Color nameColor, nameOutline, titleColor, titleOutline;
+        nameColor = transform.FindChild("Name").GetComponent<Text>().color;
+        titleColor = transform.FindChild("Title").GetComponent<Text>().color;
+        nameOutline = transform.FindChild("Name").GetComponent<Outline>().effectColor;
+        titleOutline = transform.FindChild("Title").GetComponent<Outline>().effectColor;
+        float alpha;
+        //how much it should move when linprogress = [0,1] is defined by f(x)=5(2x-1)^4
+        while (linearProgress < 1.1f) { //Overshooting 1 because the titles shooting away looks nice.
+            if (!GlobalHelper.paused) {
+                progress = 0.05f * f(linearProgress);
+                transform.anchoredPosition += progress * (endPos - startPos);
+                alpha = Mathf.Max(1 - f(linearProgress), 0);
+                nameColor.a = alpha; titleColor.a = alpha; nameOutline.a = alpha; titleOutline.a = alpha;
+                transform.FindChild("Name").GetComponent<Text>().color = nameColor;
+                transform.FindChild("Title").GetComponent<Text>().color = titleColor;
+                transform.FindChild("Name").GetComponent<Outline>().effectColor = nameOutline;
+                transform.FindChild("Title").GetComponent<Outline>().effectColor = titleOutline;
+
+                linearProgress += 0.0075f;
+            }
+            yield return null;
+        }
+        transform.gameObject.SetActive(false);
+    }
+
+    private float f(float x) {
+        return (2 * x - 1) * (2 * x - 1) * (2 * x - 1) * (2 * x - 1);
     }
 }

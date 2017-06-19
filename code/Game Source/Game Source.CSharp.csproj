@@ -116,7 +116,6 @@
     <None Include="Assets\Scripts\Shaders\HealthbarShader.shader" />
     <None Include="Assets\Scripts\Shaders\Invert.shader" />
     <None Include="Assets\Scripts\Shaders\OffsetTexture.shader" />
-    <None Include="Assets\Sources.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>

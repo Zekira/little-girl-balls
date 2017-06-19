@@ -56,7 +56,7 @@ public class DialogueEntry {
         returnEntry.currentEmotion = (emotion)System.Enum.Parse(typeof(emotion), info[1].ToUpperInvariant().Replace("\n", "").Replace("\r", ""));
         returnEntry.leftSpeaking = info[2].ToUpperInvariant().Replace("\n", "").Replace("\r", "") == "LEFT" ? true : false;
         returnEntry.showOther = info[3].ToUpperInvariant().Replace("\n", "").Replace("\r", "") == "TRUE" ? true : false;
-        returnEntry.text = info[4];
+        returnEntry.text = info[4].Replace("\\n", System.Environment.NewLine);
         returnEntry.special = new string[info.Length-5];
         for (int i = 0; i < info.Length-5; i++) {
             returnEntry.special[i] = info[i + 5];
@@ -66,12 +66,12 @@ public class DialogueEntry {
     }
 
     /// <summary>
-    /// Parses a list of lines of dialogue seperated by >
+    /// Parses a list of lines of dialogue seperated by newlines
     /// </summary>
     public static List<DialogueEntry> ParseFile(string path) { //todo: eventually allow from outside unity
         string content = (Resources.Load(path) as TextAsset).text;
         List<DialogueEntry> returnList = new List<DialogueEntry>();
-        foreach (string line in content.Split('>')) {
+        foreach (string line in content.Split(new char[] {'\n', '\r'}, System.StringSplitOptions.RemoveEmptyEntries)) {
             returnList.Add(ParseLine(line));
         }
         return returnList;
