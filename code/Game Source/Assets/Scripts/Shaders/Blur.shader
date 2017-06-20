@@ -1,4 +1,4 @@
-﻿Shader "Custom/Invert" {
+﻿Shader "Custom/Blur" {
 	Properties {
 		_MainTex ("Texture", 2D) = "white" {}
 	}
@@ -32,10 +32,33 @@
 			}
 
 			half4 frag (v2f_vct i) : COLOR {
-				half4 col = tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab));
-				col.r = 1 - col.r;
-				col.g = 1 - col.g;
-				col.b = 1 - col.b;
+				half4 col = 0;
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4(-0.007, -0.007, 0, 0)));
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4(-0.004, -0.008, 0, 0)));
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.000, -0.010, 0, 0)));
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.004, -0.008, 0, 0)));
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.007, -0.007, 0, 0)));
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4(-0.080, -0.004, 0, 0)));
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4(-0.003, -0.003, 0, 0))) * 2;
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.000, -0.005, 0, 0))) * 3;
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.003, -0.003, 0, 0))) * 2;
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.008, -0.004, 0, 0)));
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4(-0.010,  0.000, 0, 0)));
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4(-0.005,  0.000, 0, 0))) * 3;
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.000,  0.000, 0, 0))) * 8;
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.005,  0.000, 0, 0))) * 3;
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.010,  0.000, 0, 0)));
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4(-0.008,  0.004, 0, 0)));
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4(-0.003,  0.003, 0, 0))) * 2;
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.000,  0.005, 0, 0))) * 3;
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.003,  0.003, 0, 0))) * 2;
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.008,  0.004, 0, 0)));
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4(-0.007,  0.007, 0, 0)));
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4(-0.004,  0.008, 0, 0)));
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.000,  0.010, 0, 0)));
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.004,  0.008, 0, 0)));
+				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.007,  0.007, 0, 0)));
+				col /= 44;
 				return col;
 			}
 
