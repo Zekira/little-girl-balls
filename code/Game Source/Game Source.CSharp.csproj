@@ -111,7 +111,7 @@
     <None Include="Assets\Resources\Timelines\Movement\ArcRight.txt" />
     <None Include="Assets\Resources\Timelines\Movement\MoveUp.txt" />
     <None Include="Assets\Resources\Timelines\SpawnCrap.txt" />
-    <None Include="Assets\Resources\Timelines\Stages\Test.txt" />
+    <None Include="Assets\Resources\Timelines\Stages\Stage1_0.txt" />
     <None Include="Assets\Resources\Timelines\Wiki.txt" />
     <None Include="Assets\Scripts\Shaders\Blur.shader" />
     <None Include="Assets\Scripts\Shaders\BulletColorChange.shader" />

@@ -66,7 +66,12 @@ public class GlobalHelper : MonoBehaviour {
         autoCollectItems = false;
         activeBosses = 0;
 
+        LoadEnemySprites();
+        LoadBulletSprites();
+        LoadItemSprites();
+
         paused = false;
+
     }
 
     //Event to tick all timelineinterprenters
@@ -138,12 +143,6 @@ public class GlobalHelper : MonoBehaviour {
         if (activeBosses > 0 && !enemyTemplate.isBoss) {
             return null;
         }
-        //If the list of enemysprites attached to GlobalHelper is empty, initialise them because they're needed here.
-        if (enemySprites.Count == 0) {
-            foreach (Texture2D texture in Resources.LoadAll<Texture2D>("Graphics/Enemies")) {
-                enemySprites.Add(SpriteAnimator.GetSprites(texture));
-            }
-        }
         //Create the object and set the settings.
         createdObject = GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Enemy"));
 
@@ -179,12 +178,6 @@ public class GlobalHelper : MonoBehaviour {
     /// <param name="bulletPosition">The position to spawn the bullet in.</param>
     /// <returns>Returns a reference to the created bullet.</returns>
     public static GameObject CreateBullet(BulletTemplate bulletTemplate, Vector2 bulletPosition) {
-        //If the list of bulletsprites attached to GlobalHelper is empty, initialise them because they're needed here.
-        if (bulletSprites.Count == 0) {
-            foreach (Texture2D texture in Resources.LoadAll<Texture2D>("Graphics/Bullets")) {
-                bulletSprites.Add(Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 256));
-            }
-        }
         //The z-value of bullets is this value because this prevents z-fighting. Also, fun stats.
         totalFiredBullets++;
         //Take it either from the backup list, or instantiate a new bullet. The former is prefered because it's faster.
@@ -249,12 +242,6 @@ public class GlobalHelper : MonoBehaviour {
     private static Vector3 smallItemSize = new Vector3(0.45f, 0.45f, 1f);
 
     public static GameObject CreateItem(Item.ItemType type, Vector3 position) {
-        //If the list of itemsprites attached to GlobalHelper is empty, initialise them because they're needed here.
-        if (itemSprites.Count == 0) {
-            foreach (Texture2D texture in Resources.LoadAll<Texture2D>("Graphics/Items")) {
-                itemSprites.Add(Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100));
-            }
-        }
         if (backupItems.Count == 0) {
             createdObject = GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Item"));
             createdObject.transform.SetParent(itemParent);
@@ -315,5 +302,23 @@ public class GlobalHelper : MonoBehaviour {
         GlobalHelper.difficulty = difficulty;
         GlobalHelper.level = level;
         SceneManager.LoadSceneAsync("level");
+    }
+
+    public static void LoadBulletSprites() {
+        foreach (Texture2D texture in Resources.LoadAll<Texture2D>("Graphics/Bullets")) {
+            bulletSprites.Add(Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 256));
+        }
+    }
+
+    public static void LoadItemSprites() {
+        foreach (Texture2D texture in Resources.LoadAll<Texture2D>("Graphics/Items")) {
+            itemSprites.Add(Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100));
+        }
+    }
+
+    public static void LoadEnemySprites() {
+        foreach (Texture2D texture in Resources.LoadAll<Texture2D>("Graphics/Enemies")) {
+            enemySprites.Add(SpriteAnimator.GetSprites(texture));
+        }
     }
 }

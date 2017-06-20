@@ -8,6 +8,7 @@ using System;
 public class TimelineInterprenter : MonoBehaviour {
     //TODO: Dictionaries are expensive when called from 1500 bullets.
     public string patternPath = "";
+    public bool levelTimeline = false; //Set via inspector
     private Dictionary<int, float> numberVars = new Dictionary<int, float>();
     private Dictionary<int, BulletTemplate> bulletTemplateVars = new Dictionary<int, BulletTemplate>();
     private Dictionary<int, EnemyTemplate> enemyTemplateVars = new Dictionary<int, EnemyTemplate>();
@@ -48,6 +49,9 @@ public class TimelineInterprenter : MonoBehaviour {
 
     void Start() {
         GlobalHelper.Tick += TickTimeline;
+        if (levelTimeline) {
+            patternPath = "Timelines/Stages/Stage" + GlobalHelper.level + "_" + ((int)GlobalHelper.difficulty);
+        }
         parentEnemy = transform.GetComponent<Enemy>();
         if (patternPath == "") {
             patternPath = parentEnemy.template.attackPath[0];
