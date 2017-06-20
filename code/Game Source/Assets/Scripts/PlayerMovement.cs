@@ -20,15 +20,16 @@ public class PlayerMovement : MonoBehaviour {
     public Sprite[] moveLeftSprites, moveRightSprites,stationairySprites;
 
     //TODO: Make these customisable
-    public KeyCode keyPause = KeyCode.Escape;
-    public KeyCode keyFocus = KeyCode.LeftShift;
-    public KeyCode keyShoot = KeyCode.Z;
-    public KeyCode keyBomb = KeyCode.X;
-    public KeyCode keyLeft = KeyCode.LeftArrow;
-    public KeyCode keyRight = KeyCode.RightArrow;
-    public KeyCode keyUp = KeyCode.UpArrow;
-    public KeyCode keyDown = KeyCode.DownArrow;
-    public KeyCode keySkip = KeyCode.LeftControl;
+    public static KeyCode keyPause = KeyCode.Escape;
+    public static KeyCode keyFocus = KeyCode.LeftShift;
+    public static KeyCode keyShoot = KeyCode.Z;
+    public static KeyCode keyBomb = KeyCode.X;
+    public static KeyCode keyLeft = KeyCode.LeftArrow;
+    public static KeyCode keyRight = KeyCode.RightArrow;
+    public static KeyCode keyUp = KeyCode.UpArrow;
+    public static KeyCode keyDown = KeyCode.DownArrow;
+    public static KeyCode keySkip = KeyCode.LeftControl;
+    public static KeyCode keyRestart = KeyCode.R;
 
     void Awake() {
         animator = GetComponent<SpriteAnimator>();
@@ -49,23 +50,24 @@ public class PlayerMovement : MonoBehaviour {
     }
 	
 	void Update () {
+        //Check restart
+        if (Input.GetKeyDown(keyRestart)) {
+            GlobalHelper.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty);
+        }
+        //Check if pause
         if (Input.GetKeyDown(keyPause)) {
             GlobalHelper.paused = !GlobalHelper.paused;
-            if (Input.GetKey(keyFocus)) { //Updating focus is needed when unpausing
-                focused = true;
-                transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
-                transform.GetChild(0).localScale = new Vector3(GlobalHelper.GetStats().hitboxRadius, GlobalHelper.GetStats().hitboxRadius, 1f);
-            } else {
-                focused = false;
-                transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
-            }
+            UpdateFocused(); //Updating focus is needed when unpausing, otherwise it wouldn't register releasing/holding the button during the pause
+            GlobalHelper.canvas.FindChild("Pause Canvas").gameObject.SetActive(!GlobalHelper.canvas.FindChild("Pause Canvas").gameObject.activeInHierarchy);
         }
+        //Interact with game world
         if (!GlobalHelper.paused) {
             if (transform.position.y > 2) {
                 GlobalHelper.autoCollectItems = true;
             } else {
                 GlobalHelper.autoCollectItems = false;
             }
+
             //Check for going focused/unfocused
             if (Input.GetKeyDown(keyFocus)) {
                 focused = true;
@@ -129,6 +131,17 @@ public class PlayerMovement : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.Slash)) {
                 Debug.Log(GameObject.FindWithTag("BulletParent").transform.childCount + "/" + GlobalHelper.totalFiredBullets);
             }
+        }
+    }
+
+    public void UpdateFocused() {
+        if (Input.GetKey(keyFocus)) { 
+            focused = true;
+            transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
+            transform.GetChild(0).localScale = new Vector3(GlobalHelper.GetStats().hitboxRadius, GlobalHelper.GetStats().hitboxRadius, 1f);
+        } else {
+            focused = false;
+            transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
         }
     }
 }

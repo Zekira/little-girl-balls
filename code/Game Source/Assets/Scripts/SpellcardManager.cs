@@ -39,7 +39,7 @@ public class SpellcardManager : MonoBehaviour {
         timeTaken = 0;
         failed = false;
         parentEnemy = enemy;
-        startValue = (uint)(GlobalHelper.difficulty + GlobalHelper.stageNumber) * 1000000;
+        startValue = (uint)(GlobalHelper.difficulty + GlobalHelper.level) * 1000000;
         currentValue = startValue;
         timeLimit = template.spellTimers[attack];
         string name = Enemy.GetSpell(template.attackPath[attack]);

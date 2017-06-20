@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 /// <summary>
 /// A class made to make my life easier.
 /// Communicates with almost literally everything.
@@ -11,12 +12,14 @@ public class GlobalHelper : MonoBehaviour {
     public static System.Random random = new System.Random(); //NOTE: Handle ALL random events through this; if I want to be able to add replays, I should save the seeds and input them here.
     public static int totalFiredBullets; //Fun statistic to keep track of.
 
-    public static int stageNumber = 1;
+    public static bool paused = false;
+
+    public static int level = 1;
     public enum Difficulty { EASY, NORMAL, HARD, LUNATIC, EXTRA };
     public static Difficulty difficulty = Difficulty.EASY;
 
     //These things only make sense in a level, so they're defined, but initialised in Awake()
-    public static Transform enemyParent, itemParent, spellcardBackground, secondCounter, msecondCounter;
+    public static Transform enemyParent, itemParent, spellcardBackground, secondCounter, msecondCounter,canvas;
     public static GameObject bossUI, player, levelManager;
     public static List<GameObject> backupBullets, backupItems;
     public static List<Sprite> itemSprites, bulletSprites;
@@ -24,7 +27,7 @@ public class GlobalHelper : MonoBehaviour {
     public static PlayerStats stats;
     public static BulletClear bulletClear;
     public static CharacterPortraits characterPortraits;
-    public static bool paused, dialogue, autoCollectItems;
+    public static bool dialogue, autoCollectItems;
     public static int activeBosses;
 
     //Things used in createbullet and createenemy that differ everytime but is a waste to keep creating and destroying and better to just keep access to all the time.
@@ -39,6 +42,7 @@ public class GlobalHelper : MonoBehaviour {
         enemyParent = GameObject.FindWithTag("EnemyParent").transform;
         itemParent = GameObject.FindWithTag("ItemParent").transform;
         spellcardBackground = GameObject.FindWithTag("SpellcardBackground").transform;
+        canvas = GameObject.FindWithTag("UI").transform;
         bossUI = GameObject.FindWithTag("BossUI");
         secondCounter = bossUI.transform.Find("TimerSeconds");
         msecondCounter = bossUI.transform.Find("TimerMilliseconds");
@@ -58,10 +62,11 @@ public class GlobalHelper : MonoBehaviour {
 
         bulletMatPropertyBlock = new MaterialPropertyBlock();
 
-        paused = false;
         dialogue = false;
         autoCollectItems = false;
-        activeBosses = 0;  
+        activeBosses = 0;
+
+        paused = false;
     }
 
     //Event to tick all timelineinterprenters
@@ -302,5 +307,13 @@ public class GlobalHelper : MonoBehaviour {
         spriteRenderer.SetPropertyBlock(bulletMatPropertyBlock);
         
         return createdObject;
+    }
+
+    //(Re)sets the scene to the level scene with level "level".
+    public static void LoadLevel(int level, Difficulty difficulty) {
+        paused = true;
+        GlobalHelper.difficulty = difficulty;
+        GlobalHelper.level = level;
+        SceneManager.LoadSceneAsync("level");
     }
 }

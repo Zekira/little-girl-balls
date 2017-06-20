@@ -75,7 +75,7 @@
     <Compile Include="Assets\Scripts\Enemy.cs" />
     <Compile Include="Assets\Scripts\GlobalHelper.cs" />
     <Compile Include="Assets\Scripts\Laser.cs" />
-    <Compile Include="Assets\Scripts\MainMenu.cs" />
+    <Compile Include="Assets\Scripts\Menu.cs" />
     <Compile Include="Assets\Scripts\Non-Monobehaviour\BulletTemplate.cs" />
     <Compile Include="Assets\Scripts\Non-Monobehaviour\DialogueEntry.cs" />
     <Compile Include="Assets\Scripts\Non-Monobehaviour\EnemyTemplate.cs" />
@@ -113,6 +113,7 @@
     <None Include="Assets\Resources\Timelines\SpawnCrap.txt" />
     <None Include="Assets\Resources\Timelines\Stages\Test.txt" />
     <None Include="Assets\Resources\Timelines\Wiki.txt" />
+    <None Include="Assets\Scripts\Shaders\Blur.shader" />
     <None Include="Assets\Scripts\Shaders\BulletColorChange.shader" />
     <None Include="Assets\Scripts\Shaders\HealthbarShader.shader" />
     <None Include="Assets\Scripts\Shaders\Invert.shader" />
