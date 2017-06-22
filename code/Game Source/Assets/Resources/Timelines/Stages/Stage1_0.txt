@@ -21,7 +21,7 @@ enemyproperty(boss, scale, 1);
 enemyproperty(boss, boss, 1);
 enemyproperty(boss, bossportrait, charno);
 enemyproperty(boss, attackpath, Timelines/Attacks/Stage1/Spellcard1,Timelines/Attacks/Stage1/Spellcard2,Timelines/Attacks/Stage1/Spellcard3);
-enemyproperty(boss, time, 1200, -700, 1400);
+enemyproperty(boss, time, 24000, -700, 1400);
 enemyproperty(boss, id, 0);
 enemyproperty(boss, droppower, 50);
 enemyproperty(boss, dropscore, 10);

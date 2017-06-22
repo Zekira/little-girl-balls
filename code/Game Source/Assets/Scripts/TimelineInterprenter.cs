@@ -194,7 +194,13 @@ public class TimelineInterprenter : MonoBehaviour {
                             bulletTemplate.outerColor.a = ParseValue(currentCommand.args[4]);
                             break;
                         case TimelineCommand.BulletProperty.ROTATION:
-                            bulletTemplate.rotation = ParseValue(currentCommand.args[1]);
+                            if (GetComponent<Bullet>() != null) { //If the parent is a bullet, change its rotation to be rotated if the script as a whole should be rotated
+                                parentTemplate = GetComponent<Bullet>().bulletTemplate;
+                                //Debug.Log(Mathf.Acos(parentTemplate.scriptRotationMatrix.x));
+                                bulletTemplate.rotation = ParseValue(currentCommand.args[1]) + Mathf.Acos(parentTemplate.scriptRotationMatrix.x);
+                            } else {
+                                bulletTemplate.rotation = ParseValue(currentCommand.args[1]);
+                            }
                             break;
                         case TimelineCommand.BulletProperty.RELATIVEPOS:
                             bulletTemplate.positionIsRelative = ParseValue(currentCommand.args[1]) > 0 ? true : false;
@@ -302,7 +308,13 @@ public class TimelineInterprenter : MonoBehaviour {
                             laserTemplate.movement = new Vector2(ParseValue(currentCommand.args[1]), ParseValue(currentCommand.args[2]));
                             break;
                         case TimelineCommand.LaserProperty.ROTATION:
-                            laserTemplate.rotation = ParseValue(currentCommand.args[1]);
+                            if (GetComponent<Bullet>() != null) { //If the parent is a bullet, change its rotation to be rotated if the script as a whole should be rotated
+                                parentTemplate = GetComponent<Bullet>().bulletTemplate;
+                                //Debug.Log(Mathf.Acos(parentTemplate.scriptRotationMatrix.x));
+                                laserTemplate.rotation = ParseValue(currentCommand.args[1]) + Mathf.Acos(parentTemplate.scriptRotationMatrix.x);
+                            } else {
+                                laserTemplate.rotation = ParseValue(currentCommand.args[1]);
+                            }
                             break;
                         case TimelineCommand.LaserProperty.ROTATIONSPEED:
                             laserTemplate.rotationSpeed = ParseValue(currentCommand.args[1]);

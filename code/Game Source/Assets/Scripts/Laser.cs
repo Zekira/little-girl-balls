@@ -9,6 +9,7 @@ public class Laser : MonoBehaviour {
     float sin, cos, angle;
     Vector3 rotationVector;
     Vector3 movementVector;
+    private int grazeCooldown = 0;
 
     void Start() {
         transform.Rotate(new Vector3(0f, 0f, template.rotation * Mathf.Rad2Deg));
@@ -35,12 +36,22 @@ public class Laser : MonoBehaviour {
                 if (Mathf.Abs(playerPos.x) < template.width / 2 && playerPos.y < 0) {
                     GlobalHelper.GetStats().TakeDamage();
                 }
+                if (grazeCooldown <= 0 && Mathf.Abs(playerPos.x) < (template.width + 0.4) / 2 && playerPos.y < 0) {
+                    GlobalHelper.GetStats().Graze();
+                    grazeCooldown = 8;
+                }
             } else if (timer > template.warnDuration + template.shotDuration) {
                 //GetComponent<Bullet>().Deactivate();
                 Destroy(this.gameObject);
             }
 
-            //TODO: Graze
+            if (GlobalHelper.bulletClear.destroyBulletsHeight < transform.position.y && GlobalHelper.bulletClear.bulletClearType == BulletClear.BulletClearType.FULLCLEAR) {
+                Destroy(this.gameObject);
+            }
+
+            if (grazeCooldown > 0) {
+                grazeCooldown--;
+            }
             timer++;
         }
     }

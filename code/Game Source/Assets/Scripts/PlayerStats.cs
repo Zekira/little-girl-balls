@@ -164,6 +164,15 @@ public class PlayerStats : MonoBehaviour {
     }
 
     /// <summary>
+    /// Grazes if alive. Use this instead of incrementgraze if you want to wait with registering it until the end of the tick.
+    /// </summary>
+    public void Graze() {
+        if (!noMovement) {
+            grazeInATick++;
+        }
+    }
+
+    /// <summary>
     /// Sets the score to amount, updating the highscore if neccessary. Also updates the UI.
     /// </summary>
     public void SetScore(uint amount) {
