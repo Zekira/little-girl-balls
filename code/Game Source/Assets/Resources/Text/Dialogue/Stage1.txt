@@ -1,3 +1,3 @@
 rachel|happy|left|false|yay my first\nincident|timed|120|introduction|Rachel|Temple Maid
 rachel|happy|left|false|nothing happens|timed|120
-charno|happy|right|true|now seomthing doesb|timelinetick|timed|120|introduction|Charno|fire pixie
+charno|happy|right|true|now seomthing doesb\n                  #High Quality Dialogue|timelinetick|timed|120|introduction|Charno|fire pixie

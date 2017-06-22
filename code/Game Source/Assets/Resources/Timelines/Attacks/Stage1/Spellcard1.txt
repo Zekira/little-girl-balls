@@ -58,7 +58,7 @@ endrepeat;
 //wait(1);
 //endrepeat;
 //wait(60);
-set(factor, 0.07);
+set(factor, 0.06);
 repeat(4);
 angletoplayer(playerangle);
 add(playerangle, playerangle, 3.1415);

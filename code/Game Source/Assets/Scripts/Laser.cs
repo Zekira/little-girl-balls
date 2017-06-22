@@ -33,10 +33,10 @@ public class Laser : MonoBehaviour {
                 sin = Mathf.Sin(angle * Mathf.Deg2Rad);
                 cos = Mathf.Cos(angle * Mathf.Deg2Rad);
                 playerPos = new Vector3(playerPos.x * cos + playerPos.y * sin, -playerPos.x * sin + playerPos.y * cos, 0f); //The player position in a coordinate system where the laser points straight down.
-                if (Mathf.Abs(playerPos.x) < template.width / 2 && playerPos.y < 0) {
+                if (Mathf.Abs(playerPos.x) < template.width / 2 && playerPos.y > 0) {
                     GlobalHelper.GetStats().TakeDamage();
                 }
-                if (grazeCooldown <= 0 && Mathf.Abs(playerPos.x) < (template.width + 0.4) / 2 && playerPos.y < 0) {
+                if (grazeCooldown <= 0 && Mathf.Abs(playerPos.x) < (template.width + 0.4) / 2 && playerPos.y > 0) {
                     GlobalHelper.GetStats().Graze();
                     grazeCooldown = 8;
                 }

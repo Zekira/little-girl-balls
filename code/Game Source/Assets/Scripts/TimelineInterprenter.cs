@@ -311,9 +311,9 @@ public class TimelineInterprenter : MonoBehaviour {
                             if (GetComponent<Bullet>() != null) { //If the parent is a bullet, change its rotation to be rotated if the script as a whole should be rotated
                                 parentTemplate = GetComponent<Bullet>().bulletTemplate;
                                 //Debug.Log(Mathf.Acos(parentTemplate.scriptRotationMatrix.x));
-                                laserTemplate.rotation = ParseValue(currentCommand.args[1]) + Mathf.Acos(parentTemplate.scriptRotationMatrix.x);
+                                laserTemplate.rotation = ParseValue(currentCommand.args[1]) * -1 /*-1 to fit with angletoplayer()*/ + Mathf.Acos(parentTemplate.scriptRotationMatrix.x);
                             } else {
-                                laserTemplate.rotation = ParseValue(currentCommand.args[1]);
+                                laserTemplate.rotation = ParseValue(currentCommand.args[1]) * -1;
                             }
                             break;
                         case TimelineCommand.LaserProperty.ROTATIONSPEED:

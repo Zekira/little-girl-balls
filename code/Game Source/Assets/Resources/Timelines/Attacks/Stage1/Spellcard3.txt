@@ -9,7 +9,24 @@ bulletproperty(circle, id, 2);
 bulletproperty(circle, innercolor, 1, 1, 1, 1);
 bulletproperty(circle, outercolor, 0.9, 0.5, 0, 1);
 
+laserproperty(a, warnduration, 60);
+laserproperty(a, shotduration, 150);
+laserproperty(a, innercolor, 1, 1, 1, 1);
+laserproperty(a, outercolor, 0, 0.5, 0.9, 1);
+laserproperty(a, width, 0.3);
+
 repeat(99);
+repeat(99);
+angletoplayer(playerangle);
+laserproperty(a, rotation, playerangle);
+laserproperty(a, rotationspeed, 0.00314);
+createlaser(a);
+laserproperty(a, rotationspeed, -0.00314);
+createlaser(a);
+laserproperty(a, rotationspeed, 0.00628);
+createlaser(a);
+laserproperty(a, rotationspeed, -0.00628);
+createlaser(a);
 repeat(120);
 angletoplayer(playerangle);
 repeat(5);
@@ -25,5 +42,7 @@ createbullet(atpl);
 add(playerangle,playerangle,1.256);
 endrepeat;
 wait(1);
+endrepeat;
+
 endrepeat;
 endrepeat;
