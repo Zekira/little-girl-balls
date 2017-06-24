@@ -85,6 +85,8 @@
     <Compile Include="Assets\Scripts\PlayerStats.cs" />
     <Compile Include="Assets\Scripts\Really Small Scripts\BulletClear.cs" />
     <Compile Include="Assets\Scripts\Really Small Scripts\BulletMaterialisation.cs" />
+    <Compile Include="Assets\Scripts\Really Small Scripts\CameraScaler.cs" />
+    <Compile Include="Assets\Scripts\Really Small Scripts\CanvasFitter.cs" />
     <Compile Include="Assets\Scripts\Really Small Scripts\CharacterPortraits.cs" />
     <Compile Include="Assets\Scripts\Really Small Scripts\DeathAnimation.cs" />
     <Compile Include="Assets\Scripts\Really Small Scripts\FramerateCounter.cs" />

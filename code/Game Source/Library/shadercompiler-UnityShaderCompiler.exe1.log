@@ -1,22 +1,14 @@
 Base path: C:/Program Files/Unity/Editor/Data
 Cmd: getPlatforms
-Cmd: disassembleShader
-  api=15 insize=533 outsize=1174 ok=1
 Cmd: compileSnippet
-  api=14 type=0 insize=926 outsize=860 kw= pd=UNITY_ENABLE_REFLECTION_BUFFERS UNITY_PBS_USE_BRDF1 UNITY_SPECCUBE_BOX_PROJECTION UNITY_SPECCUBE_BLENDING SHADER_API_DESKTOP UNITY_TEXTURE_ALPHASPLIT_ALLOWED ok=1
-Cmd: disassembleShader
-  api=23 insize=860 outsize=860 ok=1
+  error: 2 plat 8 at (1): Compiled shader code uses too many instruction slots (149). Max. allowed by the target (ps_2_0) is 96.\nCompiling Fragment program
+Platform defines: UNITY_NO_LINEAR_COLORSPACE UNITY_ENABLE_REFLECTION_BUFFERS UNITY_PBS_USE_BRDF3
+  error: 2 plat 8 at (61): Too many math instructions for SM2.0 (124 needed, max is 64). Try #pragma target 3.0\nCompiling Fragment program
+Platform defines: UNITY_NO_LINEAR_COLORSPACE UNITY_ENABLE_REFLECTION_BUFFERS UNITY_PBS_USE_BRDF3
+  api=8 type=1 insize=3144 outsize=0 kw= pd=UNITY_NO_LINEAR_COLORSPACE UNITY_ENABLE_REFLECTION_BUFFERS UNITY_PBS_USE_BRDF3 ok=0
 Cmd: compileSnippet
-  api=15 type=0 insize=926 outsize=3429 kw= pd=UNITY_ENABLE_REFLECTION_BUFFERS UNITY_PBS_USE_BRDF1 UNITY_SPECCUBE_BOX_PROJECTION UNITY_SPECCUBE_BLENDING SHADER_API_DESKTOP UNITY_TEXTURE_ALPHASPLIT_ALLOWED ok=1
-Cmd: disassembleShader
-  api=6 insize=3429 outsize=3429 ok=1
-Cmd: compileSnippet
-  api=0 type=1 insize=926 outsize=0 kw= pd=UNITY_ENABLE_REFLECTION_BUFFERS UNITY_PBS_USE_BRDF1 UNITY_SPECCUBE_BOX_PROJECTION UNITY_SPECCUBE_BLENDING SHADER_API_DESKTOP UNITY_TEXTURE_ALPHASPLIT_ALLOWED ok=1
-Cmd: disassembleShader
-  api=1 insize=0 outsize=45 ok=1
-Cmd: compileSnippet
-  error: 2 plat 8 at (36): forced to unroll loop, but unrolling failed.\nCompiling Fragment program
-Platform defines: UNITY_NO_LINEAR_COLORSPACE UNITY_ENABLE_REFLECTION_BUFFERS UNITY_PBS_USE_BRDF3 UNITY_TEXTURE_ALPHASPLIT_ALLOWED
-  error: 2 plat 8 at (37): unable to unroll loop, loop does not appear to terminate in a timely manner (316 iterations) or unrolled loop is too large, use the [unroll(n)] attribute to force an exact higher number\nCompiling Fragment program
-Platform defines: UNITY_NO_LINEAR_COLORSPACE UNITY_ENABLE_REFLECTION_BUFFERS UNITY_PBS_USE_BRDF3 UNITY_TEXTURE_ALPHASPLIT_ALLOWED
-  api=8 type=1 insize=926 outsize=0 kw= pd=UNITY_NO_LINEAR_COLORSPACE UNITY_ENABLE_REFLECTION_BUFFERS UNITY_PBS_USE_BRDF3 UNITY_TEXTURE_ALPHASPLIT_ALLOWED ok=0
+  error: 2 plat 8 at (1): Compiled shader code uses too many instruction slots (149). Max. allowed by the target (ps_2_0) is 96.\nCompiling Fragment program
+Platform defines: UNITY_NO_LINEAR_COLORSPACE UNITY_ENABLE_REFLECTION_BUFFERS UNITY_PBS_USE_BRDF3
+  error: 2 plat 8 at (61): Too many math instructions for SM2.0 (124 needed, max is 64). Try #pragma target 3.0\nCompiling Fragment program
+Platform defines: UNITY_NO_LINEAR_COLORSPACE UNITY_ENABLE_REFLECTION_BUFFERS UNITY_PBS_USE_BRDF3
+  api=8 type=1 insize=3144 outsize=0 kw= pd=UNITY_NO_LINEAR_COLORSPACE UNITY_ENABLE_REFLECTION_BUFFERS UNITY_PBS_USE_BRDF3 ok=0
