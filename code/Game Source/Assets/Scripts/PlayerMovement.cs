@@ -56,9 +56,7 @@ public class PlayerMovement : MonoBehaviour {
         }
         //Check if pause
         if (Input.GetKeyDown(keyPause)) {
-            GlobalHelper.paused = !GlobalHelper.paused;
-            UpdateFocused(); //Updating focus is needed when unpausing, otherwise it wouldn't register releasing/holding the button during the pause
-            GlobalHelper.canvas.FindChild("Pause Canvas").gameObject.SetActive(GlobalHelper.paused);
+            GlobalHelper.SetPaused(!GlobalHelper.paused);
         }
         //Interact with game world
         if (!GlobalHelper.paused) {

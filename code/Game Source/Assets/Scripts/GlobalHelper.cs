@@ -296,14 +296,6 @@ public class GlobalHelper : MonoBehaviour {
         return createdObject;
     }
 
-    //(Re)sets the scene to the level scene with level "level".
-    public static void LoadLevel(int level, Difficulty difficulty) {
-        paused = true;
-        GlobalHelper.difficulty = difficulty;
-        GlobalHelper.level = level;
-        SceneManager.LoadSceneAsync("level");
-    }
-
     public static void LoadBulletSprites() {
         foreach (Texture2D texture in Resources.LoadAll<Texture2D>("Graphics/Bullets")) {
             bulletSprites.Add(Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 256));
@@ -320,5 +312,20 @@ public class GlobalHelper : MonoBehaviour {
         foreach (Texture2D texture in Resources.LoadAll<Texture2D>("Graphics/Enemies")) {
             enemySprites.Add(SpriteAnimator.GetSprites(texture));
         }
+    }
+
+    //(Re)sets the scene to the level scene with level "level".
+    public static void LoadLevel(int level, Difficulty difficulty) {
+        paused = true;
+        GlobalHelper.difficulty = difficulty;
+        GlobalHelper.level = level;
+        SceneManager.LoadSceneAsync("level");
+    }
+
+    public static void SetPaused(bool paused) {
+        GlobalHelper.paused = paused;
+        GetPlayer().GetComponent<PlayerMovement>().UpdateFocused(); //Updating focus is needed when unpausing, otherwise it wouldn't register releasing/holding the button during the pause
+        canvas.FindChild("Pause Canvas").gameObject.SetActive(paused);
+        canvas.FindChild("Dialogue Canvas").gameObject.SetActive(dialogue && !paused);
     }
 }

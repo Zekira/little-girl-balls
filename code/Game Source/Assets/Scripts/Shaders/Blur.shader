@@ -6,10 +6,10 @@
 	SubShader {
 		Tags {
 			"RenderType"="Transparant"
-			"Queue"="Transparent"
+			"Queue"="Transparent+100"
 		}
 
-		GrabPass { "_GrabTexture" }
+		GrabPass { "_GrabTexture2" }
 
 		Pass {
 			CGPROGRAM
@@ -18,7 +18,7 @@
 			#pragma fragment frag
 			#include "UnityCG.cginc"
 
-			sampler2D _GrabTexture;
+			sampler2D _GrabTexture2;
 
 			struct vin_vct { float4 vertex : POSITION; };
 
@@ -33,31 +33,31 @@
 
 			half4 frag (v2f_vct i) : COLOR {
 				half4 col = 0;
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4(-0.007, -0.007, 0, 0)));
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4(-0.004, -0.008, 0, 0)));
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.000, -0.010, 0, 0)));
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.004, -0.008, 0, 0)));
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.007, -0.007, 0, 0)));
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4(-0.080, -0.004, 0, 0)));
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4(-0.003, -0.003, 0, 0))) * 2;
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.000, -0.005, 0, 0))) * 3;
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.003, -0.003, 0, 0))) * 2;
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.008, -0.004, 0, 0)));
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4(-0.010,  0.000, 0, 0)));
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4(-0.005,  0.000, 0, 0))) * 3;
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.000,  0.000, 0, 0))) * 8;
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.005,  0.000, 0, 0))) * 3;
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.010,  0.000, 0, 0)));
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4(-0.008,  0.004, 0, 0)));
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4(-0.003,  0.003, 0, 0))) * 2;
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.000,  0.005, 0, 0))) * 3;
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.003,  0.003, 0, 0))) * 2;
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.008,  0.004, 0, 0)));
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4(-0.007,  0.007, 0, 0)));
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4(-0.004,  0.008, 0, 0)));
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.000,  0.010, 0, 0)));
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.004,  0.008, 0, 0)));
-				col += tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(i.uvgrab + float4( 0.007,  0.007, 0, 0)));
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4(-0.007, -0.007, 0, 0)));
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4(-0.004, -0.008, 0, 0)));
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4( 0.000, -0.010, 0, 0)));
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4( 0.004, -0.008, 0, 0)));
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4( 0.007, -0.007, 0, 0)));
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4(-0.080, -0.004, 0, 0)));
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4(-0.003, -0.003, 0, 0))) * 2;
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4( 0.000, -0.005, 0, 0))) * 3;
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4( 0.003, -0.003, 0, 0))) * 2;
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4( 0.008, -0.004, 0, 0)));
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4(-0.010,  0.000, 0, 0)));
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4(-0.005,  0.000, 0, 0))) * 3;
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4( 0.000,  0.000, 0, 0))) * 8;
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4( 0.005,  0.000, 0, 0))) * 3;
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4( 0.010,  0.000, 0, 0)));
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4(-0.008,  0.004, 0, 0)));
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4(-0.003,  0.003, 0, 0))) * 2;
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4( 0.000,  0.005, 0, 0))) * 3;
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4( 0.003,  0.003, 0, 0))) * 2;
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4( 0.008,  0.004, 0, 0)));
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4(-0.007,  0.007, 0, 0)));
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4(-0.004,  0.008, 0, 0)));
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4( 0.000,  0.010, 0, 0)));
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4( 0.004,  0.008, 0, 0)));
+				col += tex2Dproj(_GrabTexture2, UNITY_PROJ_COORD(i.uvgrab + float4( 0.007,  0.007, 0, 0)));
 				col /= 44;
 				return col;
 			}

@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.Text.RegularExpressions;
 
 public class TimelineCommand {
 
     private static Dictionary<int, List<TimelineCommand>> commandLists = new Dictionary<int, List<TimelineCommand>>();
 
-    public enum Command { STARTTIMELINE, DIALOGUE, REPEAT, ENDREPEAT, WAIT, BULLETPROPERTY, ENEMYPROPERTY, LASERPROPERTY, CREATEBULLET, CREATEENEMY, CREATELASER,
-                        MOVEPARENT, DESTROYPARENT, SETPARENTHEALTH, SETPARENTSCORE, ANGLETOPLAYER, RANDOM, SET, ADD, SUB, MUL, DIV, MOD, POW, SIN, ASIN, COS, ACOS, TAN, ATAN, ABS };
+    public enum Command { STARTTIMELINE, DIALOGUE, REPEAT, ENDREPEAT, IF, ELSE, ENDIF, WAIT, BULLETPROPERTY, ENEMYPROPERTY, LASERPROPERTY, CREATEBULLET, CREATEENEMY, CREATELASER,
+                        MOVEPARENT, DESTROYPARENT, SETPARENTHEALTH, SETPARENTSCORE, ANGLETOPLAYER, ANGLETOPOINT, GETPOSITION, GETPLAYERPOSITION, RANDOM,
+                        SET, ADD, SUB, MUL, DIV, MOD, POW, SIN, ASIN, COS, ACOS, TAN, ATAN, ABS };
     public enum EnemyProperty { SCALE, ATTACKPATH, SPELLCARDNAME, TIME, ID, COLORISE, COLOR, MAXHEALTH, BOSS, BOSSPORTRAIT, DROPVALUE, DROPPOWER, DROPSCORE, STARTPOS };
     public enum BulletProperty { MOVEMENT, ENEMYSHOT, SCALE, ID, INNERCOLOR, OUTERCOLOR, ROTATION, POSITION, RELATIVEPOS, CLEARIMMUNE, SCRIPTROTATION, ADVANCEDPATH, HARMLESS };
     public enum LaserProperty { WARNDURATION, SHOTDURATION, OUTERCOLOR, INNERCOLOR, WIDTH, MOVEMENT, ROTATION, ROTATIONSPEED };
@@ -17,6 +19,8 @@ public class TimelineCommand {
     public BulletProperty bulletProperty = BulletProperty.MOVEMENT;
     public LaserProperty laserProperty = LaserProperty.WARNDURATION;
     public List<string> args;
+
+    private static Regex whitespaceRegex = new Regex(@"\s+");
 
     public TimelineCommand(Command cmd, List<string> arguments) {
         command = cmd;
@@ -55,7 +59,7 @@ public class TimelineCommand {
         int hash = file.GetHashCode();
 
         if (!commandLists.TryGetValue(hash, out returnList)) { //If it's already a list of commands recognised, no need to parse it again. Otherwise, parse is needed.
-            file = file.Replace(" ", ""); //Simple cleanup. This also makes ReadAttack totally inappropriate for dialogue.
+            file = Regex.Replace(file, @"\s+", ""); //Simple cleanup. This also makes ReadAttack totally inappropriate for dialogue.
             file = file.Replace("\n", "");
             file = file.Replace("\r", "");
             string[] instructions = file.Split(';'); //This splits instructions.

@@ -23,12 +23,12 @@ public class TimelineInterprenter : MonoBehaviour {
     private int count, layers, findEndRepeatLine, lineDifference;
     private float num1, num2;
     private TimelineCommand currentCommand;
-    private TimelineCommand.Command findFunction;
     private BulletTemplate bulletTemplate;
     private BulletTemplate parentTemplate;
     private EnemyTemplate enemyTemplate;
     private Vector3 pos, playerpos;
     private static int stringHash;
+    private bool ifevaluation;
 
     public void Reset(string newTimeLine) {
         patternPath = newTimeLine;
@@ -116,16 +116,15 @@ public class TimelineInterprenter : MonoBehaviour {
                 case TimelineCommand.Command.REPEAT:
                     //Executes everything between here and the matching endrepeat args[0] times.
                     count = Mathf.RoundToInt(ParseValue(currentCommand.args[0])) - 1;
-                    layers = 0; //Goes down for every Repeat(x) line. Goes up for every Endrepeat line.
+                    layers = 0; //Goes down for every Repeat(x) line. Goes up for every Endrepeat line. When it reaches "1", it hit the right endrepeat.
                     for (findEndRepeatLine = currentLine + 1; layers != 1; findEndRepeatLine++) {
-                        findFunction = commands[findEndRepeatLine].command;
-                        if (findFunction == TimelineCommand.Command.REPEAT) {
+                        if (commands[findEndRepeatLine].command == TimelineCommand.Command.REPEAT) {
                             layers--;
-                        } else if (findFunction == TimelineCommand.Command.ENDREPEAT) {
+                        } else if (commands[findEndRepeatLine].command == TimelineCommand.Command.ENDREPEAT) {
                             layers++;
                         }
                     }
-                    lineDifference = 1 + currentLine - findEndRepeatLine; //This should be how much to go back after hitting "endrepeat". Add 1g because it's 1 off and would infinite-loop.
+                    lineDifference = 1 + currentLine - findEndRepeatLine; //This should be how much to go back after hitting "endrepeat". Add 1 because it's 1 off and would infinite-loop.
                     repeatStepback.Add(0); //After hitting it the final time it should go to after the end. Because of the loops ++, going to exactly the end is fine.
                     for (int i = 0; i < count; i++) {
                         repeatStepback.Add(lineDifference);
@@ -135,6 +134,70 @@ public class TimelineInterprenter : MonoBehaviour {
                     currentLine += repeatStepback[repeatStepback.Count - 1];
                     repeatStepback.RemoveAt(repeatStepback.Count - 1);
                     continue;
+                case TimelineCommand.Command.IF:
+                    //If false: continu to this level's "else", +1 line
+                    //If true : continu until else
+                    layers = 0;
+                    //Find out "ifevaluation". Format of text: if(var1,comparator,var2);
+                    switch (currentCommand.args[1]) {
+                        case "==":
+                        case "equal":
+                            ifevaluation = ParseValue(currentCommand.args[0]) == ParseValue(currentCommand.args[2]);
+                            break;
+                        case "!=":
+                        case "notequal":
+                            ifevaluation = ParseValue(currentCommand.args[0]) != ParseValue(currentCommand.args[2]);
+                            break;
+                        case ">":
+                        case "larger":
+                            ifevaluation = ParseValue(currentCommand.args[0]) > ParseValue(currentCommand.args[2]);
+                            break;
+                        case "<":
+                        case "smaller":
+                            ifevaluation = ParseValue(currentCommand.args[0]) < ParseValue(currentCommand.args[2]);
+                            break;
+                        case ">=":
+                        case "largerequal":
+                            ifevaluation = ParseValue(currentCommand.args[0]) >= ParseValue(currentCommand.args[2]);
+                            break;
+                        case "<=":
+                        case "smallerequal":
+                            ifevaluation = ParseValue(currentCommand.args[0]) <= ParseValue(currentCommand.args[2]);
+                            break;
+                        default:
+                            ifevaluation = false;
+                            break;
+                    }
+                    if (ifevaluation) {
+                        //currentLine++; //Next line is the correct one. No ++ needed, the for loop does that.
+                        continue;
+                    } else {
+                        for (findEndRepeatLine = currentLine + 1; //Goes down for every "if" line, goes up every "endif" line, "else" does not affect it. When it reaches "1", it hits the right else / endif, check which
+                            !(layers >= 0 && commands[findEndRepeatLine].command == TimelineCommand.Command.ELSE) &&
+                            !(layers >= 1 && commands[findEndRepeatLine].command == TimelineCommand.Command.ENDIF);
+                            findEndRepeatLine++) {
+                            if (commands[findEndRepeatLine].command == TimelineCommand.Command.IF) {
+                                layers--;
+                            } else if (commands[findEndRepeatLine].command == TimelineCommand.Command.ENDIF) {
+                                layers++;
+                            }
+                        }
+                        currentLine = findEndRepeatLine/* + 1*/; //No +1 because that's already in the for loop this is in.
+                        continue;
+                    }
+                case TimelineCommand.Command.ELSE:
+                    //If it hits here, the if was true, so go to the endif. Only have to worry about one end possibility so it's easier, and guaranteed ends on an "endif".
+                    for (findEndRepeatLine = currentLine + 1; layers != 1; findEndRepeatLine++) {
+                        if (commands[findEndRepeatLine].command == TimelineCommand.Command.IF) {
+                            layers--;
+                        } else if (commands[findEndRepeatLine].command == TimelineCommand.Command.ENDIF) {
+                            layers++;
+                        }
+                    }
+                    currentLine = findEndRepeatLine;
+                    continue;
+                //case TimelineCommand.Command.ENDIF: //Do nothing
+                //    continue;
                 case TimelineCommand.Command.BULLETPROPERTY:
                     bulletTemplate = new BulletTemplate(GetBulletTemplate(currentCommand.args[0]));
                     switch (currentCommand.bulletProperty) {
@@ -367,6 +430,23 @@ public class TimelineInterprenter : MonoBehaviour {
                     num1 = pos.x - playerpos.x;
                     num2 = pos.y - playerpos.y;
                     SetNumber(currentCommand.args[0], Mathf.Atan2(-num1, -num2));
+                    continue;
+                case TimelineCommand.Command.ANGLETOPOINT:
+                    pos = transform.position;
+                    Vector2 pos2 = new Vector2(ParseValue(currentCommand.args[1]), ParseValue(currentCommand.args[2]));
+                    num1 = pos.x - pos2.x;
+                    num2 = pos.y - pos2.y;
+                    SetNumber(currentCommand.args[0], Mathf.Atan2(-num1, -num2));
+                    continue;
+                case TimelineCommand.Command.GETPLAYERPOSITION:
+                    playerpos = GameObject.FindWithTag("Player").transform.position;
+                    SetNumber(currentCommand.args[0], playerpos.x);
+                    SetNumber(currentCommand.args[1], playerpos.y);
+                    continue;
+                case TimelineCommand.Command.GETPOSITION:
+                    pos = transform.position;
+                    SetNumber(currentCommand.args[0], pos.x);
+                    SetNumber(currentCommand.args[1], pos.y);
                     continue;
                 case TimelineCommand.Command.RANDOM: //Returns a random value between args[1] and args[2]. Uses the GlobalHelper.random because everything random should do that because of replay support.
                     num1 = ParseValue(currentCommand.args[1]);
