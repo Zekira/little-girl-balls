@@ -141,7 +141,6 @@ public class DialogueManager : MonoBehaviour {
                     }
                     transform.FindChild("Name").GetComponent<Text>().text = text[i + 1];
                     transform.FindChild("Title").GetComponent<Text>().text = text[i + 2];
-                    //todo: smooth movement animation
                     continue;
                 default:
                     continue;

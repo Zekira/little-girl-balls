@@ -6,7 +6,6 @@ using System;
 /// A class reading .txt's describing either enemy or bullet info. Important in those .txt's is the wait(x) function, which is in ticks and not second, because second would not allow replays.
 /// </summary>
 public class TimelineInterprenter : MonoBehaviour {
-    //TODO: Dictionaries are expensive when called from 1500 bullets.
     public string patternPath = "";
     public bool levelTimeline = false; //Set via inspector
     private Dictionary<int, float> numberVars = new Dictionary<int, float>();
@@ -17,18 +16,18 @@ public class TimelineInterprenter : MonoBehaviour {
     private Enemy parentEnemy;
     private int currentLine = 0;
     private int cooldown = 0;
-
-    //Vars needed within the for loop
     private List<TimelineCommand> commands = new List<TimelineCommand>();
-    private int count, layers, findEndRepeatLine, lineDifference;
-    private float num1, num2;
-    private TimelineCommand currentCommand;
-    private BulletTemplate bulletTemplate;
-    private BulletTemplate parentTemplate;
-    private EnemyTemplate enemyTemplate;
-    private Vector3 pos, playerpos;
+
+    //Vars needed within the for loop. Static because they don't get used for multiple ticks, so they can be reused, so it's useless to create these for every object needing the interprenter.
+    private static int count, layers, findEndRepeatLine, lineDifference;
+    private static float num1, num2;
+    private static TimelineCommand currentCommand;
+    private static BulletTemplate bulletTemplate;
+    private static BulletTemplate parentTemplate;
+    private static EnemyTemplate enemyTemplate;
+    private static Vector3 pos, playerpos;
     private static int stringHash;
-    private bool ifevaluation;
+    private static bool ifevaluation;
 
     public void Reset(string newTimeLine) {
         patternPath = newTimeLine;
@@ -91,9 +90,6 @@ public class TimelineInterprenter : MonoBehaviour {
         ReadAttack();
     }
 
-    /* TODO:
-     * IF; [..] ENDIF; IF; [..] ELSE; [..] ENDIF;
-     */
      /// <summary>
      /// Reads the text (defined in patternPath) line by line and does stuff depending on the info.
      /// The syntax of those lines is usually <functionname>([argument[,other arguments .. ]]);

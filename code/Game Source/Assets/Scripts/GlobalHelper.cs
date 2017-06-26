@@ -19,7 +19,7 @@ public class GlobalHelper : MonoBehaviour {
     public static Difficulty difficulty = Difficulty.EASY;
 
     //These things only make sense in a level, so they're defined, but initialised in Awake()
-    public static Transform enemyParent, itemParent, spellcardBackground, secondCounter, msecondCounter,canvas;
+    public static Transform enemyParent, itemParent, bulletParent, spellcardBackground, secondCounter, msecondCounter,canvas;
     public static GameObject bossUI, player, levelManager;
     public static List<GameObject> backupBullets, backupItems;
     public static List<Sprite> itemSprites, bulletSprites;
@@ -39,6 +39,7 @@ public class GlobalHelper : MonoBehaviour {
 
     //Things that make finding objects in other classes easier, but only make sense when in a level: the only time GlobalHelper is a script attached to an object.
     void Awake() {
+        bulletParent = GameObject.FindWithTag("BulletParent").transform;
         enemyParent = GameObject.FindWithTag("EnemyParent").transform;
         itemParent = GameObject.FindWithTag("ItemParent").transform;
         spellcardBackground = GameObject.FindWithTag("SpellcardBackground").transform;
@@ -164,11 +165,12 @@ public class GlobalHelper : MonoBehaviour {
     }
 
     /// <summary>
-    /// Creates an empty bullet ready to be used by CreateBullet(*actual arguments*). This is done to prevent Instantiate() lagginess as flipping a bool is faster than that.
+    /// Creates an empty bullet ready to be used by CreateBullet(*actual arguments*). Spam this when not lagging. This is done to prevent Instantiate() lagginess as flipping a bool is faster than that.
     /// </summary>
     public static void CreateEmptyBullet() {
         createdObject = GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Bullet"));
-        createdObject.SetActive(false);
+        createdObject.transform.SetParent(bulletParent);
+        createdObject.GetComponent<Bullet>().Deactivate();
     }
 
     /// <summary>
@@ -220,7 +222,7 @@ public class GlobalHelper : MonoBehaviour {
         createdObject.transform.position = bulletpos;
 
         createdObject.transform.localScale = bulletTemplate.scale * Vector3.one;
-        createdObject.transform.SetParent(GameObject.FindWithTag("BulletParent").transform);
+        createdObject.transform.SetParent(bulletParent);
         createdObject.transform.eulerAngles = new Vector3(0f, 0f, -bulletTemplate.rotation * Mathf.Rad2Deg);
 
         bullet.player = GetPlayer();

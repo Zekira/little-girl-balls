@@ -20,7 +20,7 @@ public class TimelineCommand {
     public LaserProperty laserProperty = LaserProperty.WARNDURATION;
     public List<string> args;
 
-    private static Regex whitespaceRegex = new Regex(@"\s+");
+    //private static Regex whitespaceRegex = new Regex(@"\s+");
 
     public TimelineCommand(Command cmd, List<string> arguments) {
         command = cmd;
@@ -90,7 +90,7 @@ public class TimelineCommand {
                         args
                         ));
                     continue;
-                } else if (function == "laserproperty") { //TODO: still unsure
+                } else if (function == "laserproperty") { 
                     function = args[1];
                     args.RemoveAt(1);
                     returnList.Add(new TimelineCommand(
