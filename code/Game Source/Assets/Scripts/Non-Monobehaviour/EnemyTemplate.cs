@@ -6,8 +6,6 @@ using System.Collections.Generic;
 public class EnemyTemplate {
     public float scale = 1f;
     public int enemyID = 0;
-    public bool colorise = false;
-    public Color color = Color.white;
     public bool isBoss = false;
     public int maxHealth = 1;
     public int dropValueCount = 0;
@@ -30,8 +28,6 @@ public class EnemyTemplate {
         scale = template.scale;
         attackPath = template.attackPath;
         enemyID = template.enemyID;
-        colorise = template.colorise;
-        color = template.color;
         isBoss = template.isBoss;
         maxHealth = template.maxHealth;
         dropValueCount = template.dropValueCount;

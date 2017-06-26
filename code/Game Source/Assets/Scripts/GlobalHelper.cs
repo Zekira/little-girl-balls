@@ -154,11 +154,6 @@ public class GlobalHelper : MonoBehaviour {
         createdObject.GetComponent<Enemy>().health = enemyTemplate.maxHealth;
 
         createdObject.transform.GetComponent<SpriteAnimator>().SetSprites(enemySprites[enemyTemplate.enemyID]);
-        if (enemyTemplate.colorise) {
-            createdObject.transform.GetComponent<SpriteRenderer>().color = enemyTemplate.color;
-        } else {
-            createdObject.transform.GetComponent<SpriteRenderer>().color = new Vector4(1f, 1f, 1f, 1f);
-        }
         
         createdObject.GetComponent<Enemy>().template = enemyTemplate;
         return createdObject;

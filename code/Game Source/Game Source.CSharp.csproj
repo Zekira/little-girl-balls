@@ -115,12 +115,12 @@
     <None Include="Assets\Resources\Timelines\Movement\MoveUp.txt" />
     <None Include="Assets\Resources\Timelines\SpawnCrap.txt" />
     <None Include="Assets\Resources\Timelines\Stages\Stage1_0.txt" />
-    <None Include="Assets\Resources\Timelines\Wiki.txt" />
     <None Include="Assets\Scripts\Shaders\Blur.shader" />
     <None Include="Assets\Scripts\Shaders\BulletColorChange.shader" />
     <None Include="Assets\Scripts\Shaders\HealthbarShader.shader" />
     <None Include="Assets\Scripts\Shaders\Invert.shader" />
     <None Include="Assets\Scripts\Shaders\OffsetTexture.shader" />
+    <None Include="Assets\Wiki.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>

@@ -12,7 +12,12 @@ public class TimelineInterprenter : MonoBehaviour {
     private Dictionary<int, BulletTemplate> bulletTemplateVars = new Dictionary<int, BulletTemplate>();
     private Dictionary<int, EnemyTemplate> enemyTemplateVars = new Dictionary<int, EnemyTemplate>();
     private Dictionary<int, LaserTemplate> laserTemplateVars = new Dictionary<int, LaserTemplate>();
+    private static Dictionary<int, float> globalNumberVars = new Dictionary<int, float>();
+    private static Dictionary<int, BulletTemplate> globalBulletTemplateVars = new Dictionary<int, BulletTemplate>();
+    private static Dictionary<int, EnemyTemplate> globalEnemyTemplateVars = new Dictionary<int, EnemyTemplate>();
+    private static Dictionary<int, LaserTemplate> globalLaserTemplateVars = new Dictionary<int, LaserTemplate>();
     private List<int> repeatStepback = new List<int>(); //What line to go to when encountering an endrepeat.
+    private Bullet parentBullet;
     private Enemy parentEnemy;
     private int currentLine = 0;
     private int cooldown = 0;
@@ -35,6 +40,7 @@ public class TimelineInterprenter : MonoBehaviour {
         bulletTemplateVars.Clear();
         enemyTemplateVars.Clear();
         repeatStepback = new List<int>();
+        parentBullet = transform.GetComponent<Bullet>();
         parentEnemy = transform.GetComponent<Enemy>();
         currentLine = 0;
         cooldown = 0;
@@ -198,8 +204,8 @@ public class TimelineInterprenter : MonoBehaviour {
                     bulletTemplate = new BulletTemplate(GetBulletTemplate(currentCommand.args[0]));
                     switch (currentCommand.bulletProperty) {
                         case TimelineCommand.BulletProperty.SCRIPTROTATION:
-                            if (GetComponent<Bullet>() != null) { //If the parent is a bullet also add its angle.
-                                bulletTemplate.Rotate(GetComponent<Bullet>().bulletTemplate.scriptRotation + ParseValue(currentCommand.args[1]));
+                            if (parentBullet != null) { //If the parent is a bullet also add its angle.
+                                bulletTemplate.Rotate(parentBullet.bulletTemplate.scriptRotation + ParseValue(currentCommand.args[1]));
                                 break;
                             } else {
                                 bulletTemplate.Rotate(ParseValue(currentCommand.args[1]));
@@ -208,8 +214,8 @@ public class TimelineInterprenter : MonoBehaviour {
                         case TimelineCommand.BulletProperty.MOVEMENT:
                             num1 = ParseValue(currentCommand.args[1]);
                             num2 = ParseValue(currentCommand.args[2]);
-                            if (GetComponent<Bullet>() != null) { //If the parent is a bullet, change its movement to be rotated
-                                parentTemplate = GetComponent<Bullet>().bulletTemplate;
+                            if (parentBullet != null) { //If the parent is a bullet, change its movement to be rotated
+                                parentTemplate = parentBullet.bulletTemplate;
                                 pos.x = num1 * parentTemplate.scriptRotationMatrix.x + num2 * parentTemplate.scriptRotationMatrix.y;
                                 pos.y = num1 * parentTemplate.scriptRotationMatrix.z + num2 * parentTemplate.scriptRotationMatrix.w;
                             } else {
@@ -221,8 +227,8 @@ public class TimelineInterprenter : MonoBehaviour {
                         case TimelineCommand.BulletProperty.POSITION:
                             num1 = ParseValue(currentCommand.args[1]);
                             num2 = ParseValue(currentCommand.args[2]);
-                            if (GetComponent<Bullet>() != null) { //If the parent is a bullet, change its position to be rotated 
-                                parentTemplate = GetComponent<Bullet>().bulletTemplate;
+                            if (parentBullet != null) { //If the parent is a bullet, change its position to be rotated 
+                                parentTemplate = parentBullet.bulletTemplate;
                                 pos.x = num1 * parentTemplate.scriptRotationMatrix.x + num2 * parentTemplate.scriptRotationMatrix.y;
                                 pos.y = num1 * parentTemplate.scriptRotationMatrix.z + num2 * parentTemplate.scriptRotationMatrix.w;
                             } else {
@@ -253,8 +259,8 @@ public class TimelineInterprenter : MonoBehaviour {
                             bulletTemplate.outerColor.a = ParseValue(currentCommand.args[4]);
                             break;
                         case TimelineCommand.BulletProperty.ROTATION:
-                            if (GetComponent<Bullet>() != null) { //If the parent is a bullet, change its rotation to be rotated if the script as a whole should be rotated
-                                parentTemplate = GetComponent<Bullet>().bulletTemplate;
+                            if (parentBullet != null) { //If the parent is a bullet, change its rotation to be rotated if the script as a whole should be rotated
+                                parentTemplate = parentBullet.bulletTemplate;
                                 //Debug.Log(Mathf.Acos(parentTemplate.scriptRotationMatrix.x));
                                 bulletTemplate.rotation = ParseValue(currentCommand.args[1]) + Mathf.Acos(parentTemplate.scriptRotationMatrix.x);
                             } else {
@@ -297,15 +303,6 @@ public class TimelineInterprenter : MonoBehaviour {
                         case TimelineCommand.EnemyProperty.ID: //Sets the ID of the IMAGE of the enemy, as defined in Resources/Graphics/Enemies.
                             enemyTemplate.enemyID = Mathf.RoundToInt(ParseValue(currentCommand.args[1]));
                             break;
-                        case TimelineCommand.EnemyProperty.COLORISE:
-                            enemyTemplate.colorise = ParseValue(currentCommand.args[1]) > 0 ? true : false;
-                            break;
-                        case TimelineCommand.EnemyProperty.COLOR:
-                            enemyTemplate.color.r = ParseValue(currentCommand.args[1]);
-                            enemyTemplate.color.g = ParseValue(currentCommand.args[2]);
-                            enemyTemplate.color.b = ParseValue(currentCommand.args[3]);
-                            enemyTemplate.color.a = ParseValue(currentCommand.args[4]);
-                            break;
                         case TimelineCommand.EnemyProperty.BOSS: //Requires special UI stuff.
                             enemyTemplate.isBoss = ParseValue(currentCommand.args[1]) > 0 ? true : false;
                             break;
@@ -334,6 +331,9 @@ public class TimelineInterprenter : MonoBehaviour {
                         case TimelineCommand.EnemyProperty.STARTPOS:
                             enemyTemplate.startpostion = new Vector2(ParseValue(currentCommand.args[1]), ParseValue(currentCommand.args[2]));
                             break;
+                        case TimelineCommand.EnemyProperty.BASESCORE:
+                            enemyTemplate.baseScore = (uint)Mathf.RoundToInt(ParseValue(currentCommand.args[0]));
+                            continue;
                         default:
                             break;
                     }
@@ -367,8 +367,8 @@ public class TimelineInterprenter : MonoBehaviour {
                             laserTemplate.movement = new Vector2(ParseValue(currentCommand.args[1]), ParseValue(currentCommand.args[2]));
                             break;
                         case TimelineCommand.LaserProperty.ROTATION:
-                            if (GetComponent<Bullet>() != null) { //If the parent is a bullet, change its rotation to be rotated if the script as a whole should be rotated
-                                parentTemplate = GetComponent<Bullet>().bulletTemplate;
+                            if (parentBullet != null) { //If the parent is a bullet, change its rotation to be rotated if the script as a whole should be rotated
+                                parentTemplate = parentBullet.bulletTemplate;
                                 //Debug.Log(Mathf.Acos(parentTemplate.scriptRotationMatrix.x));
                                 laserTemplate.rotation = ParseValue(currentCommand.args[1]) * -1 /*-1 to fit with angletoplayer()*/ + Mathf.Acos(parentTemplate.scriptRotationMatrix.x);
                             } else {
@@ -382,8 +382,8 @@ public class TimelineInterprenter : MonoBehaviour {
                     SetLaserTemplate(currentCommand.args[0], laserTemplate);
                     continue;
                 case TimelineCommand.Command.CREATEBULLET:
-                    if (GetComponent<Bullet>() != null) { //If a bulet is firing this, pass the script rotation data onto the new bullet.
-                        bulletTemplate.Rotate(GetComponent<Bullet>().bulletTemplate.scriptRotation + bulletTemplate.rotation);
+                    if (parentBullet != null) { //If a bulet is firing this, pass the script rotation data onto the new bullet.
+                        bulletTemplate.Rotate(parentBullet.bulletTemplate.scriptRotation + bulletTemplate.rotation);
                     }
                     GlobalHelper.CreateBullet(GetBulletTemplate(currentCommand.args[0]), transform.position);
                     continue;
@@ -394,8 +394,8 @@ public class TimelineInterprenter : MonoBehaviour {
                     GlobalHelper.CreateLaser(GetLaserTemplate(currentCommand.args[0]), transform.position);
                     continue;
                 case TimelineCommand.Command.MOVEPARENT:
-                    if (transform.GetComponent<Bullet>() != null) { //If this is a bullet, posx,y(,z) should be modified, not its direct position
-                        Bullet bullet = transform.GetComponent<Bullet>();
+                    if (parentBullet != null) { //If this is a bullet, posx,y(,z) should be modified, not its direct position
+                        Bullet bullet = parentBullet;
                         num1 = ParseValue(currentCommand.args[0]);
                         num2 = ParseValue(currentCommand.args[1]);
                         pos.x = num1 * bullet.bulletTemplate.scriptRotationMatrix.x + num2 * bullet.bulletTemplate.scriptRotationMatrix.y;
@@ -407,7 +407,11 @@ public class TimelineInterprenter : MonoBehaviour {
                     }
                     continue;
                 case TimelineCommand.Command.DESTROYPARENT: //Destroys whatever this is attached to.
-                    Destroy(transform.gameObject);
+                    if (parentBullet != null) { //Destroying bullets is wasteful, they should be added to the dead bullet pile.
+                        parentBullet.Deactivate();
+                    } else {
+                        Destroy(transform.gameObject);
+                    }
                     continue;
                 case TimelineCommand.Command.WAIT:
                     cooldown = Mathf.RoundToInt(ParseValue(currentCommand.args[0]));
@@ -416,9 +420,6 @@ public class TimelineInterprenter : MonoBehaviour {
                     parentEnemy.health = Mathf.RoundToInt(ParseValue(currentCommand.args[0]));
                     parentEnemy.template.maxHealth = parentEnemy.health;
                     parentEnemy.UpdateHealthbar();
-                    continue;
-                case TimelineCommand.Command.SETPARENTSCORE:
-                    parentEnemy.template.baseScore = (uint)Mathf.RoundToInt(ParseValue(currentCommand.args[0]));
                     continue;
                 case TimelineCommand.Command.ANGLETOPLAYER: //Returns the angle to the player.
                     pos = transform.position;
@@ -505,11 +506,20 @@ public class TimelineInterprenter : MonoBehaviour {
     /// <param name="name">The name of the var</param>
     /// <param name="value">The value of the var</param>
     private void SetNumber(string name, float value) {
-        stringHash = name.GetHashCode();
-        if (numberVars.ContainsKey(stringHash)) {
-            numberVars[stringHash] = value;
+        if (name[0] == 95) { //Starts with '_'
+            stringHash = name.GetHashCode();
+            if (globalNumberVars.ContainsKey(stringHash)) {
+                globalNumberVars[stringHash] = value;
+            } else {
+                globalNumberVars.Add(stringHash, value);
+            }
         } else {
-            numberVars.Add(stringHash, value);
+            stringHash = name.GetHashCode();
+            if (numberVars.ContainsKey(stringHash)) {
+                numberVars[stringHash] = value;
+            } else {
+                numberVars.Add(stringHash, value);
+            }
         }
     }
 
@@ -521,12 +531,189 @@ public class TimelineInterprenter : MonoBehaviour {
     private float GetNumber(string name) { 
         stringHash = name.GetHashCode();
         float returnFloat;
-        if (!numberVars.TryGetValue(stringHash, out returnFloat)) {
-            numberVars.Add(stringHash, 0f);
-            return 0f;
+        if (name[0] == 95) { //Starts with '_'
+            if (!globalNumberVars.TryGetValue(stringHash, out returnFloat)) {
+                globalNumberVars.Add(stringHash, 0f);
+                return 0f;
+            }
+        } else {
+            if (!numberVars.TryGetValue(stringHash, out returnFloat)) {
+                numberVars.Add(stringHash, 0f);
+                return 0f;
+            }
         }
         return returnFloat;
     }
+
+    /// <summary>
+    /// Gets the BulletTemplate in the numberVars dictionary by name. If it doesn't exist, it creates it, and returns it.
+    /// </summary>
+    /// <param name="name">The var name to retrieve</param>
+    /// <returns></returns>
+    private BulletTemplate GetBulletTemplate(string name) {
+        stringHash = name.GetHashCode();
+        if (name[0] == 95) { //Starts with '_'
+            if (!globalBulletTemplateVars.ContainsKey(stringHash)) {
+                globalBulletTemplateVars.Add(stringHash, new BulletTemplate());
+                return new BulletTemplate();
+            } else {
+                return globalBulletTemplateVars[stringHash];
+            }
+        } else {
+            if (!bulletTemplateVars.ContainsKey(stringHash)) {
+                bulletTemplateVars.Add(stringHash, new BulletTemplate());
+                return new BulletTemplate();
+            } else {
+                return bulletTemplateVars[stringHash];
+            }
+        }
+    }
+
+    /// <summary>
+    /// Sets the BulletTemplate in the bulletTemplateVars dictionary to whatever value is. If it doesn't exists, it creates it.
+    /// </summary>
+    /// <param name="name">The name of the var</param>
+    /// <param name="value">The value of the var</param>
+    private void SetBulletTemplate(string name, BulletTemplate value) {
+        stringHash = name.GetHashCode();
+        if (name[0] == 95) { //Starts with '_'
+            if (globalBulletTemplateVars.ContainsKey(stringHash)) {
+                globalBulletTemplateVars[stringHash] = value;
+            } else {
+                globalBulletTemplateVars.Add(stringHash, value);
+            }
+        } else {
+            if (bulletTemplateVars.ContainsKey(stringHash)) {
+                bulletTemplateVars[stringHash] = value;
+            } else {
+                bulletTemplateVars.Add(stringHash, value);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets the EnemyTemplate in the numberVars dictionary by name. If it doesn't exist, it creates it, and returns it.
+    /// </summary>
+    /// <param name="name">The var name to retrieve</param>
+    /// <returns></returns>
+    private EnemyTemplate GetEnemyTemplate(string name) {
+        stringHash = name.GetHashCode();
+        if (name[0] == 95) { //Starts with '_'
+            if (!globalEnemyTemplateVars.ContainsKey(stringHash)) {
+                globalEnemyTemplateVars.Add(stringHash, new EnemyTemplate());
+                return new EnemyTemplate();
+            } else {
+                return globalEnemyTemplateVars[stringHash];
+            }
+        } else {
+            if (!enemyTemplateVars.ContainsKey(stringHash)) {
+                enemyTemplateVars.Add(stringHash, new EnemyTemplate());
+                return new EnemyTemplate();
+            } else {
+                return enemyTemplateVars[stringHash];
+            }
+        }
+    }
+
+    /// <summary>
+    /// Sets the EnemyTemplate in the enemyTemplateVars dictionary to whatever value is. If it doesn't exists, it creates it.
+    /// </summary>
+    /// <param name="name">The name of the var</param>
+    /// <param name="value">The value of the var</param>
+    private void SetEnemyTemplate(string name, EnemyTemplate value) {
+        stringHash = name.GetHashCode();
+        if (name[0] == 95) { //Starts with '_'
+            if (globalEnemyTemplateVars.ContainsKey(stringHash)) {
+                globalEnemyTemplateVars[stringHash] = value;
+            } else {
+                globalEnemyTemplateVars.Add(stringHash, value);
+            }
+        } else {
+            if (enemyTemplateVars.ContainsKey(stringHash)) {
+                enemyTemplateVars[stringHash] = value;
+            } else {
+                enemyTemplateVars.Add(stringHash, value);
+            }
+        }
+    }
+
+    private LaserTemplate GetLaserTemplate(string name) {
+        stringHash = name.GetHashCode();
+        if (name[0] == 95) { //Starts with '_'
+            if (!globalLaserTemplateVars.ContainsKey(stringHash)) {
+                globalLaserTemplateVars.Add(stringHash, new LaserTemplate());
+                return new LaserTemplate();
+            } else {
+                return globalLaserTemplateVars[stringHash];
+            }
+        } else {
+            if (!laserTemplateVars.ContainsKey(stringHash)) {
+                laserTemplateVars.Add(stringHash, new LaserTemplate());
+                return new LaserTemplate();
+            } else {
+                return laserTemplateVars[stringHash];
+            }
+        }
+    }
+
+    private void SetLaserTemplate(string name, LaserTemplate value) {
+        stringHash = name.GetHashCode();
+        if (name[0] == 95) { //Starts with '_'
+        } else {
+            if (laserTemplateVars.ContainsKey(stringHash)) {
+                laserTemplateVars[stringHash] = value;
+            } else {
+                laserTemplateVars.Add(stringHash, value);
+            }
+        }
+    }
+
+    /// <summary>
+    /// A faster method than 26 String.Contains(char)'s for my needs.
+    /// </summary>
+    /// <param name="toEvaluate">The string to check if it has letters.</param>
+    /// <returns>True if it contains any of a-z or A-Z.</returns>
+    private static bool ContainsLetters(string toEvaluate) {
+        foreach (char c in toEvaluate) {
+            if (c >= 65 && c <= 122) { //All letters in UTF-16 from A to Z to a to z
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Returns whatever is between the first open brace and second to last character, seperated by comma's.
+    /// </summary>
+    /// <param name="toEvaluate">The string to evaluate.</param>
+    /// <returns>Everything that was originally between braces in <function>(args[0],args[1] ... )</returns>
+    public static List<string> GetArguments(string toEvaluate) {
+        //Assuming only one set of braces
+        int i = 0;
+        while (toEvaluate[i] != '(') {
+            i++;
+            if (i >= toEvaluate.Length) {
+                return new List<string>();
+            }
+        }
+        string returnString = toEvaluate.Substring(i + 1, toEvaluate.Length - i - 2);
+        List<string> returnList = new List<string>();
+        foreach (string str in returnString.Split(',')) {
+            returnList.Add(str);
+        }
+        return returnList;
+    }
+
+    /// <summary>
+    /// Returns whatever is before the first open brace for each entry in the toEvaluate array.
+    /// </summary>
+    /// <param name="toEvaluate">The string to find the function of.</param>
+    /// <returns>Returns whatever is before the first open brace.</returns>
+    public static string GetFunction(string toEvaluate) { 
+        string returnString = toEvaluate.Split('(')[0];
+        return returnString;
+    }
+    
     /// <summary>
     /// Parses value - whether it's a number or numberVars var name.
     /// </summary>
@@ -586,128 +773,5 @@ public class TimelineInterprenter : MonoBehaviour {
             }
             return f;
         }
-    }
-
-    /// <summary>
-    /// Gets the BulletTemplate in the numberVars dictionary by name. If it doesn't exist, it creates it, and returns it.
-    /// </summary>
-    /// <param name="name">The var name to retrieve</param>
-    /// <returns></returns>
-    private BulletTemplate GetBulletTemplate(string name) {
-        stringHash = name.GetHashCode();
-        if (!bulletTemplateVars.ContainsKey(stringHash)) {
-            bulletTemplateVars.Add(stringHash, new BulletTemplate());
-            return new BulletTemplate();
-        } else {
-            return bulletTemplateVars[stringHash];
-        }
-    }
-
-    /// <summary>
-    /// Sets the BulletTemplate in the bulletTemplateVars dictionary to whatever value is. If it doesn't exists, it creates it.
-    /// </summary>
-    /// <param name="name">The name of the var</param>
-    /// <param name="value">The value of the var</param>
-    private void SetBulletTemplate(string name, BulletTemplate value) {
-        stringHash = name.GetHashCode();
-        if (bulletTemplateVars.ContainsKey(stringHash)) {
-            bulletTemplateVars[stringHash] = value;
-        } else {
-            bulletTemplateVars.Add(stringHash, value);
-        }
-    }
-
-    /// <summary>
-    /// Gets the EnemyTemplate in the numberVars dictionary by name. If it doesn't exist, it creates it, and returns it.
-    /// </summary>
-    /// <param name="name">The var name to retrieve</param>
-    /// <returns></returns>
-    private EnemyTemplate GetEnemyTemplate(string name) {
-        stringHash = name.GetHashCode();
-        if (!enemyTemplateVars.ContainsKey(stringHash)) {
-            enemyTemplateVars.Add(stringHash, new EnemyTemplate());
-            return new EnemyTemplate();
-        } else {
-            return enemyTemplateVars[stringHash];
-        }
-    }
-
-    /// <summary>
-    /// Sets the EnemyTemplate in the enemyTemplateVars dictionary to whatever value is. If it doesn't exists, it creates it.
-    /// </summary>
-    /// <param name="name">The name of the var</param>
-    /// <param name="value">The value of the var</param>
-    private void SetEnemyTemplate(string name, EnemyTemplate value) {
-        stringHash = name.GetHashCode();
-        if (enemyTemplateVars.ContainsKey(stringHash)) {
-            enemyTemplateVars[stringHash] = value;
-        } else {
-            enemyTemplateVars.Add(stringHash, value);
-        }
-    }
-
-    private LaserTemplate GetLaserTemplate(string name) {
-        stringHash = name.GetHashCode();
-        if (!laserTemplateVars.ContainsKey(stringHash)) {
-            laserTemplateVars.Add(stringHash, new LaserTemplate());
-            return new LaserTemplate();
-        } else {
-            return laserTemplateVars[stringHash];
-        }
-    }
-
-    private void SetLaserTemplate(string name, LaserTemplate value) {
-        stringHash = name.GetHashCode();
-        if (laserTemplateVars.ContainsKey(stringHash)) {
-            laserTemplateVars[stringHash] = value;
-        } else {
-            laserTemplateVars.Add(stringHash, value);
-        }
-    }
-
-    /// <summary>
-    /// A faster method than 26 String.Contains(char)'s for my needs.
-    /// </summary>
-    /// <param name="toEvaluate">The string to check if it has letters.</param>
-    /// <returns>True if it contains any of a-z or A-Z.</returns>
-    private static bool ContainsLetters(string toEvaluate) {
-        foreach (char c in toEvaluate) {
-            if (c >= 65 && c <= 122) { //All letters in UTF-16 from A to Z to a to z
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /// <summary>
-    /// Returns whatever is between the first open brace and second to last character, seperated by comma's.
-    /// </summary>
-    /// <param name="toEvaluate">The string to evaluate.</param>
-    /// <returns>Everything that was originally between braces in <function>(args[0],args[1] ... )</returns>
-    public static List<string> GetArguments(string toEvaluate) {
-        //Assuming only one set of braces
-        int i = 0;
-        while (toEvaluate[i] != '(') {
-            i++;
-            if (i >= toEvaluate.Length) {
-                return new List<string>();
-            }
-        }
-        string returnString = toEvaluate.Substring(i + 1, toEvaluate.Length - i - 2);
-        List<string> returnList = new List<string>();
-        foreach (string str in returnString.Split(',')) {
-            returnList.Add(str);
-        }
-        return returnList;
-    }
-
-    /// <summary>
-    /// Returns whatever is before the first open brace for each entry in the toEvaluate array.
-    /// </summary>
-    /// <param name="toEvaluate">The string to find the function of.</param>
-    /// <returns>Returns whatever is before the first open brace.</returns>
-    public static string GetFunction(string toEvaluate) { 
-        string returnString = toEvaluate.Split('(')[0];
-        return returnString;
     }
 }

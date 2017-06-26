@@ -1,0 +1,208 @@
+Note I: The x coordinate of the playfield is between -4 and +4. The y coordinate of the playfield is between -4.65 and +4.65.
+Note II: Error checking is relatively expensive, so I assume everything fits the criteria. It's easy to break the game with this yaknow?
+Note III: <..> means required, [..] means optional. Everything else is literally that character, and case-sensitive.
+Examples and options are indented from normal text.
+
+#===================================================#
+Dialogue syntax:
+#===================================================#
+Text in dialogue files is formatting like this:
+  <character>|<her emotion/expression>|<whether she's on the right or left of the screen>|<whether to show the other side>|<her dialogue>|[other options| ...]
+
+Characters must be one of the following:
+  charno   rachel
+The expression must be one of the following:
+  alert   annoyed   embarrased   happy   neutral   surprised   tired   thinking
+Left/Right must be one of the following:
+  left   right
+Showing the other side must be one of the following:
+  false   true
+The dialogue can be any arbitrary text, where \n is used for newlines.
+
+Other options can be one of the following:
+  timelinetick   timed|<time>   introduction|<name>|<title>
+'time' must be any natural number. Every 60 is a second. This makes it so the dialogue can't be skipped, but continues automatically after 'time'/60 seconds.
+'name' and 'title' can be any arbitrary text. Shows this text underneath the dialogue at that character's side.
+'timelinetick' makes all Timelines continue for 1 game tick (so: until they come accross a wait(time); function)
+
+Example:
+  charno|happy|left|false|Hi there!|timed|120|introduction|Charno|A pixie|
+
+#===================================================#
+Timeline syntax:
+#===================================================#
+Note: A "number" (or "variable", or "value", etc) must be in the form of either:
+  2
+  2.30
+  varname
+  _globalvarname
+No comma's, f's, d's or anything like that. All text must be lowercase.
+
+Every line is either a comment:
+  #[any text];
+  //[any text];
+or a function:
+  <functionname>;
+  <functionname>([args, seperated with comma's]);
+==================
+Control functions:
+==================
+  repeat(count); [..] endrepeat;
+count: A variable determining how many times everything between the 'repeat' and 'count' should be executed.
+
+  if(var1,condition,var2); [..] [else; [..]] endif;
+var1: A variable
+condition: must be one of the following:
+  ==   !=   >   <=   <   >=
+var2: A variable
+If the check is true, it executes the block between either 'if' and 'endif', or 'if' and 'else' if 'else' exists.
+If the check is false, it executes the block between 'else' and 'endif' if 'else' exists, or skips to 'endif'.
+
+  wait(time);
+time: A variable determining how long to wait. Every 60 is a second.
+================
+Maths functions:
+================(Ommitting the <>'s here because I'm too lazy. All arguments are required.)
+  random(store, var1, var2);   set(store, var1);   add(store, var1, var2);   sub(store, var1, var2);   mul(store, var1, var2);   div(store, var1, var2);   mod(store, var1, var2);   pow(store, var1, var2);   sin(store, var1);   asin(store, var1);   cos(store, var1);   acos(store, var1);   tan(store, var1);   atan(store, var1);   abs(store, var1);
+Their respective functions set the value of 'store' to:
+A random number (not neccesarily whole) between var1 and var2; The value of var1; var1+var2; var1-var2; var1*var2; var1/var2; var1%var2; var1^var2; sin(var1); asin(var1); cos(var1); acos(var1); tan(var1); atan(var1); abs(var1).
+The trigonometric functions are in radians.
+==================
+General functions:
+==================
+  starttimeline(<path>);
+path: The place the timeline is located within within the Resources folder in unity. TODO: From outside unity.
+Attaches another Timeline to this object that starts getting executed immediatly.
+  dialogue(<path>);
+path: The place the dialogue is located within within the Resources folder in unity. TODO: From outside unity.
+Starts the dialogue. Timelines normally don't run while dialogue is active.
+  createbullet(<id>);
+  createenemy(<id>);
+  createlaser(<id>);
+id: what all properties have been saved to.
+This creates a bullet, enemy, or laser, found by 'id'.
+  moveparent(<x>, <y>);
+Adds 'x' to the x-position of the object this is attached to and 'y' to the y-position. This is influenced by "scriptrotation".
+  destroyparent;
+Removes the object this is attached to from the game.
+  setparenthealth(<value>);
+value: Whatever to set the health AND maxhealth of the enemy this is attached to to. If it's not attached to an enemy, it breaks because it makes no sense.
+  angletoplayer(<store>);
+store: Where to store the angle between what object this is attached to and the player.
+  angletopoint(<store>, <x>, <y>);
+store: Where to store the angle between what object this is attached to and a point (x,y).
+  getposition(<storex>, <storey>);
+storex/storey: Where to store the x and y coordinate of the position of what object this is attached to.
+  getplayerposition(<storex>, <storey>);
+storex/storey: Where to store the x and y coordinate of the poosition of the player.
+===================
+Property functions:
+===================
+General format:
+  enemyproperty(<id>, <property>, [value[,more values..]]);
+  bulletproperty(<id>, <property>, [value[,move values..]]);
+  laserproperty(<id>, <property>, [value[,more values..]]);
+id: What enemy/bullet/laser this property with these values belong to. used by createEnemy/Bullet/Laser.
+All properties and values:
+=======
+Bullet:
+  movement, <x>, <y>
+How this bullet moves every tick.
+Default: x=0, y=0
+  enemyshot, <0 (false) or 1 (true)>
+Whether this is shot by an enemy and can be grazed/lethal, or can damage enemies.
+Default: 1
+  scale, <value>
+How large the bullet is
+Default: 1
+  id, <value>
+What the graphical ID of this bullet is. Look at Resources/Graphics/Bullets
+Default: 0
+  innercolor, <red>, <green>, <blue>, <alpha>
+What colour and opacity the outer color (green in texture file) of this bullet is. Scale from 0 to 1. Alpha=0 means invisible, alpha=1 means fully visible.
+Default: red=1, green=1, blue=1, alpha=1 (This is also known as "white".)
+  outercolor, <red>, <green>, <blue>, <alpha>
+What colour and opacity the inner color (red in the texture file) of this bullet is. Works the same as innercolor.
+Default: red=1, green=1, blue=1, alpha=1
+  rotation, <value>
+What rotation this bullet has, in radians.
+Default: 0
+  position, <x>, <y>
+What position to spawn this bullet in.
+Default: x=0, y=0
+  relativepos, <0 (false) or 1 (true)>
+Whether the position this bullet spawns in is relative to the position the object the timeline that spawns it is attached to or absolute.
+Default: 1
+  clearimmune, <0 (false) or 1 (true)>
+Whether the bullet can be cleared by bombs/deaths.
+Default: 0
+  scriptrotation, <angle>
+Rotates the results of the following 'angle' radians: bulletProperty's scriprotation, movement, position, rotation; laserProperty's rotation; moveparent
+Default: 0
+  advancedpath, <path>
+Adds a Timeline to the created bullet. Same path rules as starttimeline(<path>);
+Default: 
+  harmless, <0 (false) or 1 (true)>
+Whether this bullet can hurt the player. Different from enemyshot, as this doesn't influence graze or anything. Just disables player collisions.
+default: 0
+======
+Enemy:
+  scale, <x>
+How large the enemy is
+Default: 1
+  attackpath, <path1> [,<path2> ... ,<pathn>]
+What attack(s) this enemy uses. After one attack's health is depleted, it continues through it attacks until there are none, then it dies. Same path rules as starttimeline(<path>);
+Default: 
+  time, <time1> [,<time2> ... ,<timen>]
+The time each attack takes. 60 is a second. There needs to be one for each entry of attackpath. Negative values denote survival cards.
+Default: 
+  id, <value>
+What the graphical ID of this bullet is. Look at Resources/Graphics/Enemies
+Default: 0
+  maxhealth, <value>
+What the health and maxhealth of the first attack is.
+Default: 1
+  boss, <0 (false) or 1 (true)>
+Whether this is a boss.
+Default: 0
+  bossportrait, <use character ID from the dialogue section>
+What character's 'happy' portrait to use when announcing spellcards
+Default: rachel
+  dropvalue, <value>
+How many value items to drop???? todo: still unsure about value
+Default: 0
+  droppower, <value>
+How much power to drop, from 0.00 to 4.00. Whole multiples get converted into a large power item worth 1.00, if it's >=4.00, a full power item gets dropped. Rounded to 0.05's.
+Default: 0
+  dropscore, <value>
+How many score items to drop.
+Default: 0
+  startpos, <x>, <y>
+Where to spawn the enemy
+Default: x=0, y=0
+  basescore, <value>
+How much to add directly to the score when progressing. This is NOT spellcard bonus.
+======
+Laser:
+  warnduration, <value>
+For how long it is harmless. 60 in a second. The last 1/6th second it widens but is still harmless.
+Default: 0
+  shotduration, <value>
+For how long it is harmful. 60 in a second.
+  innercolor, <red>, <green>, <blue>, <alpha>
+What colour and opacity the outer color (green in texture file) of this laser is. Scale from 0 to 1. Alpha=0 means invisible, alpha=1 means fully visible.
+Default: red=1, green=1, blue=1, alpha=1 (This is also known as "white".)
+  outercolor, <red>, <green>, <blue>, <alpha>
+What colour and opacity the inner color (red in the texture file) of this laser is. Works the same as innercolor.
+Default: red=1, green=1, blue=1, alpha=1
+  width, <value>
+How wide the laser is.
+Default: 0.5
+  movement, <x>, <y>
+How this moves.
+Default: x=0, y=0
+  rotation, <value>
+What rotation this has, in radians.
+Default: 0
+  rotationspeed, <value>
+How much this rotates, 60 * value radians per second.

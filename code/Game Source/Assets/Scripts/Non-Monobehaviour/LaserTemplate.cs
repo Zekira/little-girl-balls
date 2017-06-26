@@ -10,8 +10,8 @@ public class LaserTemplate {
     public float rotation = 0f; //In radians
     public float rotationSpeed = 0f; //In radians per tick
 
-    public Color outerColor = new Color(0, 0, 0, 0); //These two the same way as regular bullets
-    public Color innerColor = new Color(0, 0, 0, 0);
+    public Color outerColor = new Color(1, 1, 1, 1); //These two the same way as regular bullets
+    public Color innerColor = new Color(1, 1, 1, 1);
 
     public LaserTemplate() {
     }
