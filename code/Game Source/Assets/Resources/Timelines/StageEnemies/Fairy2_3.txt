@@ -1,0 +1,26 @@
+starttimeline(Timelines/Movement/VerticalInWaitVerticalOut);
+
+wait(30);
+
+bulletproperty(bullet, scale, 0.33);
+bulletproperty(bullet, id, 7);
+bulletproperty(bullet, innercolor, 1, 1, 1, 1);
+bulletproperty(bullet, outercolor, 0, 0, 1, 1);
+
+random(angle, 0, 6.28);
+repeat(8);
+	repeat(20);
+		add(angle, angle, 0.157);
+		repeat(5);
+			sin(movex, angle);
+			cos(movey, angle);
+			mul(movex, movex, 0.04);
+			mul(movey, movey, 0.04);
+			bulletproperty(bullet, movement, movex, movey);
+			createbullet(bullet);
+			add(angle, angle, 0.0314);
+		endrepeat;
+	endrepeat;
+	wait(60);
+	add(angle, angle, 0.157);
+endrepeat;

@@ -172,7 +172,7 @@ Default: rachel
 How many value items to drop???? todo: still unsure about value
 Default: 0
   droppower, <value>
-How much power to drop, from 0.00 to 4.00. Whole multiples get converted into a large power item worth 1.00, if it's >=4.00, a full power item gets dropped. Rounded to 0.05's.
+How much power to drop, from 0 to 400. Whole multiples get converted into a large power item worth 100, if it's >=400, a full power item gets dropped. Rounded to 5's.
 Default: 0
   dropscore, <value>
 How many score items to drop.
@@ -181,7 +181,7 @@ Default: 0
 Where to spawn the enemy
 Default: x=0, y=0
   basescore, <value>
-How much to add directly to the score when progressing. This is NOT spellcard bonus.
+How much to add directly to the score when progressing attacks/being killed. This is NOT spellcard bonus or dropped score.
 ======
 Laser:
   warnduration, <value>

@@ -84,9 +84,7 @@ public class Bullet : MonoBehaviour {
     /// Sets the bullet to inactive and into GlobalHelper's bullet queue.
     /// </summary>
     public void Deactivate() {
-        if (GetComponent<Laser>() != null) { //Remove the laser if it's there.
-            Destroy(GetComponent<Laser>());
-        }
+        GlobalHelper.currentBullets--;
         GlobalHelper.backupBullets.Add(gameObject);
         gameObject.SetActive(false);
     }

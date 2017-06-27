@@ -1,0 +1,10 @@
+repeat(90);
+	moveparent(0, -0.02);
+	wait(1);
+endrepeat;
+wait(300);
+repeat(90);
+	moveparent(0, 0.02);
+	wait(1);
+endrepeat;
+destroyparent;

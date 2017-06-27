@@ -127,7 +127,7 @@ public class PlayerMovement : MonoBehaviour {
 
             //Debug stuff
             if (Input.GetKeyDown(KeyCode.Slash)) {
-                Debug.Log(GameObject.FindWithTag("BulletParent").transform.childCount + "/" + GlobalHelper.totalFiredBullets);
+                Debug.Log(GlobalHelper.currentBullets + "/" + GlobalHelper.totalFiredBullets);
             }
         }
     }

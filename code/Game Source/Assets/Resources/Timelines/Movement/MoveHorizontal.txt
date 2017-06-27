@@ -1,0 +1,18 @@
+getposition(posx,posy);
+if (posx, <, 0);
+	repeat(9);
+	repeat(40);
+		moveparent(0.025, 0);
+		wait(1);
+	endrepeat;
+	endrepeat;
+	destroyparent;
+else;
+	repeat(9);
+	repeat(40);
+		moveparent(-0.025, 0);
+		wait(1);
+	endrepeat;
+	endrepeat;
+	destroyparent;
+endif;

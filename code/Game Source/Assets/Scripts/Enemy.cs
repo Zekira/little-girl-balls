@@ -189,23 +189,23 @@ public class Enemy : MonoBehaviour {
     /// Drop the items specified in the EnemyTemplate.
     /// </summary>
     private void DropItems() {
-        Vector3 position;
-        position = transform.position;
+        Vector3 position, basePosition;
+        basePosition = transform.position;
         //Drop stuff depending on what's stated in the template, with a random offset, and z-value set to how important it is (+randomness to prevent z-fighting).
         for (int i = 0; i < template.dropPowerCount; i++) {
-            position += new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble() - 0.01f);
+            position = basePosition + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble() - 0.01f);
             GlobalHelper.CreateItem(Item.ItemType.POWER, position);
         }
         for (int i = 0; i < template.dropPowerLargeCount; i++) {
-            position += new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble() - 0.02f);
+            position = basePosition + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble() - 0.02f);
             GlobalHelper.CreateItem(Item.ItemType.LARGEPOWER, position);
         }
         if (template.dropPowerFullCount >= 1) {
-            position += new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble() - 0.03f);
+            position = basePosition + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble() - 0.03f);
             GlobalHelper.CreateItem(Item.ItemType.FULLPOWER, position);
         }
         for (int i = 0; i < template.dropScoreCount; i++) {
-            position += new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble());
+            position = basePosition + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble());
             GlobalHelper.CreateItem(Item.ItemType.POINT, position);
         }
     }

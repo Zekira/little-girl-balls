@@ -1,0 +1,52 @@
+wait(120);
+enemyproperty(fairy, attackpath, Timelines/StageEnemies/Fairy1_3);
+enemyproperty(fairy, id, 1);
+enemyproperty(fairy, maxhealth, 10);
+enemyproperty(fairy, droppower, 5);
+enemyproperty(fairy, dropscore, 2);
+enemyproperty(fairy, basescore, 1000);
+
+enemyproperty(fairy2, attackpath, Timelines/StageEnemies/Fairy2_3);
+enemyproperty(fairy2, id, 1);
+enemyproperty(fairy2, maxhealth, 50);
+enemyproperty(fairy2, droppower, 50);
+enemyproperty(fairy2, dropscore, 10);
+enemyproperty(fairy2, basescore, 3000);
+
+enemyproperty(fairy, startpos, -4.5, 3);
+repeat(4);
+	createenemy(fairy);
+	wait(40);
+endrepeat;
+enemyproperty(fairy, startpos, 4.5, 3);
+repeat(4);
+	createenemy(fairy);
+	wait(40);
+endrepeat;
+
+wait(100);
+
+enemyproperty(fairy2, startpos, 0, 5);
+createenemy(fairy2);
+
+enemyproperty(fairy, startpos, -4.5, 3);
+createenemy(fairy);
+enemyproperty(fairy, startpos, 4.5, 3);
+createenemy(fairy);
+wait(50);
+enemyproperty(fairy, startpos, -4.5, 2);
+createenemy(fairy);
+enemyproperty(fairy, startpos, 4.5, 2);
+createenemy(fairy);
+wait(50);
+enemyproperty(fairy, startpos, -4.5, 1);
+createenemy(fairy);
+enemyproperty(fairy, startpos, 4.5, 1);
+createenemy(fairy);
+
+wait(100);
+
+enemyproperty(fairy2, startpos, -2, 5);
+createenemy(fairy2);
+enemyproperty(fairy2, startpos, 2, 5);
+createenemy(fairy2);

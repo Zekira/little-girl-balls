@@ -11,12 +11,13 @@ public class GlobalHelper : MonoBehaviour {
     //Things needed all the time that make (some) sense even when not in a level.
     public static System.Random random = new System.Random(); //NOTE: Handle ALL random events through this; if I want to be able to add replays, I should save the seeds and input them here.
     public static int totalFiredBullets; //Fun statistic to keep track of.
+    public static int currentBullets;
 
     public static bool paused = false;
 
     public static int level = 1;
     public enum Difficulty { EASY, NORMAL, HARD, LUNATIC, EXTRA };
-    public static Difficulty difficulty = Difficulty.EASY;
+    public static Difficulty difficulty = Difficulty.LUNATIC;
 
     //These things only make sense in a level, so they're defined, but initialised in Awake()
     public static Transform enemyParent, itemParent, bulletParent, spellcardBackground, secondCounter, msecondCounter,canvas;
@@ -71,6 +72,9 @@ public class GlobalHelper : MonoBehaviour {
         LoadBulletSprites();
         LoadItemSprites();
 
+        GameObject.FindWithTag("UIVariable").transform.FindChild("Difficulty").GetComponent<RawImage>().texture = (Texture2D)Resources.Load("Graphics/Difficulty/" + (int)difficulty);
+
+        
         paused = false;
 
     }
@@ -163,6 +167,7 @@ public class GlobalHelper : MonoBehaviour {
     /// Creates an empty bullet ready to be used by CreateBullet(*actual arguments*). Spam this when not lagging. This is done to prevent Instantiate() lagginess as flipping a bool is faster than that.
     /// </summary>
     public static void CreateEmptyBullet() {
+        currentBullets++;
         createdObject = GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Bullet"));
         createdObject.transform.SetParent(bulletParent);
         createdObject.GetComponent<Bullet>().Deactivate();
@@ -175,6 +180,7 @@ public class GlobalHelper : MonoBehaviour {
     /// <param name="bulletPosition">The position to spawn the bullet in.</param>
     /// <returns>Returns a reference to the created bullet.</returns>
     public static GameObject CreateBullet(BulletTemplate bulletTemplate, Vector2 bulletPosition) {
+        currentBullets++;
         //The z-value of bullets is this value because this prevents z-fighting. Also, fun stats.
         totalFiredBullets++;
         //Take it either from the backup list, or instantiate a new bullet. The former is prefered because it's faster.
@@ -295,7 +301,7 @@ public class GlobalHelper : MonoBehaviour {
 
     public static void LoadBulletSprites() {
         foreach (Texture2D texture in Resources.LoadAll<Texture2D>("Graphics/Bullets")) {
-            bulletSprites.Add(Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 256));
+            bulletSprites.Add(Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 128));
         }
     }
 
