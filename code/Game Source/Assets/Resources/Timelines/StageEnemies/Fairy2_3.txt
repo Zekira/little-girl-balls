@@ -21,6 +21,6 @@ repeat(8);
 			add(angle, angle, 0.0314);
 		endrepeat;
 	endrepeat;
-	wait(60);
+	wait(70);
 	add(angle, angle, 0.157);
 endrepeat;
