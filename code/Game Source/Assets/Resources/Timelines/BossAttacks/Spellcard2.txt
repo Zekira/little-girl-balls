@@ -1,0 +1,35 @@
+attackduration(1800);
+setparenthealth(170);
+
+laserproperty(laser, warnduration, 60);
+laserproperty(laser, shotduration, 120);
+laserproperty(laser, outercolor, 1, 1, 0, 1);
+laserproperty(laser, innercolor, 1, 1, 1, 1);
+laserproperty(laser, width, 0.5);
+laserproperty(laser, relativepos, 0);
+
+bulletproperty(bullet, scale, 0.33);
+bulletproperty(bullet, id, 5);
+bulletproperty(bullet, outercolor, 1, 1, 0, 1);
+bulletproperty(bullet, innercolor, 1, 1, 1, 1);
+bulletproperty(bullet, relativepos, 0);
+
+repeat(90);
+	random(randomx, -3.6, 3.6);
+	random(randomangle, 2.94, 3.34);
+	laserproperty(laser, position, randomx, 5);
+	laserproperty(laser, rotation, randomangle);
+	createlaser(laser);
+	bulletproperty(bullet, position, randomx, 5);
+	set(bulletangle, 1.5707);
+	repeat(21);
+		sin(movex, bulletangle);
+		cos(movey, bulletangle);
+		mul(movex, movex, 0.02);
+		mul(movey, movey, 0.06);
+		bulletproperty(bullet, movement, movex, movey);
+		createbullet(bullet);
+		add(bulletangle, bulletangle, 0.1571);
+	endrepeat;
+	wait(20);
+endrepeat;

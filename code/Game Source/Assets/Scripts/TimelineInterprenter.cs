@@ -33,6 +33,7 @@ public class TimelineInterprenter : MonoBehaviour {
     private static Vector3 pos, playerpos;
     private static int stringHash;
     private static bool ifevaluation;
+    private static List<TimelineCommand> enemyCommands = new List<TimelineCommand>();
 
     public void Reset(string newTimeLine) {
         patternPath = newTimeLine;
@@ -237,6 +238,9 @@ public class TimelineInterprenter : MonoBehaviour {
                             }
                             bulletTemplate.position = pos;
                             break;
+                        case TimelineCommand.BulletProperty.RELATIVEPOS:
+                            bulletTemplate.positionIsRelative = ParseValue(currentCommand.args[1]) > 0 ? true : false;
+                            break;
                         case TimelineCommand.BulletProperty.ENEMYSHOT:
                             bulletTemplate.enemyShot = ParseValue(currentCommand.args[1]) > 0 ? true : false;
                             break;
@@ -267,9 +271,6 @@ public class TimelineInterprenter : MonoBehaviour {
                                 bulletTemplate.rotation = ParseValue(currentCommand.args[1]);
                             }
                             break;
-                        case TimelineCommand.BulletProperty.RELATIVEPOS:
-                            bulletTemplate.positionIsRelative = ParseValue(currentCommand.args[1]) > 0 ? true : false;
-                            break;
                         case TimelineCommand.BulletProperty.ADVANCEDPATH:
                             bulletTemplate.advancedAttackPath = currentCommand.args[1];
                             break;
@@ -290,14 +291,19 @@ public class TimelineInterprenter : MonoBehaviour {
                             break;
                         case TimelineCommand.EnemyProperty.ATTACKPATH: //Sets one or more attackpaths of this enemy. Clears previous attackpaths.
                             enemyTemplate.attackPath.Clear();
-                            for (int i = 1; i < currentCommand.args.Count; i++) {
-                                enemyTemplate.attackPath.Add(currentCommand.args[i]);
-                            }
-                            break;
-                        case TimelineCommand.EnemyProperty.TIME: //States the time for each spellcard.
                             enemyTemplate.spellTimers.Clear();
                             for (int i = 1; i < currentCommand.args.Count; i++) {
-                                enemyTemplate.spellTimers.Add(Mathf.RoundToInt(ParseValue(currentCommand.args[i])));
+                                enemyTemplate.attackPath.Add(currentCommand.args[i]);
+                                //Read the files to get the time the attacks should last, and if it doesn't exist, let it be the default 9999. "Enemy" handles the rest, like survival cards etc.
+                                enemyCommands = TimelineCommand.GetCommands(currentCommand.args[i]);
+                                count = 9999;
+                                foreach (TimelineCommand c in enemyCommands) {
+                                    if (c.command == TimelineCommand.Command.ATTACKDURATION) {
+                                        count = Mathf.RoundToInt(ParseValue(c.args[0]));
+                                        break;
+                                    }
+                                }
+                                enemyTemplate.spellTimers.Add(count);
                             }
                             break;
                         case TimelineCommand.EnemyProperty.ID: //Sets the ID of the IMAGE of the enemy, as defined in Resources/Graphics/Enemies.
@@ -377,6 +383,22 @@ public class TimelineInterprenter : MonoBehaviour {
                             break;
                         case TimelineCommand.LaserProperty.ROTATIONSPEED:
                             laserTemplate.rotationSpeed = ParseValue(currentCommand.args[1]);
+                            break;
+                        case TimelineCommand.LaserProperty.POSITION:
+                            num1 = ParseValue(currentCommand.args[1]);
+                            num2 = ParseValue(currentCommand.args[2]);
+                            if (parentBullet != null) { //If the parent is a bullet, change its position to be rotated 
+                                parentTemplate = parentBullet.bulletTemplate;
+                                pos.x = num1 * parentTemplate.scriptRotationMatrix.x + num2 * parentTemplate.scriptRotationMatrix.y;
+                                pos.y = num1 * parentTemplate.scriptRotationMatrix.z + num2 * parentTemplate.scriptRotationMatrix.w;
+                            } else {
+                                pos.x = num1;
+                                pos.y = num2;
+                            }
+                            laserTemplate.position = pos;
+                            break;
+                        case TimelineCommand.LaserProperty.RELATIVEPOS:
+                            laserTemplate.positionIsRelative = ParseValue(currentCommand.args[1]) > 0 ? true : false;
                             break;
                     }
                     SetLaserTemplate(currentCommand.args[0], laserTemplate);

@@ -1,0 +1,30 @@
+attackduration(1200);
+setparenthealth(150);
+
+wait(20);
+
+bulletproperty(bullet, scale, 0.33);
+bulletproperty(bullet, id, 5);
+bulletproperty(bullet, outercolor, 1, 1, 0, 1);
+bulletproperty(bullet, innercolor, 1, 1, 1, 1);
+bulletproperty(bullet, relativepos, 0);
+
+getplayerposition(px, py);
+repeat(80);
+	getplayerposition(px, py);
+	add(px, px, -3);
+	random(movexreminder, -0.01, 0.01);
+	repeat(5);
+		bulletproperty(bullet, position, px, 5);
+		set(movex, movexreminder);
+		set(movey, -0.1);
+		repeat(6);
+			bulletproperty(bullet, movement, movex, movey);
+			mul(movex, movex, 0.8);
+			mul(movey, movey, 0.8);
+			createbullet(bullet);
+		endrepeat;
+		add(px, px, 1.5);
+	endrepeat;
+	wait(40);
+endrepeat;

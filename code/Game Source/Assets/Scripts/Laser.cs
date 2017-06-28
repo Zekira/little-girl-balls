@@ -38,7 +38,7 @@ public class Laser : MonoBehaviour {
                 }
                 if (grazeCooldown <= 0 && Mathf.Abs(playerPos.x) < (template.width + 0.4) / 2 && playerPos.y > 0) {
                     GlobalHelper.GetStats().Graze();
-                    grazeCooldown = 8;
+                    grazeCooldown = 4;
                 }
             } else if (timer > template.warnDuration + template.shotDuration) {
                 //GetComponent<Bullet>().Deactivate();

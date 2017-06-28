@@ -1,5 +1,5 @@
 Note I: The x coordinate of the playfield is between -4 and +4. The y coordinate of the playfield is between -4.65 and +4.65.
-Note II: Error checking is relatively expensive, so I assume everything fits the criteria. It's easy to break the game with this yaknow?
+Note II: Error checking is relatively expensive, so I assume everything fits the criteria and don't check anything. It's easy to break the game with this yaknow?
 Note III: <..> means required, [..] means optional. Everything else is literally that character, and case-sensitive.
 Examples and options are indented from normal text.
 
@@ -98,6 +98,8 @@ store: Where to store the angle between what object this is attached to and a po
 storex/storey: Where to store the x and y coordinate of the position of what object this is attached to.
   getplayerposition(<storex>, <storey>);
 storex/storey: Where to store the x and y coordinate of the poosition of the player.
+  attackduration(<time>);
+Needs to be in an attack/spellcard file. States how many 1/60th's of a second this attacks lasts. Negative values for timeout spells. If it's missing, assuming 9999. Good practice to have this the first line in a attack.
 ===================
 Property functions:
 ===================
@@ -156,9 +158,6 @@ Default: 1
   attackpath, <path1> [,<path2> ... ,<pathn>]
 What attack(s) this enemy uses. After one attack's health is depleted, it continues through it attacks until there are none, then it dies. Same path rules as starttimeline(<path>);
 Default: 
-  time, <time1> [,<time2> ... ,<timen>]
-The time each attack takes. 60 is a second. There needs to be one for each entry of attackpath. Negative values denote survival cards.
-Default: 
   id, <value>
 What the graphical ID of this bullet is. Look at Resources/Graphics/Enemies
 Default: 0
@@ -209,3 +208,9 @@ What rotation this has, in radians.
 Default: 0
   rotationspeed, <value>
 How much this rotates, 60 * value radians per second.
+  position, <x>, <y>
+What position to spawn this laser in.
+Default: x=0, y=0
+  relativepos, <0 (false) or 1 (true)>
+Whether the position this laser spawns in is relative to the position the object the timeline that spawns it is attached to or absolute.
+Default: 1

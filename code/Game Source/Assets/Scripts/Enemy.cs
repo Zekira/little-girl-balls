@@ -19,9 +19,8 @@ public class Enemy : MonoBehaviour {
     private int temptimer;
 
     void Start() {
-        //Initialising stuff to both prevent null errors and update the UI if this is a boss.
-        healthbarTransform = transform.Find("Healthbar");
         itemParentTransform = GameObject.FindWithTag("ItemParent").transform;
+        healthbarTransform = transform.FindChild("Healthbar");
         if (template.isBoss) {
             GlobalHelper.activeBosses++;
             healthbarTransform.gameObject.SetActive(true);
@@ -223,6 +222,9 @@ public class Enemy : MonoBehaviour {
     /// Updates the healthbar to the current health/maxhealth (through a shader).
     /// </summary>
     public void UpdateHealthbar() {
+        if (healthbarTransform == null) {
+            healthbarTransform = transform.FindChild("Healthbar");
+        }
         healthbarTransform.GetComponent<SpriteRenderer>().material.SetFloat("_Progress", health / ((float)template.maxHealth));
     }
 

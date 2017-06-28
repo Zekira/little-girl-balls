@@ -39,6 +39,7 @@ public class GlobalHelper : MonoBehaviour {
     private static SpriteRenderer spriteRenderer;
 
     //Things that make finding objects in other classes easier, but only make sense when in a level: the only time GlobalHelper is a script attached to an object.
+    //Also sets up things needed for the level and such as this only runs when loading the level.
     void Awake() {
         bulletParent = GameObject.FindWithTag("BulletParent").transform;
         enemyParent = GameObject.FindWithTag("EnemyParent").transform;
@@ -74,6 +75,9 @@ public class GlobalHelper : MonoBehaviour {
 
         GameObject.FindWithTag("UIVariable").transform.FindChild("Difficulty").GetComponent<RawImage>().texture = (Texture2D)Resources.Load("Graphics/Difficulty/" + (int)difficulty);
 
+        AudioSource audio = GameObject.FindWithTag("BGM").GetComponent<AudioSource>();
+        audio.clip = (AudioClip) Resources.Load("Audio/Music/Stage" + level);
+        audio.Play();
         
         paused = false;
 
@@ -284,7 +288,11 @@ public class GlobalHelper : MonoBehaviour {
 
     public static GameObject CreateLaser(LaserTemplate template, Vector2 position) {
         createdObject = GameObject.Instantiate(Resources.Load("Prefabs/Laser") as GameObject);
-        createdObject.transform.position = new Vector3(position.x, position.y, 1);
+        if (template.positionIsRelative) {
+            createdObject.transform.position = new Vector3(position.x + template.position.x, position.y + template.position.y, 1);
+        } else {
+            createdObject.transform.position = new Vector3(template.position.x, template.position.y, 1f);
+        }
         createdObject.transform.localScale = new Vector3(0.06f, 99f, 1f);
         createdObject.GetComponent<Laser>().template = template;
 
@@ -330,5 +338,10 @@ public class GlobalHelper : MonoBehaviour {
         GetPlayer().GetComponent<PlayerMovement>().UpdateFocused(); //Updating focus is needed when unpausing, otherwise it wouldn't register releasing/holding the button during the pause
         canvas.FindChild("Pause Canvas").gameObject.SetActive(paused);
         canvas.FindChild("Dialogue Canvas").gameObject.SetActive(dialogue && !paused);
+        if (paused) {
+            GameObject.FindWithTag("BGM").GetComponent<AudioSource>().Pause();
+        } else {
+            GameObject.FindWithTag("BGM").GetComponent<AudioSource>().UnPause();
+        }
     }
 }

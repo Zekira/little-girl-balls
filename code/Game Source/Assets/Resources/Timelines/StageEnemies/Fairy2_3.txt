@@ -1,3 +1,4 @@
+attackduration(9999);
 starttimeline(Timelines/Movement/VerticalInWaitVerticalOut);
 
 wait(20);

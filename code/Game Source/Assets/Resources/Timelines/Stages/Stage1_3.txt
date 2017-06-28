@@ -20,6 +20,14 @@ enemyproperty(fairy3, droppower, 5);
 enemyproperty(fairy3, dropscore, 2);
 enemyproperty(fairy3, basescore, 1000);
 
+enemyproperty(midboss, attackpath, Timelines/BossAttacks/1_3Mid1, Timelines/BossAttacks/Spellcard2);
+enemyproperty(midboss, id, 0);
+enemyproperty(midboss, maxhealth, 10); //Set by the attacks themselves anyway;
+enemyproperty(midboss, droppower, 10);
+enemyproperty(midboss, dropscore, 10);
+enemyproperty(midboss, basescore, 8000);
+enemyproperty(midboss, boss, 1);
+
 enemyproperty(fairy, startpos, -4.5, 3);
 repeat(5);
 	createenemy(fairy);
@@ -80,7 +88,7 @@ wait(160);
 enemyproperty(fairy, startpos, 4.5, 3);
 createenemy(fairy);
 
-wait(160);
+wait(180);
 
 enemyproperty(fairy3, startpos, -3.5, 5);
 createenemy(fairy3);
@@ -99,3 +107,8 @@ enemyproperty(fairy3, startpos, -1.5, 5);
 createenemy(fairy3);
 enemyproperty(fairy3, startpos, 1.5, 5);
 createenemy(fairy3);
+
+wait(540);
+enemyproperty(midboss, startpos, 0, 3);
+createenemy(midboss);
+//Maximum boss length: little more than 3000 because of the spellcard animation, let's say 3100 needs to be filled up

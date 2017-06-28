@@ -43,7 +43,7 @@ public class Bullet : MonoBehaviour {
                     otherpos = GlobalHelper.GetStats().playerPosition;
                     deltax = otherpos.x - posx;
                     deltay = otherpos.y - posy;
-                    if (!GlobalHelper.GetStats().noMovement && deltax * deltax + deltay * deltay < 0.5f * bulletTemplate.scale / 2f * bulletTemplate.scale / 2f + GlobalHelper.GetStats().hitboxRadius * GlobalHelper.GetStats().hitboxRadius) {
+                    if (!GlobalHelper.GetStats().noMovement && deltax * deltax + deltay * deltay < 0.5f * bulletTemplate.scale / 2f * bulletTemplate.scale / 2f + GlobalHelper.GetStats().hitboxRadius * GlobalHelper.GetStats().hitboxRadius * 0.33f) {
                         GlobalHelper.GetStats().TakeDamage();
                         Deactivate();
                     } else if (!grazed && deltax * deltax + deltay * deltay < GlobalHelper.GetStats().grazeRadius * GlobalHelper.GetStats().grazeRadius) {
@@ -66,7 +66,7 @@ public class Bullet : MonoBehaviour {
                     }
                 }
             }
-            if (posx * posx + posy * posy > 40) { //AKA when it's so far out of the field it's irrelevant
+            if (posx * posx + posy * posy > 64) { //AKA when it's so far out of the field it's irrelevant
                 Deactivate();
             }
             //Move it

@@ -17,6 +17,7 @@ TagManager:
   - LevelManager
   - SpellcardBackground
   - MenuBase
+  - BGM
   layers:
   - Default
   - TransparentFX
