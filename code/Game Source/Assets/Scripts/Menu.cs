@@ -37,11 +37,26 @@ public class Menu : MonoBehaviour {
                 switch (gameObject.name) {
                     //Mostly main menu items
                     case "Play":
-                        GlobalHelper.LoadLevel(1, GlobalHelper.Difficulty.EASY);
+                        transform.parent.parent.FindChild("Difficulty").gameObject.SetActive(true);
+                        StartCoroutine(transform.parent.parent.FindChild("Difficulty").FindChild("PlayNormal").GetComponent<Menu>().select(true));
+                        //GlobalHelper.LoadLevel(1, GlobalHelper.Difficulty.EASY);
                         break;
 
                     case "Quit":
                         Application.Quit();
+                        break;
+                    //Difficulty items
+                    case "PlayEasy":
+                        GlobalHelper.LoadLevel(1, GlobalHelper.Difficulty.EASY);
+                        break;
+                    case "PlayNormal":
+                        GlobalHelper.LoadLevel(1, GlobalHelper.Difficulty.NORMAL);
+                        break;
+                    case "PlayHard":
+                        GlobalHelper.LoadLevel(1, GlobalHelper.Difficulty.HARD);
+                        break;
+                    case "PlayLunatic":
+                        GlobalHelper.LoadLevel(1, GlobalHelper.Difficulty.LUNATIC);
                         break;
                     //Game menu items
                     case "Resume":
@@ -75,18 +90,18 @@ public class Menu : MonoBehaviour {
     public IEnumerator select(bool fromPrev) {
         if (selectable) {
             selectedObject = transform;
+            //animation shit
+            GetComponent<Outline>().effectColor = Color.white;
+            yield return null;
         } else {
             if (fromPrev) {
                 StartCoroutine(nextObject.GetComponent<Menu>().select(true));
                 yield return null;
             } else {
-                StartCoroutine(nextObject.GetComponent<Menu>().select(false));
+                StartCoroutine(prevObject.GetComponent<Menu>().select(false));
                 yield return null;
             }
         }
-        //animation shit
-        GetComponent<Outline>().effectColor = Color.white;
-        yield return null;
     }
 
     private bool isSelected() {

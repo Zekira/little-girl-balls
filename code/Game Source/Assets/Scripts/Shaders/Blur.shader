@@ -7,6 +7,7 @@
 		Tags {
 			"RenderType"="Transparant"
 			"Queue"="Transparent+100"
+			"LightMode"="Always"
 		}
 
 		GrabPass { "_GrabTexture2" }
@@ -16,6 +17,7 @@
 
 			#pragma vertex vert
 			#pragma fragment frag
+			#pragma target 3.0
 			#include "UnityCG.cginc"
 
 			sampler2D _GrabTexture2;
