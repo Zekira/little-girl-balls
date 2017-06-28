@@ -1,0 +1,73 @@
+starttimeline(Timelines/Movement/VerticalInWaitVerticalOut);
+
+wait(20);
+
+repeat(6);
+	bulletproperty(bullet, scale, 0.33);
+	bulletproperty(bullet, id, 11);
+	bulletproperty(bullet, outercolor, 1, 1, 1, 1);
+	bulletproperty(bullet, innercolor, 0, 1, 1, 1);
+
+
+	set(angle, 3.14);
+	sin(movex, angle);
+	cos(movey, angle);
+	mul(movex, movex, 0.08);
+	mul(movey, movey, 0.08);
+	bulletproperty(bullet, rotation, angle);
+	bulletproperty(bullet, movement, movex, movey);
+	createbullet(bullet);
+	add(angle, angle, 0.2);
+	sin(movex, angle);
+	cos(movey, angle);
+	mul(movex, movex, 0.08);
+	mul(movey, movey, 0.08);
+	bulletproperty(bullet, rotation, angle);
+	bulletproperty(bullet, movement, movex, movey);
+	createbullet(bullet);
+	add(angle, angle, -0.4);
+	sin(movex, angle);
+	cos(movey, angle);
+	mul(movex, movex, 0.08);
+	mul(movey, movey, 0.08);
+	bulletproperty(bullet, rotation, angle);
+	bulletproperty(bullet, movement, movex, movey);
+	createbullet(bullet);
+	add(angle, angle, 0.2);
+
+	wait(8);
+
+	bulletproperty(bullet, scale, 0.25);
+	bulletproperty(bullet, id, 8);
+	bulletproperty(bullet, innercolor, 1, 1, 1, 1);
+	bulletproperty(bullet, outercolor, 0, 0.3, 1, 1);
+
+	repeat(20);
+		sin(movex, angle);
+		cos(movey, angle);
+		mul(movex, movex, 0.08);
+		mul(movey, movey, 0.08);
+		bulletproperty(bullet, rotation, angle);
+		bulletproperty(bullet, movement, movex, movey);
+		createbullet(bullet);
+		add(angle, angle, 0.2);
+		sin(movex, angle);
+		cos(movey, angle);
+		mul(movex, movex, 0.08);
+		mul(movey, movey, 0.08);
+		bulletproperty(bullet, rotation, angle);
+		bulletproperty(bullet, movement, movex, movey);
+		createbullet(bullet);
+		add(angle, angle, -0.4);
+		sin(movex, angle);
+		cos(movey, angle);
+		mul(movex, movex, 0.08);
+		mul(movey, movey, 0.08);
+		bulletproperty(bullet, rotation, angle);
+		bulletproperty(bullet, movement, movex, movey);
+		createbullet(bullet);
+		add(angle, angle, 0.2);
+		wait(2);
+	endrepeat;
+	wait(32);
+endrepeat;

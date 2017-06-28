@@ -1,6 +1,6 @@
 starttimeline(Timelines/Movement/VerticalInWaitVerticalOut);
 
-wait(30);
+wait(20);
 
 bulletproperty(bullet, scale, 0.33);
 bulletproperty(bullet, id, 7);
@@ -21,6 +21,6 @@ repeat(8);
 			add(angle, angle, 0.0314);
 		endrepeat;
 	endrepeat;
-	wait(70);
+	wait(80);
 	add(angle, angle, 0.157);
 endrepeat;
