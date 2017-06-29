@@ -1,11 +1,18 @@
 wait(120);
-enemyproperty(fairy, attackpath, Timelines/StageEnemies/Fairy1_3);
-enemyproperty(fairy, id, 1);
-enemyproperty(fairy, maxhealth, 10);
-enemyproperty(fairy, droppower, 5);
-enemyproperty(fairy, dropscore, 2);
-enemyproperty(fairy, basescore, 1000);
+enemyproperty(fairy_red, attackpath, Timelines/StageEnemies/Fairy1_3);
+enemyproperty(fairy_red, id, 1);
+enemyproperty(fairy_red, maxhealth, 10);
+enemyproperty(fairy_red, droppower, 10);
+enemyproperty(fairy_red, dropscore, 0);
+enemyproperty(fairy_red, basescore, 1000);
+enemyproperty(fairy_blue, attackpath, Timelines/StageEnemies/Fairy1_3);
+enemyproperty(fairy_blue, id, 2);
+enemyproperty(fairy_blue, maxhealth, 10);
+enemyproperty(fairy_blue, droppower, 0);
+enemyproperty(fairy_blue, dropscore, 5);
+enemyproperty(fairy_blue, basescore, 1000);
 
+//todo: big fairy;
 enemyproperty(fairy2, attackpath, Timelines/StageEnemies/Fairy2_3);
 enemyproperty(fairy2, id, 1);
 enemyproperty(fairy2, maxhealth, 50);
@@ -13,12 +20,18 @@ enemyproperty(fairy2, droppower, 25);
 enemyproperty(fairy2, dropscore, 5);
 enemyproperty(fairy2, basescore, 3000);
 
-enemyproperty(fairy3, attackpath, Timelines/StageEnemies/Fairy3_3);
-enemyproperty(fairy3, id, 1);
-enemyproperty(fairy3, maxhealth, 10);
-enemyproperty(fairy3, droppower, 5);
-enemyproperty(fairy3, dropscore, 2);
-enemyproperty(fairy3, basescore, 1000);
+enemyproperty(fairy3_red, attackpath, Timelines/StageEnemies/Fairy3_3);
+enemyproperty(fairy3_red, id, 1);
+enemyproperty(fairy3_red, maxhealth, 10);
+enemyproperty(fairy3_red, droppower, 10);
+enemyproperty(fairy3_red, dropscore, 0);
+enemyproperty(fairy3_red, basescore, 1000);
+enemyproperty(fairy3_blue, attackpath, Timelines/StageEnemies/Fairy3_3);
+enemyproperty(fairy3_blue, id, 2);
+enemyproperty(fairy3_blue, maxhealth, 10);
+enemyproperty(fairy3_blue, droppower, 0);
+enemyproperty(fairy3_blue, dropscore, 5);
+enemyproperty(fairy3_blue, basescore, 1000);
 
 enemyproperty(midboss, attackpath, Timelines/BossAttacks/1_3Mid1, Timelines/BossAttacks/Spellcard2);
 enemyproperty(midboss, id, 0);
@@ -28,14 +41,14 @@ enemyproperty(midboss, dropscore, 10);
 enemyproperty(midboss, basescore, 8000);
 enemyproperty(midboss, boss, 1);
 
-enemyproperty(fairy, startpos, -4.5, 3);
+enemyproperty(fairy_blue, startpos, -4.5, 3);
 repeat(5);
-	createenemy(fairy);
+	createenemy(fairy_blue);
 	wait(40);
 endrepeat;
-enemyproperty(fairy, startpos, 4.5, 3);
+enemyproperty(fairy_red, startpos, 4.5, 3);
 repeat(5);
-	createenemy(fairy);
+	createenemy(fairy_red);
 	wait(40);
 endrepeat;
 
@@ -46,25 +59,25 @@ createenemy(fairy2);
 
 wait(10);
 
-enemyproperty(fairy, startpos, -4.5, 3);
-createenemy(fairy);
-enemyproperty(fairy, startpos, 4.5, 3);
-createenemy(fairy);
+enemyproperty(fairy_red, startpos, -4.5, 3);
+createenemy(fairy_red);
+enemyproperty(fairy_red, startpos, 4.5, 3);
+createenemy(fairy_red);
 wait(40);
-enemyproperty(fairy, startpos, -4.5, 2);
-createenemy(fairy);
-enemyproperty(fairy, startpos, 4.5, 2);
-createenemy(fairy);
+enemyproperty(fairy_blue, startpos, -4.5, 2);
+createenemy(fairy_blue);
+enemyproperty(fairy_blue, startpos, 4.5, 2);
+createenemy(fairy_blue);
 wait(40);
-enemyproperty(fairy, startpos, -4.5, 1);
-createenemy(fairy);
-enemyproperty(fairy, startpos, 4.5, 1);
-createenemy(fairy);
+enemyproperty(fairy_red, startpos, -4.5, 1);
+createenemy(fairy_red);
+enemyproperty(fairy_red, startpos, 4.5, 1);
+createenemy(fairy_red);
 wait(40);
-enemyproperty(fairy, startpos, -4.5, 0);
-createenemy(fairy);
-enemyproperty(fairy, startpos, 4.5, 0);
-createenemy(fairy);
+enemyproperty(fairy_blue, startpos, -4.5, 0);
+createenemy(fairy_blue);
+enemyproperty(fairy_blue, startpos, 4.5, 0);
+createenemy(fairy_blue);
 
 wait(89);
 
@@ -75,40 +88,40 @@ createenemy(fairy2);
 
 wait(111);
 
-enemyproperty(fairy, startpos, 4.5, 3);
-createenemy(fairy);
+enemyproperty(fairy_blue, startpos, 4.5, 3);
+createenemy(fairy_blue);
 
 wait(160);
 
-enemyproperty(fairy, startpos, -4.5, 3);
-createenemy(fairy);
+enemyproperty(fairy_red, startpos, -4.5, 3);
+createenemy(fairy_red);
 
 wait(160);
 
-enemyproperty(fairy, startpos, 4.5, 3);
-createenemy(fairy);
+enemyproperty(fairy_blue, startpos, 4.5, 3);
+createenemy(fairy_blue);
 
 wait(180);
 
-enemyproperty(fairy3, startpos, -3.5, 5);
-createenemy(fairy3);
-enemyproperty(fairy3, startpos, 3.5, 5);
-createenemy(fairy3);
+enemyproperty(fairy3_blue, startpos, -3.5, 5);
+createenemy(fairy3_blue);
+enemyproperty(fairy3_blue, startpos, 3.5, 5);
+createenemy(fairy3_blue);
 wait(20);
-enemyproperty(fairy3, startpos, -2.5, 5);
-createenemy(fairy3);
-enemyproperty(fairy3, startpos, 2.5, 5);
-createenemy(fairy3);
+enemyproperty(fairy3_red, startpos, -2.5, 5);
+createenemy(fairy3_red);
+enemyproperty(fairy3_red, startpos, 2.5, 5);
+createenemy(fairy3_red);
 wait(10);
 enemyproperty(fairy2, startpos, 0, 5);
 createenemy(fairy2);
 wait(10);
-enemyproperty(fairy3, startpos, -1.5, 5);
-createenemy(fairy3);
-enemyproperty(fairy3, startpos, 1.5, 5);
-createenemy(fairy3);
+enemyproperty(fairy3_blue, startpos, -1.5, 5);
+createenemy(fairy3_blue);
+enemyproperty(fairy3_blue, startpos, 1.5, 5);
+createenemy(fairy3_blue);
 
-wait(540);
+wait(580);
 enemyproperty(midboss, startpos, 0, 3);
 createenemy(midboss);
-//Maximum boss length: little more than 3000 because of the spellcard animation, let's say 3100 needs to be filled up
+//Maximum boss length: little more than 1800 because of the spellcard animation, which is 90 ticks, so 1890 needs to be filled up

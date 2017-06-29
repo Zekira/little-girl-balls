@@ -428,6 +428,11 @@ public class TimelineInterprenter : MonoBehaviour {
                         transform.position += new Vector3(ParseValue(currentCommand.args[0]), ParseValue(currentCommand.args[1]), 0f);
                     }
                     continue;
+                case TimelineCommand.Command.MOVETOWARDSPOINT:
+                    StopCoroutine("moveTowardsSmooth");
+                    StartCoroutine(moveTowardsSmooth(new Vector3(ParseValue(currentCommand.args[0]), ParseValue(currentCommand.args[1]), transform.position.z), ParseValue(currentCommand.args[2])));
+                    //TODO: Test
+                    continue;
                 case TimelineCommand.Command.DESTROYPARENT: //Destroys whatever this is attached to.
                     if (parentBullet != null) { //Destroying bullets is wasteful, they should be added to the dead bullet pile.
                         parentBullet.Deactivate();
@@ -795,5 +800,25 @@ public class TimelineInterprenter : MonoBehaviour {
             }
             return f;
         }
+    }
+
+    /// <summary>
+    /// Moves from the current position to endPos, taking "time" ticks. (It's a float, but has the same 60-ticks-is-a-second rule.)
+    /// </summary>
+    private IEnumerator moveTowardsSmooth(Vector3 endPos, float time) {
+        time = Mathf.Round(time);
+        Vector3 startPos = transform.position;
+        float linearProgress = 0f;
+        float actualProgress = 0f;
+        //The difference every tick is determined by 3/(2*time) * 4x-4x^2, because for all a sum k from 0 to a (3/2a * (4k/a - 4(k/a)^2)) returns almost 1. (WA gives 1 - 1/(a^2), and a is usually at least 2 digits).
+        while (linearProgress < 1f) {
+            if (!GlobalHelper.paused) {
+                actualProgress = 3/(2 * time) * (4 * (linearProgress - linearProgress*linearProgress));
+                transform.position += actualProgress * (endPos - startPos);
+                linearProgress += 1 / time;
+            }
+            yield return null;
+        }
+        transform.position = endPos;
     }
 }

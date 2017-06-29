@@ -100,6 +100,8 @@ storex/storey: Where to store the x and y coordinate of the position of what obj
 storex/storey: Where to store the x and y coordinate of the poosition of the player.
   attackduration(<time>);
 Needs to be in an attack/spellcard file. States how many 1/60th's of a second this attacks lasts. Negative values for timeout spells. If it's missing, assuming 9999. Good practice to have this the first line in a attack.
+  movetowardspoint(<x>, <y>, <time>);
+Moves the parent smoothly to (x,y), taking time amount of 1/60th seconds.
 ===================
 Property functions:
 ===================
