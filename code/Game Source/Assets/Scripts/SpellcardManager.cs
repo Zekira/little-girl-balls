@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 /// <summary>
@@ -10,13 +11,16 @@ public class SpellcardManager : MonoBehaviour {
     public uint startValue = 0;
     public uint currentValue = 0;
     public int timeLimit = 0;
-    public bool failed = false;
+    public static bool failed = false;
+    public static int currentSpellId;
 
     private int ticksTaken = 0;
     private float timeTaken = 0;
     private Enemy parentEnemy;
     private GameObject spellcardUI;
     private DialogueEntry.character portraitCharacter;
+
+    private List<short> histories = new List<short>();
 
     void Start() {
         spellcardUI = GlobalHelper.bossUI.transform.FindChild("SpellcardUI").gameObject;
@@ -47,6 +51,9 @@ public class SpellcardManager : MonoBehaviour {
             spellcardUI.SetActive(true);
             GlobalHelper.spellcardBackground.gameObject.SetActive(true);
             SetSpellcardName(name);
+            int history = GetHistory(currentSpellId, 0); //TODO: Characters & shottypes
+            spellcardUI.transform.FindChild("History").GetComponent<Text>().text = (history >> 16) + "/" + ((history & 0xffff) + 1);
+            SetHistory(currentSpellId, 0, history >> 16, (history & 0xffff) + 1);
             spellcardUI.transform.FindChild("Bonus").GetComponent<Text>().text = currentValue.ToString();
             StartCoroutine(MoveSpellUI());
             StartCoroutine(MoveCasterPortrait());
@@ -160,10 +167,12 @@ public class SpellcardManager : MonoBehaviour {
 
     /// <summary>
     /// Coroutines fail when the object calling them is destroyed/inactive even though what they to is still avtive so I have to do it like this.
-    /// This shows the "Got Spell Card Bonus! [x]" or "Bonus Failed...".
+    /// This shows the "Got Spell Card Bonus! [x]" or "Bonus Failed...", and updates the history
     /// </summary>
-    public void StartShowBonus() {
+    public void EndSpellcard() {
         StartCoroutine(ShowBonus());
+        int historyvalues = GetHistory(currentSpellId, 0); //TODO: Characters & shottypes
+        SetHistory(currentSpellId, 0, (historyvalues >> 16) + (failed ? 0 : 1), historyvalues & 0xffff); //The second argument is already set at the beginning of the spell
     }
 
     private IEnumerator ShowBonus() {
@@ -202,5 +211,37 @@ public class SpellcardManager : MonoBehaviour {
         failed = true;
         currentValue = 0;
         spellcardUI.transform.FindChild("Bonus").GetComponent<Text>().text = "FAILED";
+    }
+
+    /// <summary>
+    /// The int is two shorts: the first is the succeed count, the second is the attempts.
+    /// To go back to two shorts: first = x>>16, second = 0xffff
+    /// </summary>
+    public int GetHistory(int spellcardId, int character) {
+        histories = SaveLoad.LoadSpellcardHistories();
+        for (int i = 0; i < histories.Count; i += 4) {
+            if (histories[i] == spellcardId && histories[i + 1] == character) {
+                return (histories[i + 2] << 16) + histories[i + 3];
+            }
+        }
+        return 0; //Zero attempts and zero successes if the player hasn't faced it yet
+    }
+
+    public void SetHistory(int spellcardId, int character, int successes, int attempts) {
+        bool foundInList = false;
+        for (int i = 0; i < histories.Count; i += 4) {
+            if (histories[i] == spellcardId && histories[i + 1] == character) {
+                foundInList = true;
+                histories[i + 2] = (short)successes;
+                histories[i + 3] = (short)attempts;
+            }
+        }
+        if (!foundInList) {
+            histories.Add((short)spellcardId);
+            histories.Add((short)character);
+            histories.Add((short)successes);
+            histories.Add((short)attempts);
+        }
+        SaveLoad.SaveSpellcardHistories(histories);
     }
 }

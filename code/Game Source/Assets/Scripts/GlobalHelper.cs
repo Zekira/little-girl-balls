@@ -41,6 +41,7 @@ public class GlobalHelper : MonoBehaviour {
     //Things that make finding objects in other classes easier, but only make sense when in a level: the only time GlobalHelper is a script attached to an object.
     //Also sets up things needed for the level and such as this only runs when loading the level.
     void Awake() {
+        SaveLoad.test();
         bulletParent = GameObject.FindWithTag("BulletParent").transform;
         enemyParent = GameObject.FindWithTag("EnemyParent").transform;
         itemParent = GameObject.FindWithTag("ItemParent").transform;

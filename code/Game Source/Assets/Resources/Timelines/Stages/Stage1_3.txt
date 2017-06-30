@@ -41,6 +41,10 @@ enemyproperty(midboss, dropscore, 10);
 enemyproperty(midboss, basescore, 8000);
 enemyproperty(midboss, boss, 1);
 
+enemyproperty(midboss, startpos, 0, 3);
+createenemy(midboss);
+wait(9999);
+
 enemyproperty(fairy_blue, startpos, -4.5, 3);
 repeat(5);
 	createenemy(fairy_blue);

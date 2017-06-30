@@ -108,7 +108,7 @@ public class Enemy : MonoBehaviour {
         }
         //If this boss' attack was a spellcard (and existed, that's why thereý a >= 0), a bonus needs to be shown
         if (template.isBoss && currentAttack >= 0 && GetSpell(template.attackPath[currentAttack]) != "") {
-            GlobalHelper.levelManager.GetComponent<SpellcardManager>().StartShowBonus();
+            GlobalHelper.levelManager.GetComponent<SpellcardManager>().EndSpellcard();
         }
         //Goes to the next attack, and if there is none, goes away.
         if (currentAttack + 1 < template.attackPath.Count) {
@@ -264,6 +264,7 @@ public class Enemy : MonoBehaviour {
         string returnString = "";
         int idIndex = path.IndexOf("Spellcard");
         if (idIndex != -1) {
+            SpellcardManager.currentSpellId = idIndex;
             returnString = path.Substring(idIndex).ToUpperInvariant();
             returnString = StringFetcher.GetString(returnString);
         }
