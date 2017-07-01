@@ -33,7 +33,7 @@ enemyproperty(fairy3_blue, droppower, 0);
 enemyproperty(fairy3_blue, dropscore, 5);
 enemyproperty(fairy3_blue, basescore, 1000);
 
-enemyproperty(midboss, attackpath, Timelines/BossAttacks/1_3Mid1, Timelines/BossAttacks/Spellcard2);
+enemyproperty(midboss, attackpath, Timelines/BossAttacks/1_3Mid1, Timelines/BossAttacks/Spellcard2, Timelines/BossAttacks/Spellcard3);
 enemyproperty(midboss, id, 0);
 enemyproperty(midboss, maxhealth, 10); //Set by the attacks themselves anyway;
 enemyproperty(midboss, droppower, 10);
@@ -43,7 +43,8 @@ enemyproperty(midboss, boss, 1);
 
 enemyproperty(midboss, startpos, 0, 3);
 createenemy(midboss);
-wait(9999);
+
+wait(99999);
 
 enemyproperty(fairy_blue, startpos, -4.5, 3);
 repeat(5);

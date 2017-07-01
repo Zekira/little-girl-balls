@@ -264,7 +264,9 @@ public class Enemy : MonoBehaviour {
         string returnString = "";
         int idIndex = path.IndexOf("Spellcard");
         if (idIndex != -1) {
-            SpellcardManager.currentSpellId = idIndex;
+            int numericId = -1;
+            int.TryParse(path.Substring(idIndex + 9), out numericId);
+            SpellcardManager.currentSpellId = numericId;
             returnString = path.Substring(idIndex).ToUpperInvariant();
             returnString = StringFetcher.GetString(returnString);
         }

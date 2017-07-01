@@ -12,7 +12,7 @@ public class SpellcardManager : MonoBehaviour {
     public uint currentValue = 0;
     public int timeLimit = 0;
     public static bool failed = false;
-    public static int currentSpellId;
+    public static int currentSpellId; //Set in Enemy.GetSpell();
 
     private int ticksTaken = 0;
     private float timeTaken = 0;
@@ -51,9 +51,9 @@ public class SpellcardManager : MonoBehaviour {
             spellcardUI.SetActive(true);
             GlobalHelper.spellcardBackground.gameObject.SetActive(true);
             SetSpellcardName(name);
-            int history = GetHistory(currentSpellId, 0); //TODO: Characters & shottypes
-            spellcardUI.transform.FindChild("History").GetComponent<Text>().text = (history >> 16) + "/" + ((history & 0xffff) + 1);
-            SetHistory(currentSpellId, 0, history >> 16, (history & 0xffff) + 1);
+            int historyvalues = GetHistory(currentSpellId, 0); //TODO: Characters & shottypes
+            spellcardUI.transform.FindChild("History").GetComponent<Text>().text = (historyvalues >> 16) + "/" + ((historyvalues & 0xffff) + 1);
+            SetHistory(currentSpellId, 0, historyvalues >> 16, (historyvalues & 0xffff) + 1);
             spellcardUI.transform.FindChild("Bonus").GetComponent<Text>().text = currentValue.ToString();
             StartCoroutine(MoveSpellUI());
             StartCoroutine(MoveCasterPortrait());

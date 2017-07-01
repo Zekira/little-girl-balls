@@ -4,7 +4,7 @@ using System.IO;
 
 public static class SaveLoad {
     private static string basePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) +
-        Path.DirectorySeparatorChar + "Touaoii Project" + Path.DirectorySeparatorChar + "Disembodiment of the Teal Angel" + Path.DirectorySeparatorChar;
+        Path.DirectorySeparatorChar + "TouaoiiProject" + Path.DirectorySeparatorChar + "DisembodimentOfTheTealAngel" + Path.DirectorySeparatorChar;
     private static string spellcardHistoryPath = basePath + "SpellcardHistories.dat";
 
     public static void test() {

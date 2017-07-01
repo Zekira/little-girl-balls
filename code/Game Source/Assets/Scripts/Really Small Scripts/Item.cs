@@ -49,7 +49,7 @@ public class Item : MonoBehaviour {
                     }
                     GlobalHelper.backupItems.Add(this.gameObject);
                     gameObject.SetActive(false);
-                } else if (!GlobalHelper.GetStats().noMovement && (distance < 4 || autoCollected)) { //Close enough to be attracted or autocollected. You also can't attract stuff if you're dead.
+                } else if (!GlobalHelper.GetStats().noMovement && (distance < 2 || autoCollected)) { //Close enough to be attracted or autocollected. You also can't attract stuff if you're dead.
                     Vector2 travel = new Vector2(deltax, deltay).normalized / 10f;
                     transform.position += new Vector3(travel.x, travel.y, 0f);
                 } else {

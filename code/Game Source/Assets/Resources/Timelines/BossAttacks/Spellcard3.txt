@@ -1,0 +1,40 @@
+attackduration(2700);
+setparenthealth(200);
+
+bulletproperty(bullet, scale, 0.33);
+bulletproperty(bullet, id, 5);
+bulletproperty(bullet, outercolor, 1, 1, 1, 1);
+bulletproperty(bullet, innercolor, 1, 1, 1, 1);
+bulletproperty(bullet, movement, 0, 0);
+bulletproperty(bullet, advancedpath, Timelines/Supplementary/Refraction_3);
+
+wait(30);
+
+repeat(20);
+repeat(20);
+
+angletoplayer(angle);
+random(random, -0.05, 0.05);
+add(angle, angle, random);
+repeat(10);
+	add(angle, angle, 1.607);
+	bulletproperty(bullet, rotation, angle);
+	bulletproperty(bullet, scriptrotation, angle);
+	createbullet(bullet);
+	wait(1);
+endrepeat;
+wait(20);
+angletoplayer(angle);
+random(random, -0.05, 0.05);
+add(angle, angle, random);
+repeat(10);
+	add(angle, angle, -1.607);
+	bulletproperty(bullet, rotation, angle);
+	bulletproperty(bullet, scriptrotation, angle);
+	createbullet(bullet);
+	wait(1);
+endrepeat;
+wait(20);
+
+endrepeat;
+endrepeat;
