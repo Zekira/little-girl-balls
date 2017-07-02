@@ -191,6 +191,7 @@ public class GlobalHelper : MonoBehaviour {
         //Take it either from the backup list, or instantiate a new bullet. The former is prefered because it's faster.
         if (backupBullets.Count == 0) {
             createdObject = GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Bullet"));
+            createdObject.transform.SetParent(bulletParent);
         } else {
             createdObject = backupBullets[0];
             backupBullets.RemoveAt(0);
@@ -228,7 +229,6 @@ public class GlobalHelper : MonoBehaviour {
         createdObject.transform.position = bulletpos;
 
         createdObject.transform.localScale = bulletTemplate.scale * Vector3.one;
-        createdObject.transform.SetParent(bulletParent);
         createdObject.transform.eulerAngles = new Vector3(0f, 0f, -bulletTemplate.rotation * Mathf.Rad2Deg);
 
         bullet.player = GetPlayer();

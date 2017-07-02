@@ -38,7 +38,7 @@ Note: A "number" (or "variable", or "value", etc) must be in the form of either:
   _globalvarname
 No comma's, f's, d's or anything like that. All text must be lowercase.
 
-Every line is either a comment:
+Every line is either a comment: (note that the ; is mandatory)
   #[any text];
   //[any text];
 or a function:

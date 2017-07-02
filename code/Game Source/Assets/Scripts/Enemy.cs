@@ -98,7 +98,11 @@ public class Enemy : MonoBehaviour {
         timeoutAttack = false;
         if (byDamage) {
             if (template.isBoss) {
-                GlobalHelper.stats.AddScore(GlobalHelper.levelManager.GetComponent<SpellcardManager>().currentValue);
+                if (GetSpell(template.attackPath[currentAttack]) != "") {
+                    GlobalHelper.stats.AddScore(GlobalHelper.levelManager.GetComponent<SpellcardManager>().currentValue);
+                } else {
+                    GlobalHelper.stats.AddScore(template.baseScore);
+                }
             } else {
                 GlobalHelper.stats.AddScore(template.baseScore);
             }

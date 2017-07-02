@@ -1,0 +1,43 @@
+attackduration(1200);
+setparenthealth(150);
+
+//wait(20);
+
+bulletproperty(bullet, scale, 0.33);
+bulletproperty(bullet, id, 5);
+bulletproperty(bullet, outercolor, 1, 1, 0, 1);
+bulletproperty(bullet, innercolor, 1, 1, 1, 1);
+bulletproperty(bullet, relativepos, 0);
+
+repeat(80);
+	set(px, -4);
+	repeat(15);
+		random(movex, -0.01, 0.01);
+		bulletproperty(bullet, position, px, 5);
+		set(movey, -0.09);
+		repeat(5);
+			bulletproperty(bullet, movement, movex, movey);
+			mul(movex, movex, 0.8);
+			mul(movey, movey, 0.8);
+			createbullet(bullet);
+		endrepeat;
+		wait(2);
+		add(px, px, 0.533);
+	endrepeat;
+	wait(30);
+	set(px, 4);
+	repeat(15);
+		random(movex, -0.01, 0.01);
+		bulletproperty(bullet, position, px, 5);
+		set(movey, -0.09);
+		repeat(5);
+			bulletproperty(bullet, movement, movex, movey);
+			mul(movex, movex, 0.8);
+			mul(movey, movey, 0.8);
+			createbullet(bullet);
+		endrepeat;
+		wait(2);
+		add(px, px, -0.533);
+	endrepeat;
+	wait(30);
+endrepeat;

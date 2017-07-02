@@ -19,8 +19,12 @@ public class Laser : MonoBehaviour {
 
     void Update() {
         if (!GlobalHelper.paused) {
-            transform.position += movementVector;
-            transform.Rotate(rotationVector);
+            if (rotationVector.sqrMagnitude > 0) {
+                transform.position += movementVector;
+            }
+            if (rotationVector.z != 0) {
+                transform.Rotate(rotationVector);
+            }
 
             if (timer < template.warnDuration && timer > template.warnDuration - 10) {
                 //widening animation that lasts for 10 ticks

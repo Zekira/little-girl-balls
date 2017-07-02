@@ -1,5 +1,5 @@
 attackduration(2700);
-setparenthealth(200);
+setparenthealth(180);
 
 bulletproperty(bullet, scale, 0.33);
 bulletproperty(bullet, id, 5);

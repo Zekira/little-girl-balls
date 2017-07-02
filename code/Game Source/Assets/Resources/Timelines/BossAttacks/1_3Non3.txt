@@ -1,0 +1,58 @@
+attackduration(1200);
+setparenthealth(150);
+
+//wait(20);
+
+bulletproperty(bullet, scale, 0.33);
+bulletproperty(bullet, id, 5);
+bulletproperty(bullet, outercolor, 1, 1, 0, 1);
+bulletproperty(bullet, innercolor, 1, 1, 1, 1);
+bulletproperty(bullet, relativepos, 0);
+
+bulletproperty(atpl, scale, 0.3);
+bulletproperty(atpl, id, 8);
+bulletproperty(atpl, outercolor, 1, 1, 0, 1);
+bulletproperty(atpl, innercolor, 1, 1, 1, 1);
+
+repeat(80);
+	set(px, -4);
+	repeat(9);
+		bulletproperty(bullet, position, px, 5);
+		set(movey, -0.1);
+		repeat(3);
+			bulletproperty(bullet, movement, 0, movey);
+			mul(movey, movey, 0.7);
+			createbullet(bullet);
+		endrepeat;
+		add(px, px, 1);
+	endrepeat;
+	wait(30);
+	set(px, -4);
+	repeat(9);
+		bulletproperty(bullet, position, px, 5);
+		set(movey, -0.1);
+		repeat(5);
+			bulletproperty(bullet, movement, 0, movey);
+			mul(movey, movey, 0.7);
+			createbullet(bullet);
+		endrepeat;
+		add(px, px, 1);
+	endrepeat;
+
+	angletoplayer(angle);
+	repeat(30);
+		repeat(2);
+			random(offset, -0.15, 0.15);
+			add(newangle, angle, offset);
+			random(speed, 0.04, 0.06);
+			sin(movex, newangle);
+			cos(movey, newangle);
+			mul(movex, movex, speed);
+			mul(movey, movey, speed);
+			bulletproperty(atpl, rotation, newangle);
+			bulletproperty(atpl, movement, movex, movey);
+			createbullet(atpl);
+		endrepeat;
+		wait(1);
+	endrepeat;
+endrepeat;

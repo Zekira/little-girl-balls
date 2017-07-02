@@ -1,0 +1,87 @@
+attackduration(2700);
+setparenthealth(240);
+
+bulletproperty(bullet, scale, 0.33);
+bulletproperty(bullet, id, 11);
+bulletproperty(bullet, outercolor, 1, 1, 1, 1);
+bulletproperty(bullet, innercolor, 1, 1, 0, 1);
+bulletproperty(bullet, advancedpath, Timelines/Supplementary/CrossLasers_3);
+
+bulletproperty(b2, scale, 0.2);
+bulletproperty(b2, id, 12);
+bulletproperty(b2, outercolor, 1, 1, 1, 1);
+bulletproperty(b2, innercolor, 1, 1, 0, 1);
+
+repeat(10);
+
+wait(30);
+
+angletoplayer(angle);
+sin(movex, angle);
+cos(movey, angle);
+mul(movex, movex, 0.08);
+mul(movey, movey, 0.08);
+bulletproperty(bullet, rotation, angle);
+bulletproperty(bullet, movement, movex, movey);
+createbullet(bullet);
+add(angle, angle, 0.2);
+sin(movex, angle);
+cos(movey, angle);
+mul(movex, movex, 0.08);
+mul(movey, movey, 0.08);
+bulletproperty(bullet, rotation, angle);
+bulletproperty(bullet, movement, movex, movey);
+createbullet(bullet);
+add(angle, angle, -0.4);
+sin(movex, angle);
+cos(movey, angle);
+mul(movex, movex, 0.08);
+mul(movey, movey, 0.08);
+bulletproperty(bullet, rotation, angle);
+bulletproperty(bullet, movement, movex, movey);
+createbullet(bullet);
+add(angle, angle, 0.2);
+repeat(7);
+	wait(5);
+	add(angle, angle, 0.7854);
+	sin(movex, angle);
+	cos(movey, angle);
+	mul(movex, movex, 0.08);
+	mul(movey, movey, 0.08);
+	bulletproperty(bullet, rotation, angle);
+	bulletproperty(bullet, movement, movex, movey);
+	createbullet(bullet);
+endrepeat;
+
+angletoplayer(angle1);
+set(angle2, angle1);
+	repeat(10);
+	set(factor, 0.04);
+	repeat(10);
+		repeat(10);
+			add(angle1, angle1, 1.0472);
+			add(angle2, angle2, 1.0472);
+			sin(movex, angle1);
+			cos(movey, angle1);
+			mul(movex, movex, factor);
+			mul(movey, movey, factor);
+			bulletproperty(b2, rotation, angle1);
+			bulletproperty(b2, movement, movex, movey);
+			createbullet(b2);
+			sin(movex, angle2);
+			cos(movey, angle2);
+			mul(movex, movex, factor);
+			mul(movey, movey, factor);
+			bulletproperty(b2, rotation, angle2);
+			bulletproperty(b2, movement, movex, movey);
+			createbullet(b2);
+		endrepeat;
+		add(factor, factor, 0.00125);
+		add(angle1, angle1, 0.07854);
+		add(angle2, angle2, -0.07854);
+		wait(3);
+	endrepeat;
+endrepeat;
+
+wait(120);
+endrepeat;

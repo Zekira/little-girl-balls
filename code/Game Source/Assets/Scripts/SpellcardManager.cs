@@ -43,11 +43,11 @@ public class SpellcardManager : MonoBehaviour {
         timeTaken = 0;
         failed = false;
         parentEnemy = enemy;
-        startValue = (uint)(GlobalHelper.difficulty + GlobalHelper.level) * 1000000;
-        currentValue = startValue;
         timeLimit = template.spellTimers[attack];
         string name = Enemy.GetSpell(template.attackPath[attack]);
         if (name != "") {
+            startValue = (uint)(GlobalHelper.difficulty + GlobalHelper.level) * 1000000;
+            currentValue = startValue;
             spellcardUI.SetActive(true);
             GlobalHelper.spellcardBackground.gameObject.SetActive(true);
             SetSpellcardName(name);
@@ -64,6 +64,7 @@ public class SpellcardManager : MonoBehaviour {
             spellcardUI.SetActive(false);
             GlobalHelper.spellcardBackground.gameObject.SetActive(false);
             currentValue = template.baseScore;
+            startValue = currentValue;
         }
         if (enemy.timeoutAttack) { //Healthbar shouldn't show when it's a survival attack.
             enemy.transform.FindChild("Healthbar").gameObject.SetActive(false);
@@ -134,7 +135,7 @@ public class SpellcardManager : MonoBehaviour {
         //Wait a bit
         while (progress <= 1f) {
             if (!GlobalHelper.paused) {
-                progress += 0.2f;
+                progress += 0.1f;
             }
         }
         progress = 0f;
