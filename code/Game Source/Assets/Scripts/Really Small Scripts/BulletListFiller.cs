@@ -8,7 +8,7 @@ public class BulletListFiller : MonoBehaviour {
             GlobalHelper.CreateEmptyBullet();
             GlobalHelper.CreateEmptyBullet();
         } else {
-            Destroy(this.GetComponent<BulletListFiller>());
+            Destroy(this);
         }
 	}
 }

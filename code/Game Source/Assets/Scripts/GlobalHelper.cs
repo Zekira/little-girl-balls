@@ -20,7 +20,7 @@ public class GlobalHelper : MonoBehaviour {
     public static Difficulty difficulty = Difficulty.LUNATIC;
 
     //These things only make sense in a level, so they're defined, but initialised in Awake()
-    public static Transform enemyParent, itemParent, bulletParent, spellcardBackground, secondCounter, msecondCounter,canvas;
+    public static Transform spellcardBackground, secondCounter, msecondCounter,canvas;
     public static GameObject bossUI, player, levelManager;
     public static List<GameObject> backupBullets, backupItems;
     public static List<Sprite> itemSprites, bulletSprites;
@@ -41,10 +41,6 @@ public class GlobalHelper : MonoBehaviour {
     //Things that make finding objects in other classes easier, but only make sense when in a level: the only time GlobalHelper is a script attached to an object.
     //Also sets up things needed for the level and such as this only runs when loading the level.
     void Awake() {
-        SaveLoad.test();
-        bulletParent = GameObject.FindWithTag("BulletParent").transform;
-        enemyParent = GameObject.FindWithTag("EnemyParent").transform;
-        itemParent = GameObject.FindWithTag("ItemParent").transform;
         spellcardBackground = GameObject.FindWithTag("SpellcardBackground").transform;
         canvas = GameObject.FindWithTag("UI").transform;
         bossUI = GameObject.FindWithTag("BossUI");
@@ -158,7 +154,6 @@ public class GlobalHelper : MonoBehaviour {
 
         createdObject.transform.position += new Vector3(enemyTemplate.startpostion.x, enemyTemplate.startpostion.y, 0f);
         createdObject.transform.localScale = enemyTemplate.scale * Vector3.one;
-        createdObject.transform.SetParent(GameObject.FindWithTag("EnemyParent").transform);
 
         createdObject.GetComponent<Enemy>().health = enemyTemplate.maxHealth;
 
@@ -174,7 +169,6 @@ public class GlobalHelper : MonoBehaviour {
     public static void CreateEmptyBullet() {
         currentBullets++;
         createdObject = GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Bullet"));
-        createdObject.transform.SetParent(bulletParent);
         createdObject.GetComponent<Bullet>().Deactivate();
     }
 
@@ -191,13 +185,13 @@ public class GlobalHelper : MonoBehaviour {
         //Take it either from the backup list, or instantiate a new bullet. The former is prefered because it's faster.
         if (backupBullets.Count == 0) {
             createdObject = GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Bullet"));
-            createdObject.transform.SetParent(bulletParent);
         } else {
             createdObject = backupBullets[0];
             backupBullets.RemoveAt(0);
             createdObject.SetActive(true);
         }
-        createdObject.GetComponent<Bullet>().Reset();
+        bullet = createdObject.GetComponent<Bullet>();
+        bullet.Reset();
         if (bulletTemplate.advancedAttackPath != "") { //If there's advanced stuff happening, enable the TimelineInterprenter
             TimelineInterprenter interprenter = createdObject.GetComponent<TimelineInterprenter>();
             interprenter.enabled = true;
@@ -220,7 +214,6 @@ public class GlobalHelper : MonoBehaviour {
             bulletpos.y += bulletTemplate.position.y;
         }
         //Set the bullet's internal position vars; reading transform.position is a laggy operation apparantly, so this solves that.
-        bullet = createdObject.GetComponent<Bullet>();
         bullet.bulletTemplate = bulletTemplate;
         bullet.posx = bulletpos.x;
         bullet.posy = bulletpos.y;
@@ -230,8 +223,6 @@ public class GlobalHelper : MonoBehaviour {
 
         createdObject.transform.localScale = bulletTemplate.scale * Vector3.one;
         createdObject.transform.eulerAngles = new Vector3(0f, 0f, -bulletTemplate.rotation * Mathf.Rad2Deg);
-
-        bullet.player = GetPlayer();
 
         spriteRenderer = createdObject.transform.GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = bulletSprites[bulletTemplate.bulletID];
@@ -252,7 +243,6 @@ public class GlobalHelper : MonoBehaviour {
     public static GameObject CreateItem(Item.ItemType type, Vector3 position) {
         if (backupItems.Count == 0) {
             createdObject = GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Item"));
-            createdObject.transform.SetParent(itemParent);
         } else {
             createdObject = backupItems[0];
             backupItems.RemoveAt(0);

@@ -4,20 +4,18 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - BulletParent
   - UIParent
   - UIBombs
   - UIVariable
   - UI
   - UILives
-  - EnemyParent
   - BossUI
-  - ItemParent
   - Dialogue
   - LevelManager
   - SpellcardBackground
   - MenuBase
   - BGM
+  - Enemy
   layers:
   - Default
   - TransparentFX

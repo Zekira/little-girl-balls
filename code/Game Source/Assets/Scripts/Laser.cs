@@ -31,7 +31,7 @@ public class Laser : MonoBehaviour {
                 transform.localScale = new Vector3(Mathf.Lerp(0.06f, template.width, (timer-template.warnDuration+10) / 10f), 99f, 1f);
             } else if (timer > template.warnDuration && timer < template.warnDuration + template.shotDuration) {
                 //collision check
-                playerPos = GlobalHelper.GetPlayer().transform.position; //The player position in the regular coordinate system
+                playerPos = PlayerPosGetter.playerPos; //The player position in the regular coordinate system
                 playerPos -= transform.position; //The player position in a coordinate system through this object, parallel with the previous one
                 angle = transform.localEulerAngles.z;
                 sin = Mathf.Sin(angle * Mathf.Deg2Rad);

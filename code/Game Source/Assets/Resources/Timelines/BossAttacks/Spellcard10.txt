@@ -1,5 +1,5 @@
 attackduration(2700);
-setparenthealth(240);
+setparenthealth(200);
 
 bulletproperty(bullet, scale, 0.33);
 bulletproperty(bullet, id, 11);
@@ -55,7 +55,7 @@ endrepeat;
 
 angletoplayer(angle1);
 set(angle2, angle1);
-	repeat(10);
+repeat(10);
 	set(factor, 0.04);
 	repeat(10);
 		repeat(10);

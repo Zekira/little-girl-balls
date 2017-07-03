@@ -33,7 +33,7 @@ public class BulletMaterialisation : MonoBehaviour {
                 timer = 9; //For the next time this gets spawned
                 //If it's close to the player, prevent it from spawning if it is able to be cleared by bombs (and thus generally unimportant).
                 Bullet bullet = GetComponent<Bullet>();
-                if (!bullet.bulletTemplate.clearImmune && Vector2.Distance(transform.position, GlobalHelper.GetPlayer().transform.position) < bullet.bulletTemplate.scale/2) {
+                if (!bullet.bulletTemplate.clearImmune && Vector2.Distance(transform.position, PlayerPosGetter.playerPos) < bullet.bulletTemplate.scale/2) {
                     bullet.enabled = true;
                     this.enabled = false;
                     bullet.Deactivate();

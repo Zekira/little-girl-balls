@@ -28,7 +28,7 @@ public class Item : MonoBehaviour {
             }
             if (cooldown <= 0) {
                 pos = transform.position;
-                Vector3 playerpos = GlobalHelper.GetPlayer().transform.position;
+                Vector3 playerpos = PlayerPosGetter.playerPos;
                 float deltax = playerpos.x - pos.x;
                 float deltay = playerpos.y - pos.y;
                 float distance = deltax * deltax + deltay * deltay;

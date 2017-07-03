@@ -7,9 +7,9 @@ public class Bullet : MonoBehaviour {
 
     public BulletTemplate bulletTemplate;
     public bool grazed;
-    public GameObject player;
     public float posx, posy, posz, deltax, deltay;
-    public int timeUntilUpdatedCollisions = 1;
+    private bool updateCollisions = true;
+    private bool deactivated = false;
     Vector3 otherpos;
 
     /// <summary>
@@ -18,19 +18,19 @@ public class Bullet : MonoBehaviour {
     public void Reset() {
         bulletTemplate = new BulletTemplate();
         grazed = false;
+        deactivated = false;
         posx = 0; posy = 0; posz = 0; deltax = 0; deltay = 0;
-        timeUntilUpdatedCollisions = 1;
+        updateCollisions = true;
     }
 
 	void Update () {
         if (!GlobalHelper.paused) {
-            timeUntilUpdatedCollisions--;
             //Move it
             posx += bulletTemplate.movement.x;
             posy += bulletTemplate.movement.y;
             transform.position = new Vector3(posx, posy, posz);
             //Do collision checks only once every other frame because they are intensive.
-            if (timeUntilUpdatedCollisions < 0) {
+            if (updateCollisions) {
                 //This block only checks collision; a harmless bullet can't collide with anything.
                 if (!bulletTemplate.harmless) {
                     //Check whether colliding with the player is lethal, and if so, either be grazed or be lethal.
@@ -47,7 +47,7 @@ public class Bullet : MonoBehaviour {
                             }
                         }
 
-                        otherpos = GlobalHelper.GetStats().playerPosition;
+                        otherpos = PlayerPosGetter.playerPos;
                         deltax = otherpos.x - posx;
                         deltay = otherpos.y - posy;
                         if (!GlobalHelper.GetStats().noMovement && deltax * deltax + deltay * deltay < 0.5f * bulletTemplate.scale / 2f * bulletTemplate.scale / 2f + GlobalHelper.GetStats().hitboxRadius * GlobalHelper.GetStats().hitboxRadius * 0.33f) {
@@ -58,9 +58,8 @@ public class Bullet : MonoBehaviour {
                             grazed = true;
                         }
                     } else { //If the bullet is not harmful to the player, it should check enemies and damage them.
-                        for (int i = 0; i < GlobalHelper.enemyParent.childCount; i++) {
-                            Transform enemy = GlobalHelper.enemyParent.GetChild(i);
-                            if (enemy.gameObject.activeSelf == true) {
+                        foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy")) {
+                            if (enemy.activeSelf == true) {
                                 otherpos = enemy.transform.position;
                                 deltax = otherpos.x - posx;
                                 deltay = otherpos.y - posy;
@@ -76,7 +75,9 @@ public class Bullet : MonoBehaviour {
                 if (posx * posx + posy * posy > 64) { //AKA when it's so far out of the field it's irrelevant
                     Deactivate();
                 }
-                timeUntilUpdatedCollisions = 1;
+                updateCollisions = false;
+            } else {
+                updateCollisions = true;
             }
         }
     }
@@ -85,8 +86,11 @@ public class Bullet : MonoBehaviour {
     /// Sets the bullet to inactive and into GlobalHelper's bullet queue.
     /// </summary>
     public void Deactivate() {
-        GlobalHelper.currentBullets--;
-        GlobalHelper.backupBullets.Add(gameObject);
-        gameObject.SetActive(false);
+        if (!deactivated) {
+            deactivated = true;
+            GlobalHelper.currentBullets--;
+            GlobalHelper.backupBullets.Add(gameObject);
+            gameObject.SetActive(false);
+        }
     }
 }

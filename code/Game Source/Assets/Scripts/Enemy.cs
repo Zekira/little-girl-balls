@@ -9,7 +9,6 @@ public class Enemy : MonoBehaviour {
     public EnemyTemplate template = new EnemyTemplate();
     public int health = 1000;
     public Transform healthbarTransform;
-    public Transform itemParentTransform;
     public int timer = 9999;
     public int currentAttack = 0;
     public bool timeoutAttack = false; //This makes the boss immune until the end.
@@ -19,7 +18,6 @@ public class Enemy : MonoBehaviour {
     private int temptimer;
 
     void Start() {
-        itemParentTransform = GameObject.FindWithTag("ItemParent").transform;
         healthbarTransform = transform.FindChild("Healthbar");
         if (template.isBoss) {
             GlobalHelper.activeBosses++;
@@ -35,7 +33,7 @@ public class Enemy : MonoBehaviour {
 	void Update () {
         if (!GlobalHelper.paused) {
             //Checking collision with the player. This can happen inbetween phases, so outside the !midDelay part, but getting hit during dialogue is stupid, so not there.
-            if (!GlobalHelper.dialogue && Vector2.Distance(transform.position, GlobalHelper.GetPlayer().transform.position) < template.scale/2.5f) {
+            if (!GlobalHelper.dialogue && Vector2.Distance(transform.position, PlayerPosGetter.playerPos) < template.scale/2.5f) {
                 GlobalHelper.GetStats().TakeDamage();
             }
             //Things that should not happen inbetween phases or during dialogue.

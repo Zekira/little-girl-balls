@@ -33,7 +33,6 @@ public class PlayerStats : MonoBehaviour {
 
     public Sprite[] bombSprites = { null, null, null, null, null};
     public Sprite[] lifeSprites = { null, null, null, null };
-    public Vector3 playerPosition;
 
     private GameObject UIVariable;
 
@@ -66,7 +65,6 @@ public class PlayerStats : MonoBehaviour {
                 SetGraze(graze + grazeInATick);
                 grazeInATick = 0;
             }
-            playerPosition = transform.position;
             //Invincibility cooldown.
             if (invincibility > 0) {
                 invincibility--;

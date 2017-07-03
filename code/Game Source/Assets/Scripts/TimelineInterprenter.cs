@@ -450,7 +450,7 @@ public class TimelineInterprenter : MonoBehaviour {
                     continue;
                 case TimelineCommand.Command.ANGLETOPLAYER: //Returns the angle to the player.
                     pos = transform.position;
-                    playerpos = GameObject.FindWithTag("Player").transform.position;
+                    playerpos = PlayerPosGetter.playerPos;
                     num1 = pos.x - playerpos.x;
                     num2 = pos.y - playerpos.y;
                     SetNumber(currentCommand.args[0], Mathf.Atan2(-num1, -num2));
@@ -463,7 +463,7 @@ public class TimelineInterprenter : MonoBehaviour {
                     SetNumber(currentCommand.args[0], Mathf.Atan2(-num1, -num2));
                     continue;
                 case TimelineCommand.Command.GETPLAYERPOSITION:
-                    playerpos = GameObject.FindWithTag("Player").transform.position;
+                    playerpos = PlayerPosGetter.playerPos;
                     SetNumber(currentCommand.args[0], playerpos.x);
                     SetNumber(currentCommand.args[1], playerpos.y);
                     continue;

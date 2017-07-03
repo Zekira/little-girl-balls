@@ -1,13 +1,15 @@
-laserproperty(laser, warnduration, 60);
-laserproperty(laser, shotduration, 240);
+laserproperty(laser, warnduration, 90);
+laserproperty(laser, shotduration, 210);
 laserproperty(laser, innercolor, 1, 1, 1, 1);
-laserproperty(laser, outercolor, 1, 1, 0, 1);
+laserproperty(laser, outercolor, 1, 1, 0.5, 1);
 
+set(angle, 3.1415);
+wait(40);
 repeat(4);
-	wait(60);
-	repeat(8);
-		add(angle, angle, 0.7854);
-		laserproperty(laser, rotation, angle);
-		createlaser(laser);
-	endrepeat;
+wait(20);
+repeat(5);
+	add(angle, angle, 1.2566);
+	laserproperty(laser, rotation, angle);
+	createlaser(laser);
+endrepeat;
 endrepeat;
