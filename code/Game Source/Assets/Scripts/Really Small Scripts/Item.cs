@@ -32,24 +32,24 @@ public class Item : MonoBehaviour {
                 float deltax = playerpos.x - pos.x;
                 float deltay = playerpos.y - pos.y;
                 float distance = deltax * deltax + deltay * deltay;
-                if (!GlobalHelper.GetStats().noMovement && distance < 0.016f) { //Close enough to be picked up. And you can't pick up stuff if you're dead.
+                if (!GlobalHelper.stats.noMovement && distance < 0.016f) { //Close enough to be picked up. And you can't pick up stuff if you're dead.
                     switch (type) {
                         case ItemType.POWER:
-                            GlobalHelper.GetStats().AddPower(5);
+                            GlobalHelper.stats.AddPower(5);
                             break;
                         case ItemType.LARGEPOWER:
-                            GlobalHelper.GetStats().AddPower(100);
+                            GlobalHelper.stats.AddPower(100);
                             break;
                         case ItemType.FULLPOWER:
-                            GlobalHelper.GetStats().SetPower(400);
+                            GlobalHelper.stats.SetPower(400);
                             break;
                         case ItemType.POINT:
-                            GlobalHelper.GetStats().AddScore(GlobalHelper.GetStats().value);
+                            GlobalHelper.stats.AddScore(GlobalHelper.stats.value);
                             break;
                     }
                     GlobalHelper.backupItems.Add(this.gameObject);
                     gameObject.SetActive(false);
-                } else if (!GlobalHelper.GetStats().noMovement && (distance < 2 || autoCollected)) { //Close enough to be attracted or autocollected. You also can't attract stuff if you're dead.
+                } else if (!GlobalHelper.stats.noMovement && (distance < 2 || autoCollected)) { //Close enough to be attracted or autocollected. You also can't attract stuff if you're dead.
                     Vector2 travel = new Vector2(deltax, deltay).normalized / 10f;
                     transform.position += new Vector3(travel.x, travel.y, 0f);
                 } else {

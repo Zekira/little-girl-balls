@@ -8,6 +8,8 @@ bulletproperty(bullet, innercolor, 1, 1, 1, 1);
 bulletproperty(bullet, movement, 0, 0);
 bulletproperty(bullet, advancedpath, Timelines/Supplementary/Refraction_3);
 
+movetowardspoint(0, 3, 20);
+
 wait(30);
 
 repeat(20);

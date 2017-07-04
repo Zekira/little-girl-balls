@@ -12,6 +12,8 @@ bulletproperty(b2, id, 12);
 bulletproperty(b2, outercolor, 1, 1, 1, 1);
 bulletproperty(b2, innercolor, 1, 1, 0, 1);
 
+movetowardspoint(0, 3, 20);
+
 repeat(10);
 
 wait(30);

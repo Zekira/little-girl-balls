@@ -34,7 +34,7 @@ public class Enemy : MonoBehaviour {
         if (!GlobalHelper.paused) {
             //Checking collision with the player. This can happen inbetween phases, so outside the !midDelay part, but getting hit during dialogue is stupid, so not there.
             if (!GlobalHelper.dialogue && Vector2.Distance(transform.position, PlayerPosGetter.playerPos) < template.scale/2.5f) {
-                GlobalHelper.GetStats().TakeDamage();
+                GlobalHelper.stats.TakeDamage();
             }
             //Things that should not happen inbetween phases or during dialogue.
             if (!midDelay && !GlobalHelper.dialogue) {

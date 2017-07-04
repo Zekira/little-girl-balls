@@ -199,7 +199,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nextObject: {fileID: 1119832197}
   prevObject: {fileID: 1269712694}
-  selectable: 0
+  selectable: 1
+  previousSelectedMenuItems: []
 --- !u!1 &232715594
 GameObject:
   m_ObjectHideFlags: 0
@@ -315,6 +316,7 @@ MonoBehaviour:
   nextObject: {fileID: 2144926412}
   prevObject: {fileID: 1648732821}
   selectable: 1
+  previousSelectedMenuItems: []
 --- !u!1 &254753690
 GameObject:
   m_ObjectHideFlags: 0
@@ -521,6 +523,7 @@ MonoBehaviour:
   nextObject: {fileID: 0}
   prevObject: {fileID: 0}
   selectable: 1
+  previousSelectedMenuItems: []
 --- !u!1 &514524240
 GameObject:
   m_ObjectHideFlags: 0
@@ -635,7 +638,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nextObject: {fileID: 1648732821}
   prevObject: {fileID: 942771822}
-  selectable: 0
+  selectable: 1
+  previousSelectedMenuItems: []
 --- !u!1 &564851398
 GameObject:
   m_ObjectHideFlags: 0
@@ -651,7 +655,7 @@ GameObject:
   - 114: {fileID: 564851400}
   m_Layer: 5
   m_Name: PlayNormal
-  m_TagString: Untagged
+  m_TagString: MenuBase
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -686,7 +690,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nextObject: {fileID: 887030898}
   prevObject: {fileID: 803981217}
-  selectable: 0
+  selectable: 1
+  previousSelectedMenuItems: []
 --- !u!114 &564851401
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -801,7 +806,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nextObject: {fileID: 564851399}
   prevObject: {fileID: 1037864659}
-  selectable: 0
+  selectable: 1
+  previousSelectedMenuItems: []
 --- !u!114 &803981219
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -916,7 +922,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nextObject: {fileID: 1037864659}
   prevObject: {fileID: 564851399}
-  selectable: 0
+  selectable: 1
+  previousSelectedMenuItems: []
 --- !u!114 &887030900
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1095,7 +1102,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nextObject: {fileID: 514524241}
   prevObject: {fileID: 1119832197}
-  selectable: 0
+  selectable: 1
+  previousSelectedMenuItems: []
 --- !u!1 &1037864658
 GameObject:
   m_ObjectHideFlags: 0
@@ -1147,6 +1155,7 @@ MonoBehaviour:
   nextObject: {fileID: 803981217}
   prevObject: {fileID: 887030898}
   selectable: 1
+  previousSelectedMenuItems: []
 --- !u!114 &1037864661
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1325,7 +1334,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nextObject: {fileID: 942771822}
   prevObject: {fileID: 224484174}
-  selectable: 0
+  selectable: 1
+  previousSelectedMenuItems: []
 --- !u!1 &1201370844
 GameObject:
   m_ObjectHideFlags: 0
@@ -1480,7 +1490,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nextObject: {fileID: 224484174}
   prevObject: {fileID: 2144926412}
-  selectable: 0
+  selectable: 1
+  previousSelectedMenuItems: []
 --- !u!1 &1648732820
 GameObject:
   m_ObjectHideFlags: 0
@@ -1595,7 +1606,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nextObject: {fileID: 232715595}
   prevObject: {fileID: 514524241}
-  selectable: 0
+  selectable: 1
+  previousSelectedMenuItems: []
 --- !u!1 &1989703313
 GameObject:
   m_ObjectHideFlags: 0
@@ -1814,3 +1826,4 @@ MonoBehaviour:
   nextObject: {fileID: 1269712694}
   prevObject: {fileID: 232715595}
   selectable: 1
+  previousSelectedMenuItems: []

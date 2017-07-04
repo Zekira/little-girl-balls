@@ -31,6 +31,10 @@ public class Bullet : MonoBehaviour {
             transform.position = new Vector3(posx, posy, posz);
             //Do collision checks only once every other frame because they are intensive.
             if (updateCollisions) {
+                if (posx * posx + posy * posy > 64) { //AKA when it's so far out of the field it's irrelevant
+                    Deactivate();
+                }
+                updateCollisions = false;
                 //This block only checks collision; a harmless bullet can't collide with anything.
                 if (!bulletTemplate.harmless) {
                     //Check whether colliding with the player is lethal, and if so, either be grazed or be lethal.
@@ -50,11 +54,11 @@ public class Bullet : MonoBehaviour {
                         otherpos = PlayerPosGetter.playerPos;
                         deltax = otherpos.x - posx;
                         deltay = otherpos.y - posy;
-                        if (!GlobalHelper.GetStats().noMovement && deltax * deltax + deltay * deltay < 0.5f * bulletTemplate.scale / 2f * bulletTemplate.scale / 2f + GlobalHelper.GetStats().hitboxRadius * GlobalHelper.GetStats().hitboxRadius * 0.33f) {
-                            GlobalHelper.GetStats().TakeDamage();
+                        if (!GlobalHelper.stats.noMovement && deltax * deltax + deltay * deltay < 0.5f * bulletTemplate.scale / 2f * bulletTemplate.scale / 2f + GlobalHelper.stats.hitboxRadius * GlobalHelper.stats.hitboxRadius * 0.33f) {
+                            GlobalHelper.stats.TakeDamage();
                             Deactivate();
-                        } else if (!grazed && deltax * deltax + deltay * deltay < GlobalHelper.GetStats().grazeRadius * GlobalHelper.GetStats().grazeRadius) {
-                            GlobalHelper.GetStats().Graze();
+                        } else if (!grazed && deltax * deltax + deltay * deltay < GlobalHelper.stats.grazeRadius * GlobalHelper.stats.grazeRadius) {
+                            GlobalHelper.stats.Graze();
                             grazed = true;
                         }
                     } else { //If the bullet is not harmful to the player, it should check enemies and damage them.
@@ -72,10 +76,6 @@ public class Bullet : MonoBehaviour {
                         }
                     }
                 }
-                if (posx * posx + posy * posy > 64) { //AKA when it's so far out of the field it's irrelevant
-                    Deactivate();
-                }
-                updateCollisions = false;
             } else {
                 updateCollisions = true;
             }

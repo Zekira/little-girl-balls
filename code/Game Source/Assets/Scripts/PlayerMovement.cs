@@ -70,19 +70,19 @@ public class PlayerMovement : MonoBehaviour {
             if (Input.GetKeyDown(keyFocus)) {
                 focused = true;
                 transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
-                transform.GetChild(0).localScale = new Vector3(GlobalHelper.GetStats().hitboxRadius, GlobalHelper.GetStats().hitboxRadius, 1f);
+                transform.GetChild(0).localScale = new Vector3(GlobalHelper.stats.hitboxRadius, GlobalHelper.stats.hitboxRadius, 1f);
             } else if (Input.GetKeyUp(keyFocus)) {
                 focused = false;
                 transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
             }
 
             //Things that shouldn't happen when in deathanimation: movement, shot, and bombs
-            if (!GlobalHelper.GetStats().noMovement) {
-                if (Input.GetKeyDown(keyBomb) && !GlobalHelper.dialogue && GlobalHelper.GetStats().bombs > 0) { //todo: graphics
+            if (!GlobalHelper.stats.noMovement) {
+                if (Input.GetKeyDown(keyBomb) && !GlobalHelper.dialogue && GlobalHelper.stats.bombs > 0) { //todo: graphics
                     //Set the spellcard bonus to failure. Does basically nothing if there's no spell active except eat like .01ms
                     GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
-                    GlobalHelper.GetStats().invincibility = 300;
-                    GlobalHelper.GetStats().SetBombs((byte)(GlobalHelper.GetStats().bombs - 1), GlobalHelper.GetStats().bombpieces);
+                    GlobalHelper.stats.invincibility = 300;
+                    GlobalHelper.stats.SetBombs((byte)(GlobalHelper.stats.bombs - 1), GlobalHelper.stats.bombpieces);
                     GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(0.3f, BulletClear.BulletClearType.BOMB,300);
                 }
                 //Check what movement should happen
@@ -136,7 +136,7 @@ public class PlayerMovement : MonoBehaviour {
         if (Input.GetKey(keyFocus)) { 
             focused = true;
             transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
-            transform.GetChild(0).localScale = new Vector3(GlobalHelper.GetStats().hitboxRadius, GlobalHelper.GetStats().hitboxRadius, 1f);
+            transform.GetChild(0).localScale = new Vector3(GlobalHelper.stats.hitboxRadius, GlobalHelper.stats.hitboxRadius, 1f);
         } else {
             focused = false;
             transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;

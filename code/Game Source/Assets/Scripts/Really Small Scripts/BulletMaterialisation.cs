@@ -10,7 +10,7 @@ public class BulletMaterialisation : MonoBehaviour {
     private BulletTemplate template;
     private SpriteRenderer spriteRenderer;
     public Sprite actualSprite;
-    public Sprite materialiseSprite;
+    public static Sprite materialiseSprite;
     private Color color;
     public float scale;
     public int timer;

@@ -59,6 +59,8 @@ public class GlobalHelper : MonoBehaviour {
         itemSprites = new List<Sprite>(); //All sprite textures
         bulletSprites = new List<Sprite>(); //All bullet textures
         enemySprites = new List<Sprite[]>(); //All enemy textures
+        Texture2D bulletMaterialiseTexture = (Texture2D) Resources.Load("Graphics/MaterialiseSprite");
+        BulletMaterialisation.materialiseSprite = Sprite.Create(bulletMaterialiseTexture, new Rect(0, 0, bulletMaterialiseTexture.width, bulletMaterialiseTexture.height), Vector2.one * 0.5f);
 
         bulletMatPropertyBlock = new MaterialPropertyBlock();
 
@@ -87,22 +89,6 @@ public class GlobalHelper : MonoBehaviour {
         if (Tick != null) {
             Tick();
         }
-    }
-
-    /// <summary>
-    /// Get a reference to the Player GameObject.
-    /// </summary>
-    /// <returns>Returns the Player GameObject.</returns>
-    public static GameObject GetPlayer() {
-        return player;
-    }
-
-    /// <summary>
-    /// Gets a reference to the PlayerStats component.
-    /// </summary>
-    /// <returns>Returns the PlayerStats component.</returns>
-    public static PlayerStats GetStats() {
-        return stats;
     }
 
     /// <summary>
@@ -326,7 +312,7 @@ public class GlobalHelper : MonoBehaviour {
 
     public static void SetPaused(bool paused) {
         GlobalHelper.paused = paused;
-        GetPlayer().GetComponent<PlayerMovement>().UpdateFocused(); //Updating focus is needed when unpausing, otherwise it wouldn't register releasing/holding the button during the pause
+        player.GetComponent<PlayerMovement>().UpdateFocused(); //Updating focus is needed when unpausing, otherwise it wouldn't register releasing/holding the button during the pause
         canvas.FindChild("Pause Canvas").gameObject.SetActive(paused);
         canvas.FindChild("Dialogue Canvas").gameObject.SetActive(dialogue && !paused);
         if (paused) {
