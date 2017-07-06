@@ -25,7 +25,7 @@ public class TimelineInterprenter : MonoBehaviour {
 
     //Vars needed within the for loop. Static because they don't get used for multiple ticks, so they can be reused, so it's useless to create these for every object needing the interprenter.
     private static int count, layers, findEndRepeatLine, lineDifference;
-    private static float num1, num2;
+    private static float num1, num2, num3;
     private static TimelineCommand currentCommand;
     private static BulletTemplate bulletTemplate;
     private static BulletTemplate parentTemplate;
@@ -224,6 +224,22 @@ public class TimelineInterprenter : MonoBehaviour {
                                 pos.y = num2;
                             }
                             bulletTemplate.movement = pos;
+                            break;
+                        case TimelineCommand.BulletProperty.MOVEMENTPOLAR:
+                            num3 = ParseValue(currentCommand.args[1]); //angle
+                            num2 = ParseValue(currentCommand.args[2]); //length
+                            num1 = Mathf.Sin(num3) * num2; //x
+                            num2 = Mathf.Cos(num3) * num2; //y
+                            if (parentBullet != null) { //If the parent is a bullet, change its movement to be rotated
+                                parentTemplate = parentBullet.bulletTemplate;
+                                pos.x = num1 * parentTemplate.scriptRotationMatrix.x + num2 * parentTemplate.scriptRotationMatrix.y;
+                                pos.y = num1 * parentTemplate.scriptRotationMatrix.z + num2 * parentTemplate.scriptRotationMatrix.w;
+                            } else {
+                                pos.x = num1;
+                                pos.y = num2;
+                            }
+                            bulletTemplate.movement = pos;
+
                             break;
                         case TimelineCommand.BulletProperty.POSITION:
                             num1 = ParseValue(currentCommand.args[1]);

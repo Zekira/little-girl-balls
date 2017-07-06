@@ -5004,7 +5004,7 @@ MonoBehaviour:
   value: 10000
   graze: 0
   grazeInATick: 0
-  invincibility: 0
+  invincibility: 999999
   noMovement: 0
   startPosition: {x: 0, y: -4, z: 0}
   hitboxRadius: 0.15
@@ -5928,7 +5928,7 @@ AudioSource:
   m_Volume: 0.073
   m_Pitch: 1
   Loop: 1
-  Mute: 1
+  Mute: 0
   Spatialize: 0
   Priority: 0
   DopplerLevel: 1

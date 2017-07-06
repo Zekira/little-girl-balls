@@ -12,7 +12,7 @@ public class TimelineCommand {
                         SET, ADD, SUB, MUL, DIV, MOD, POW, SIN, ASIN, COS, ACOS, TAN, ATAN, ABS,
                         ATTACKDURATION };
     public enum EnemyProperty { SCALE, ATTACKPATH, ID, MAXHEALTH, BOSS, BOSSPORTRAIT, DROPVALUE, DROPPOWER, DROPSCORE, STARTPOS, BASESCORE };
-    public enum BulletProperty { MOVEMENT, ENEMYSHOT, SCALE, ID, INNERCOLOR, OUTERCOLOR, ROTATION, POSITION, RELATIVEPOS, CLEARIMMUNE, SCRIPTROTATION, ADVANCEDPATH, HARMLESS };
+    public enum BulletProperty { MOVEMENT, MOVEMENTPOLAR, ENEMYSHOT, SCALE, ID, INNERCOLOR, OUTERCOLOR, ROTATION, POSITION, RELATIVEPOS, CLEARIMMUNE, SCRIPTROTATION, ADVANCEDPATH, HARMLESS };
     public enum LaserProperty { WARNDURATION, SHOTDURATION, OUTERCOLOR, INNERCOLOR, WIDTH, MOVEMENT, POSITION, RELATIVEPOS, ROTATION, ROTATIONSPEED };
 
     public Command command;
@@ -88,6 +88,7 @@ public class TimelineCommand {
                         }
                         break;
                     case "starttimeline":
+                    case "dialogue":
                         if (args.Count != 1) {
                             Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 1.");
                             foundError = true;
@@ -96,7 +97,6 @@ public class TimelineCommand {
                             foundError = true;
                         }
                         break;
-                    case "dialogue":
                     case "repeat":
                     case "wait":
                     case "createbullet":
@@ -163,6 +163,7 @@ public class TimelineCommand {
                                 break;
                             case "position":
                             case "movement":
+                            case "movementpolar":
                                 if (args.Count != 4) {
                                     Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 2.");
                                     foundError = true;
@@ -216,7 +217,6 @@ public class TimelineCommand {
                                 break;
                             case "attackpath": //Any number of values >0 is allowed, so no checking that
                                 for (int i = 2; i < args.Count; i++) {
-                                    Debug.Log(args[i]);
                                     if (Resources.Load(args[i]) == null) {
                                         Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): file \"<i>" + args[i] + "</i>\" does not exist.");
                                         foundError = true;

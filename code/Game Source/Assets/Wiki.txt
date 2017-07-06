@@ -115,6 +115,9 @@ All properties and values:
 Bullet:
   movement, <x>, <y>
 How this bullet moves every tick.
+  movementpolar, <angle>, <length>
+How this bullet moves every tick, defined by polar coordinates.
+Shorthand for: sin(x, angle); cos(y, angle); mul(x, x, length); mul (y, y, length); bulletproperty(<bullet>, movement, x, y);
 Default: x=0, y=0
   enemyshot, <0 (false) or 1 (true)>
 Whether this is shot by an enemy and can be grazed/lethal, or can damage enemies.

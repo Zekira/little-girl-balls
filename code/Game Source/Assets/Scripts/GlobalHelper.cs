@@ -18,6 +18,9 @@ public class GlobalHelper : MonoBehaviour {
     public static int level = 1;
     public enum Difficulty { EASY, NORMAL, HARD, LUNATIC, EXTRA };
     public static Difficulty difficulty = Difficulty.LUNATIC;
+    public static float MusicVolume = 1f;
+    public static float OtherVolume = 1f;
+    public static bool defaultFullscreen = false;
 
     //These things only make sense in a level, so they're defined, but initialised in Awake()
     public static Transform spellcardBackground, secondCounter, msecondCounter,canvas;
@@ -37,6 +40,7 @@ public class GlobalHelper : MonoBehaviour {
     private static Bullet bullet;
     private static Vector3 bulletpos;
     private static SpriteRenderer spriteRenderer;
+    private static Transform bulletTransform;
 
     //Things that make finding objects in other classes easier, but only make sense when in a level: the only time GlobalHelper is a script attached to an object.
     //Also sets up things needed for the level and such as this only runs when loading the level.
@@ -172,8 +176,9 @@ public class GlobalHelper : MonoBehaviour {
         if (backupBullets.Count == 0) {
             createdObject = GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Bullet"));
         } else {
-            createdObject = backupBullets[0];
-            backupBullets.RemoveAt(0);
+            int index = backupBullets.Count - 1;
+            createdObject = backupBullets[index];
+            backupBullets.RemoveAt(index);
             createdObject.SetActive(true);
         }
         bullet = createdObject.GetComponent<Bullet>();
@@ -205,12 +210,13 @@ public class GlobalHelper : MonoBehaviour {
         bullet.posy = bulletpos.y;
         bullet.posz = bulletpos.z;
         //Set the actual position
-        createdObject.transform.position = bulletpos;
+        bulletTransform = createdObject.transform;
+        bulletTransform.position = bulletpos;
 
-        createdObject.transform.localScale = bulletTemplate.scale * Vector3.one;
-        createdObject.transform.eulerAngles = new Vector3(0f, 0f, -bulletTemplate.rotation * Mathf.Rad2Deg);
+        bulletTransform.localScale = bulletTemplate.scale * Vector3.one;
+        bulletTransform.eulerAngles = new Vector3(0f, 0f, -bulletTemplate.rotation * Mathf.Rad2Deg);
 
-        spriteRenderer = createdObject.transform.GetComponent<SpriteRenderer>();
+        spriteRenderer = createdObject.GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = bulletSprites[bulletTemplate.bulletID];
         //If the property block is empty, initalise it here because it's needed.
         spriteRenderer.GetPropertyBlock(bulletMatPropertyBlock);
