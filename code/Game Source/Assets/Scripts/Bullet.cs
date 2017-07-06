@@ -7,20 +7,22 @@ public class Bullet : MonoBehaviour {
 
     public BulletTemplate bulletTemplate;
     public bool grazed;
-    public float posx, posy, posz, deltax, deltay;
+    public float posx, posy, posz;
+    private static float deltax = 0f;
+    private static float deltay = 0f;
     private bool updateCollisions = true;
     private bool deactivated = false;
-    Vector3 otherpos;
+    private static Vector3 otherpos;
 
     /// <summary>
-    /// Set all values to default. Does NOT affect a TimelineInterprenter attached; use its own reset for that.
+    /// Set all values to default, and the template to the argument. Does NOT affect a TimelineInterprenter attached; use its own reset for that.
     /// </summary>
-    public void Reset() {
-        bulletTemplate = new BulletTemplate();
+    public void Reset(BulletTemplate template) {
+        bulletTemplate = template;
         grazed = false;
         deactivated = false;
-        posx = 0; posy = 0; posz = 0; deltax = 0; deltay = 0;
         updateCollisions = true;
+        /*posx = 0; posy = 0; posz = 0; Set by GlobalHelper.Createbullet()*/ /*deltax = 0; deltay = 0; done every tick without saving data, doesn't need to be reset*/
     }
 
 	void Update () {

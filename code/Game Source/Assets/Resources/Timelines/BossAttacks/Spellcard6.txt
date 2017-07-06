@@ -12,6 +12,21 @@ movetowardspoint(0, 3, 20);
 
 wait(30);
 
+random(r, 0, 1);
+if(r,>,0.5);
+	angletoplayer(angle);
+	random(random, -0.05, 0.05);
+	add(angle, angle, random);
+	repeat(10);
+		add(angle, angle, -1.607);
+		bulletproperty(bullet, rotation, angle);
+		bulletproperty(bullet, scriptrotation, angle);
+		createbullet(bullet);
+		wait(1);
+	endrepeat;
+	wait(20);
+endif;
+
 repeat(20);
 repeat(20);
 

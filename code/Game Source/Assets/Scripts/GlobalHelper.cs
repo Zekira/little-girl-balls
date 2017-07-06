@@ -182,7 +182,7 @@ public class GlobalHelper : MonoBehaviour {
             createdObject.SetActive(true);
         }
         bullet = createdObject.GetComponent<Bullet>();
-        bullet.Reset();
+        bullet.Reset(bulletTemplate);
         if (bulletTemplate.advancedAttackPath != "") { //If there's advanced stuff happening, enable the TimelineInterprenter
             TimelineInterprenter interprenter = createdObject.GetComponent<TimelineInterprenter>();
             interprenter.enabled = true;
@@ -205,7 +205,6 @@ public class GlobalHelper : MonoBehaviour {
             bulletpos.y += bulletTemplate.position.y;
         }
         //Set the bullet's internal position vars; reading transform.position is a laggy operation apparantly, so this solves that.
-        bullet.bulletTemplate = bulletTemplate;
         bullet.posx = bulletpos.x;
         bullet.posy = bulletpos.y;
         bullet.posz = bulletpos.z;

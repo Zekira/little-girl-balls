@@ -1,0 +1,5 @@
+charno|happy|right|true|How did I lose?
+charno|happy|right|true|My powers of light should cleanse any evil!
+rachel|happy|left|true|But I'm not evil.
+charno|happy|right|true|Oh.
+rachel|happy|left|true|\n[High quality temp dialogue]

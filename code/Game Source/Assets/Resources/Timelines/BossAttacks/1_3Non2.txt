@@ -1,7 +1,7 @@
 attackduration(1200);
 setparenthealth(150);
 
-//wait(20);
+wait(20);
 
 bulletproperty(bullet, scale, 0.33);
 bulletproperty(bullet, id, 5);

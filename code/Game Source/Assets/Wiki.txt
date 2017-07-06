@@ -60,6 +60,8 @@ If the check is false, it executes the block between 'else' and 'endif' if 'else
 
   wait(time);
 time: A variable determining how long to wait. Every 60 is a second.
+  bosswait;
+Wait until the tick after the boss disappears, or wait(1); if there are none.
 
 Note I: You should never do something like Repeat If Endrepeat Endif.
 Note II: All angles in the following functions are radians. 0 is straight up, 3.14 is straight down.

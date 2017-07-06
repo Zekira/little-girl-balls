@@ -8,6 +8,7 @@ using System;
 public class TimelineInterprenter : MonoBehaviour {
     public string patternPath = "";
     public bool levelTimeline = false; //Set via inspector
+    public int commandsId;
     private Dictionary<int, float> numberVars = new Dictionary<int, float>();
     private Dictionary<int, BulletTemplate> bulletTemplateVars = new Dictionary<int, BulletTemplate>();
     private Dictionary<int, EnemyTemplate> enemyTemplateVars = new Dictionary<int, EnemyTemplate>();
@@ -21,7 +22,7 @@ public class TimelineInterprenter : MonoBehaviour {
     private Enemy parentEnemy;
     private int currentLine = 0;
     private int cooldown = 0;
-    private List<TimelineCommand> commands = new List<TimelineCommand>();
+    private bool bosswaiting = false;
 
     //Vars needed within the for loop. Static because they don't get used for multiple ticks, so they can be reused, so it's useless to create these for every object needing the interprenter.
     private static int count, layers, findEndRepeatLine, lineDifference;
@@ -33,7 +34,7 @@ public class TimelineInterprenter : MonoBehaviour {
     private static Vector3 pos, playerpos;
     private static int stringHash;
     private static bool ifevaluation;
-    private static List<TimelineCommand> enemyCommands = new List<TimelineCommand>();
+    private static int enemyCommandsId;
 
     public void Reset(string newTimeLine) {
         patternPath = newTimeLine;
@@ -67,12 +68,15 @@ public class TimelineInterprenter : MonoBehaviour {
 
     void Update() {
         if (!GlobalHelper.paused && !GlobalHelper.dialogue) {
-            if (cooldown == 0) {
+            if (cooldown <= 0 && !bosswaiting) {
                 //+1 because it would otherwise start at the line it terminated at (only "wait(x)"), resulting in an infinite loop, which is a nightmare. That is longer than 12 seconds.
                 currentLine++;
                 ReadAttack();
             }
-            cooldown = cooldown >= 0 ? cooldown - 1 : 0;
+            cooldown--;
+            if (bosswaiting && GlobalHelper.activeBosses == 0) {
+                bosswaiting = false;
+            }
         }
     }
 
@@ -92,7 +96,7 @@ public class TimelineInterprenter : MonoBehaviour {
     /// </summary>
     public void ReadAttack(bool initialise) {
         if (initialise) {
-            commands = TimelineCommand.GetCommands(patternPath);
+            commandsId = TimelineCommand.GetCommands(patternPath);
         }
         ReadAttack();
     }
@@ -103,8 +107,8 @@ public class TimelineInterprenter : MonoBehaviour {
      /// Any text evaluated should be all-lowercase.
      /// </summary>
     public void ReadAttack() { 
-        for (; currentLine < commands.Count; currentLine++) {
-            currentCommand = commands[currentLine];
+        for (; currentLine < TimelineCommand.commandLists[commandsId].Count; currentLine++) {
+            currentCommand = TimelineCommand.commandLists[commandsId][currentLine];
             //Take the part before the brackets and try to figure out what it says and do something with it.
             switch (currentCommand.command) {
                 case TimelineCommand.Command.STARTTIMELINE:
@@ -121,9 +125,9 @@ public class TimelineInterprenter : MonoBehaviour {
                     count = Mathf.RoundToInt(ParseValue(currentCommand.args[0])) - 1;
                     layers = 0; //Goes down for every Repeat(x) line. Goes up for every Endrepeat line. When it reaches "1", it hit the right endrepeat.
                     for (findEndRepeatLine = currentLine + 1; layers != 1; findEndRepeatLine++) {
-                        if (commands[findEndRepeatLine].command == TimelineCommand.Command.REPEAT) {
+                        if (TimelineCommand.commandLists[commandsId][findEndRepeatLine].command == TimelineCommand.Command.REPEAT) {
                             layers--;
-                        } else if (commands[findEndRepeatLine].command == TimelineCommand.Command.ENDREPEAT) {
+                        } else if (TimelineCommand.commandLists[commandsId][findEndRepeatLine].command == TimelineCommand.Command.ENDREPEAT) {
                             layers++;
                         }
                     }
@@ -140,7 +144,6 @@ public class TimelineInterprenter : MonoBehaviour {
                 case TimelineCommand.Command.IF:
                     //If false: continu to this level's "else", +1 line
                     //If true : continu until else
-                    layers = 0;
                     //Find out "ifevaluation". Format of text: if(var1,comparator,var2);
                     switch (currentCommand.args[1]) {
                         case "==":
@@ -175,15 +178,20 @@ public class TimelineInterprenter : MonoBehaviour {
                         //currentLine++; //Next line is the correct one. No ++ needed, the for loop does that.
                         continue;
                     } else {
-                        for (findEndRepeatLine = currentLine + 1; //Goes down for every "if" line, goes up every "endif" line, "else" does not affect it. When it reaches "1", it hits the right else / endif, check which
-                            !(layers >= 0 && commands[findEndRepeatLine].command == TimelineCommand.Command.ELSE) &&
-                            !(layers >= 1 && commands[findEndRepeatLine].command == TimelineCommand.Command.ENDIF);
-                            findEndRepeatLine++) {
-                            if (commands[findEndRepeatLine].command == TimelineCommand.Command.IF) {
+                        layers = 0;
+                        findEndRepeatLine = currentLine + 1;
+                        //"layers" goes down for every "if" line, goes up every "endif" line, "else" does not affect it. When it reaches "1" on endif or 0 on else it's done
+                        while (true) {
+                            if (TimelineCommand.commandLists[commandsId][findEndRepeatLine].command == TimelineCommand.Command.IF) {
                                 layers--;
-                            } else if (commands[findEndRepeatLine].command == TimelineCommand.Command.ENDIF) {
+                            } else if (TimelineCommand.commandLists[commandsId][findEndRepeatLine].command == TimelineCommand.Command.ENDIF) {
                                 layers++;
                             }
+                            if ((layers >= 0 && TimelineCommand.commandLists[commandsId][findEndRepeatLine].command == TimelineCommand.Command.ELSE) ||
+                            (layers >= 1 && TimelineCommand.commandLists[commandsId][findEndRepeatLine].command == TimelineCommand.Command.ENDIF)) {
+                                break;
+                            }
+                            findEndRepeatLine++;
                         }
                         currentLine = findEndRepeatLine/* + 1*/; //No +1 because that's already in the for loop this is in.
                         continue;
@@ -191,9 +199,9 @@ public class TimelineInterprenter : MonoBehaviour {
                 case TimelineCommand.Command.ELSE:
                     //If it hits here, the if was true, so go to the endif. Only have to worry about one end possibility so it's easier, and guaranteed ends on an "endif".
                     for (findEndRepeatLine = currentLine + 1; layers != 1; findEndRepeatLine++) {
-                        if (commands[findEndRepeatLine].command == TimelineCommand.Command.IF) {
+                        if (TimelineCommand.commandLists[commandsId][findEndRepeatLine].command == TimelineCommand.Command.IF) {
                             layers--;
-                        } else if (commands[findEndRepeatLine].command == TimelineCommand.Command.ENDIF) {
+                        } else if (TimelineCommand.commandLists[commandsId][findEndRepeatLine].command == TimelineCommand.Command.ENDIF) {
                             layers++;
                         }
                     }
@@ -311,9 +319,9 @@ public class TimelineInterprenter : MonoBehaviour {
                             for (int i = 1; i < currentCommand.args.Count; i++) {
                                 enemyTemplate.attackPath.Add(currentCommand.args[i]);
                                 //Read the files to get the time the attacks should last, and if it doesn't exist, let it be the default 9999. "Enemy" handles the rest, like survival cards etc.
-                                enemyCommands = TimelineCommand.GetCommands(currentCommand.args[i]);
+                                enemyCommandsId = TimelineCommand.GetCommands(currentCommand.args[i]);
                                 count = 9999;
-                                foreach (TimelineCommand c in enemyCommands) {
+                                foreach (TimelineCommand c in TimelineCommand.commandLists[enemyCommandsId]) {
                                     if (c.command == TimelineCommand.Command.ATTACKDURATION) {
                                         count = Mathf.RoundToInt(ParseValue(c.args[0]));
                                         break;
@@ -458,7 +466,10 @@ public class TimelineInterprenter : MonoBehaviour {
                     continue;
                 case TimelineCommand.Command.WAIT:
                     cooldown = Mathf.RoundToInt(ParseValue(currentCommand.args[0]));
-                    return;
+                    return; //return true because nothing else should execute this tick
+                case TimelineCommand.Command.BOSSWAIT:
+                    bosswaiting = true;
+                    return; //return true because nothing else should execute this tick
                 case TimelineCommand.Command.SETPARENTHEALTH:
                     parentEnemy.health = Mathf.RoundToInt(ParseValue(currentCommand.args[0]));
                     parentEnemy.template.maxHealth = parentEnemy.health;
