@@ -218,5 +218,5 @@ dialogue(Text/Dialogue/Stage1);
 enemyproperty(boss, startpos, 0, 3);
 createenemy(boss);
 bosswait;
-wait(60);
+wait(120);
 dialogue(Text/Dialogue/Stage1_End);
