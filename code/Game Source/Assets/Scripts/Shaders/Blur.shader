@@ -1,4 +1,6 @@
-﻿Shader "Custom/Blur" {
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Custom/Blur" {
 	Properties {
 		_MainTex ("Texture", 2D) = "white" {}
 	}
@@ -28,7 +30,7 @@
 
 			v2f_vct vert (vin_vct v) {
 				v2f_vct o;
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uvgrab = ComputeGrabScreenPos(o.vertex);
 				return o;
 			}

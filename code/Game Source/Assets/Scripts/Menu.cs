@@ -126,7 +126,7 @@ public class Menu : MonoBehaviour {
     }
 
     public void ToMenu(string name, bool hidePrevious) {
-        ToMenu(selectedObject.parent.parent.FindChild(name), true);
+        ToMenu(selectedObject.parent.parent.Find(name), true);
     }
 
     public void ToMenu(Transform parent, bool hidePrevious) {

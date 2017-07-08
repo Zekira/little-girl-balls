@@ -76,7 +76,7 @@ public class GlobalHelper : MonoBehaviour {
         LoadBulletSprites();
         LoadItemSprites();
 
-        GameObject.FindWithTag("UIVariable").transform.FindChild("Difficulty").GetComponent<RawImage>().texture = (Texture2D)Resources.Load("Graphics/Difficulty/" + (int)difficulty);
+        GameObject.FindWithTag("UIVariable").transform.Find("Difficulty").GetComponent<RawImage>().texture = (Texture2D)Resources.Load("Graphics/Difficulty/" + (int)difficulty);
 
         AudioSource audio = GameObject.FindWithTag("BGM").GetComponent<AudioSource>();
         audio.clip = (AudioClip) Resources.Load("Audio/Music/Stage" + level);
@@ -318,8 +318,8 @@ public class GlobalHelper : MonoBehaviour {
     public static void SetPaused(bool paused) {
         GlobalHelper.paused = paused;
         player.GetComponent<PlayerMovement>().UpdateFocused(); //Updating focus is needed when unpausing, otherwise it wouldn't register releasing/holding the button during the pause
-        canvas.FindChild("Pause Canvas").gameObject.SetActive(paused);
-        canvas.FindChild("Dialogue Canvas").gameObject.SetActive(dialogue && !paused);
+        canvas.Find("Pause Canvas").gameObject.SetActive(paused);
+        canvas.Find("Dialogue Canvas").gameObject.SetActive(dialogue && !paused);
         if (paused) {
             GameObject.FindWithTag("BGM").GetComponent<AudioSource>().Pause();
         } else {

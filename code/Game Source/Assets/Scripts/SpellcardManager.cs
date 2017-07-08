@@ -23,7 +23,7 @@ public class SpellcardManager : MonoBehaviour {
     private List<short> histories = new List<short>();
 
     void Start() {
-        spellcardUI = GlobalHelper.bossUI.transform.FindChild("SpellcardUI").gameObject;
+        spellcardUI = GlobalHelper.bossUI.transform.Find("SpellcardUI").gameObject;
     }
 
     void Update() {
@@ -52,9 +52,9 @@ public class SpellcardManager : MonoBehaviour {
             GlobalHelper.spellcardBackground.gameObject.SetActive(true);
             SetSpellcardName(name);
             int historyvalues = GetHistory(currentSpellId, 0); //TODO: Characters & shottypes
-            spellcardUI.transform.FindChild("History").GetComponent<Text>().text = (historyvalues >> 16) + "/" + ((historyvalues & 0xffff) + 1);
+            spellcardUI.transform.Find("History").GetComponent<Text>().text = (historyvalues >> 16) + "/" + ((historyvalues & 0xffff) + 1);
             SetHistory(currentSpellId, 0, historyvalues >> 16, (historyvalues & 0xffff) + 1);
-            spellcardUI.transform.FindChild("Bonus").GetComponent<Text>().text = currentValue.ToString();
+            spellcardUI.transform.Find("Bonus").GetComponent<Text>().text = currentValue.ToString();
             StartCoroutine(MoveSpellUI());
             StartCoroutine(MoveCasterPortrait());
             if (!enemy.timeoutAttack) { //Score should only decrease when it's a survival card
@@ -67,19 +67,19 @@ public class SpellcardManager : MonoBehaviour {
             startValue = currentValue;
         }
         if (enemy.timeoutAttack) { //Healthbar shouldn't show when it's a survival attack.
-            enemy.transform.FindChild("Healthbar").gameObject.SetActive(false);
+            enemy.transform.Find("Healthbar").gameObject.SetActive(false);
         }
     }
 
     private void SetSpellcardName(string name) { //Todo: add support for storing histories
         spellcardUI.SetActive(true);
-        spellcardUI.transform.FindChild("SpellcardName").GetComponent<Text>().text = name;
+        spellcardUI.transform.Find("SpellcardName").GetComponent<Text>().text = name;
     }
 
     private IEnumerator MoveCasterPortrait() { //From (-320,-80) to (230,520)
         Vector2 startPos = new Vector2(-320f, -200f);
         Vector2 endPos = new Vector2(130f, 100f);
-        GameObject spellcardCaster = GlobalHelper.bossUI.transform.FindChild("SpellcardCaster").gameObject;
+        GameObject spellcardCaster = GlobalHelper.bossUI.transform.Find("SpellcardCaster").gameObject;
         spellcardCaster.SetActive(true);
         Image spellcardCasterImage = spellcardCaster.GetComponent<Image>();
         spellcardCasterImage.sprite = GlobalHelper.levelManager.GetComponent<CharacterPortraits>().GetSprite(portraitCharacter, DialogueEntry.emotion.HAPPY);
@@ -158,7 +158,7 @@ public class SpellcardManager : MonoBehaviour {
                 if (!failed) {
                     currentValue = startValue - lessPerTick * (uint)(timeLimit - parentEnemy.timer);
                     if ((timeLimit & 2) == 0) { //every fourth tick
-                        spellcardUI.transform.FindChild("Bonus").GetComponent<Text>().text = currentValue.ToString();
+                        spellcardUI.transform.Find("Bonus").GetComponent<Text>().text = currentValue.ToString();
                     }
                 }
             }
@@ -177,24 +177,24 @@ public class SpellcardManager : MonoBehaviour {
     }
 
     private IEnumerator ShowBonus() {
-        Transform spellcardBonus = GameObject.FindWithTag("UI").transform.FindChild("Boss Canvas").FindChild("SpellcardBonus");
+        Transform spellcardBonus = GameObject.FindWithTag("UI").transform.Find("Boss Canvas").Find("SpellcardBonus");
         spellcardBonus.gameObject.SetActive(true);
         if (!failed) {
-            spellcardBonus.FindChild("Title").GetComponent<Text>().text = StringFetcher.GetString("SPELLBONUS");
-            spellcardBonus.FindChild("Score").GetComponent<Text>().text = GlobalHelper.Commafy(currentValue);
+            spellcardBonus.Find("Title").GetComponent<Text>().text = StringFetcher.GetString("SPELLBONUS");
+            spellcardBonus.Find("Score").GetComponent<Text>().text = GlobalHelper.Commafy(currentValue);
         } else {
-            spellcardBonus.FindChild("Title").GetComponent<Text>().text = StringFetcher.GetString("BONUSFAILED");
-            spellcardBonus.FindChild("Score").GetComponent<Text>().text = "";
+            spellcardBonus.Find("Title").GetComponent<Text>().text = StringFetcher.GetString("BONUSFAILED");
+            spellcardBonus.Find("Score").GetComponent<Text>().text = "";
         }
-        spellcardBonus.FindChild("Time Taken").GetComponent<Text>().text = ticksTaken / 600 + "" + (ticksTaken / 60) % 10 + ":" + (ticksTaken % 60) / 6 + "" + (ticksTaken % 60) % 10;
-        spellcardBonus.FindChild("Actual Time").GetComponent<Text>().text = ((int)timeTaken/10)+ "" + ((int)timeTaken%10) + ":" + ((int)(10*timeTaken%10)) + "" + ((int)(100*timeTaken%10));
+        spellcardBonus.Find("Time Taken").GetComponent<Text>().text = ticksTaken / 600 + "" + (ticksTaken / 60) % 10 + ":" + (ticksTaken % 60) / 6 + "" + (ticksTaken % 60) % 10;
+        spellcardBonus.Find("Actual Time").GetComponent<Text>().text = ((int)timeTaken/10)+ "" + ((int)timeTaken%10) + ":" + ((int)(10*timeTaken%10)) + "" + ((int)(100*timeTaken%10));
         float slowdown;
         if (timeTaken == 0) { //Prevent division by zero if it happens somehow
             slowdown = 6.66f;
         } else { //What usually happens ie not killing the spellcard the tick it starts.
             slowdown = Mathf.Max((60 * timeTaken - ticksTaken) / (60 * timeTaken), 0f);
         }
-        spellcardBonus.FindChild("Slowdown").GetComponent<Text>().text = ((int)(100*slowdown)) + "%";
+        spellcardBonus.Find("Slowdown").GetComponent<Text>().text = ((int)(100*slowdown)) + "%";
         int waitTime = 150;
         while (waitTime > 0) {
             if (!GlobalHelper.paused) {
@@ -211,7 +211,7 @@ public class SpellcardManager : MonoBehaviour {
     public void Fail() {
         failed = true;
         currentValue = 0;
-        spellcardUI.transform.FindChild("Bonus").GetComponent<Text>().text = "FAILED";
+        spellcardUI.transform.Find("Bonus").GetComponent<Text>().text = "FAILED";
     }
 
     /// <summary>

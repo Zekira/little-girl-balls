@@ -20,12 +20,12 @@ public class DialogueManager : MonoBehaviour {
     private DialogueEntry currentDialogue;
 
     void Awake() {
-        left = GameObject.FindWithTag("Dialogue").transform.FindChild("Left").transform;
-        right = GameObject.FindWithTag("Dialogue").transform.FindChild("Right").transform;
-        leftText = left.FindChild("DialogueBox").FindChild("Text").GetComponent<Text>();
-        rightText = right.FindChild("DialogueBox").FindChild("Text").GetComponent<Text>();
-        leftTitle = left.FindChild("Title").transform;
-        rightTitle = right.FindChild("Title").transform;
+        left = GameObject.FindWithTag("Dialogue").transform.Find("Left").transform;
+        right = GameObject.FindWithTag("Dialogue").transform.Find("Right").transform;
+        leftText = left.Find("DialogueBox").Find("Text").GetComponent<Text>();
+        rightText = right.Find("DialogueBox").Find("Text").GetComponent<Text>();
+        leftTitle = left.Find("Title").transform;
+        rightTitle = right.Find("Title").transform;
         Hide();
     }
     
@@ -78,15 +78,15 @@ public class DialogueManager : MonoBehaviour {
     public void LeftSays(DialogueEntry dialogue, bool showRight) {
         left.gameObject.SetActive(true);
         StartCoroutine(MoveTowards(new Vector3(0f, 0f, 0f), 0.2f, left.GetComponent<RectTransform>()));
-        left.FindChild("DialogueBox").gameObject.SetActive(true);
-        left.FindChild("Character").GetComponent<Image>().sprite = GlobalHelper.characterPortraits.GetSprite(dialogue.currentCharacer, dialogue.currentEmotion);
-        left.FindChild("Character").GetComponent<Image>().color = speakingColor;
+        left.Find("DialogueBox").gameObject.SetActive(true);
+        left.Find("Character").GetComponent<Image>().sprite = GlobalHelper.characterPortraits.GetSprite(dialogue.currentCharacer, dialogue.currentEmotion);
+        left.Find("Character").GetComponent<Image>().color = speakingColor;
         leftText.text = dialogue.text;
         if (showRight) {
             right.gameObject.SetActive(true);
             StartCoroutine(MoveTowards(new Vector3(40f, -40f, 0f), 0.2f, right.GetComponent<RectTransform>()));
-            right.FindChild("DialogueBox").gameObject.SetActive(false);
-            right.FindChild("Character").GetComponent<Image>().color = silentColor;
+            right.Find("DialogueBox").gameObject.SetActive(false);
+            right.Find("Character").GetComponent<Image>().color = silentColor;
         } else {
             right.gameObject.SetActive(false);
         }
@@ -96,15 +96,15 @@ public class DialogueManager : MonoBehaviour {
     public void RightSays(DialogueEntry dialogue, bool showLeft) {
         right.gameObject.SetActive(true);
         StartCoroutine(MoveTowards(new Vector3(0f, 0f, 0f), 0.2f, right.GetComponent<RectTransform>()));
-        right.FindChild("DialogueBox").gameObject.SetActive(true);
-        right.FindChild("Character").GetComponent<Image>().sprite = GlobalHelper.characterPortraits.GetSprite(dialogue.currentCharacer, dialogue.currentEmotion);
-        right.FindChild("Character").GetComponent<Image>().color = speakingColor;
+        right.Find("DialogueBox").gameObject.SetActive(true);
+        right.Find("Character").GetComponent<Image>().sprite = GlobalHelper.characterPortraits.GetSprite(dialogue.currentCharacer, dialogue.currentEmotion);
+        right.Find("Character").GetComponent<Image>().color = speakingColor;
         rightText.text = dialogue.text;
         if (showLeft) {
             left.gameObject.SetActive(true);
             StartCoroutine(MoveTowards(new Vector3(-40f, -40f, 0f), 0.2f, left.GetComponent<RectTransform>()));
-            left.FindChild("DialogueBox").gameObject.SetActive(false);
-            left.FindChild("Character").GetComponent<Image>().color = silentColor;
+            left.Find("DialogueBox").gameObject.SetActive(false);
+            left.Find("Character").GetComponent<Image>().color = silentColor;
         } else {
             left.gameObject.SetActive(false);
         }
@@ -139,8 +139,8 @@ public class DialogueManager : MonoBehaviour {
                         transform.gameObject.SetActive(true);
                         StartCoroutine(MoveSmooth(transform.GetComponent<RectTransform>(), new Vector2(70, -227), new Vector2(170, -227)));
                     }
-                    transform.FindChild("Name").GetComponent<Text>().text = text[i + 1];
-                    transform.FindChild("Title").GetComponent<Text>().text = text[i + 2];
+                    transform.Find("Name").GetComponent<Text>().text = text[i + 1];
+                    transform.Find("Title").GetComponent<Text>().text = text[i + 2];
                     continue;
                 default:
                     continue;
@@ -187,10 +187,10 @@ public class DialogueManager : MonoBehaviour {
         float progress = 0f;;
         transform.anchoredPosition = new Vector3(startPos.x, startPos.y);
         Color nameColor, nameOutline, titleColor, titleOutline;
-        nameColor = transform.FindChild("Name").GetComponent<Text>().color;
-        titleColor = transform.FindChild("Title").GetComponent<Text>().color;
-        nameOutline = transform.FindChild("Name").GetComponent<Outline>().effectColor;
-        titleOutline = transform.FindChild("Title").GetComponent<Outline>().effectColor;
+        nameColor = transform.Find("Name").GetComponent<Text>().color;
+        titleColor = transform.Find("Title").GetComponent<Text>().color;
+        nameOutline = transform.Find("Name").GetComponent<Outline>().effectColor;
+        titleOutline = transform.Find("Title").GetComponent<Outline>().effectColor;
         float alpha;
         //how much it should move when linprogress = [0,1] is defined by f(x)=5(2x-1)^4
         while (linearProgress < 1.1f) { //Overshooting 1 because the titles shooting away looks nice.
@@ -199,10 +199,10 @@ public class DialogueManager : MonoBehaviour {
                 transform.anchoredPosition += progress * (endPos - startPos);
                 alpha = Mathf.Max(1 - f(linearProgress), 0);
                 nameColor.a = alpha; titleColor.a = alpha; nameOutline.a = alpha; titleOutline.a = alpha;
-                transform.FindChild("Name").GetComponent<Text>().color = nameColor;
-                transform.FindChild("Title").GetComponent<Text>().color = titleColor;
-                transform.FindChild("Name").GetComponent<Outline>().effectColor = nameOutline;
-                transform.FindChild("Title").GetComponent<Outline>().effectColor = titleOutline;
+                transform.Find("Name").GetComponent<Text>().color = nameColor;
+                transform.Find("Title").GetComponent<Text>().color = titleColor;
+                transform.Find("Name").GetComponent<Outline>().effectColor = nameOutline;
+                transform.Find("Title").GetComponent<Outline>().effectColor = titleOutline;
 
                 linearProgress += 0.0075f;
             }

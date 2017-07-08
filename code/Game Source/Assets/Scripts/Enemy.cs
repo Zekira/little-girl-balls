@@ -18,7 +18,7 @@ public class Enemy : MonoBehaviour {
     private int temptimer;
 
     void Start() {
-        healthbarTransform = transform.FindChild("Healthbar");
+        healthbarTransform = transform.Find("Healthbar");
         if (template.isBoss) {
             GlobalHelper.activeBosses++;
             healthbarTransform.gameObject.SetActive(true);
@@ -175,7 +175,7 @@ public class Enemy : MonoBehaviour {
     /// Fills the healthbar from empty to full taking "time" ticks. It directly modifies the health variable.
     /// </summary>
     private IEnumerator FillHealthbar(int time) {
-        transform.FindChild("Healthbar").gameObject.SetActive(true);
+        transform.Find("Healthbar").gameObject.SetActive(true);
         int currentTime = 0;
         while (currentTime < time) {
             if (!GlobalHelper.paused) {
@@ -225,7 +225,7 @@ public class Enemy : MonoBehaviour {
     /// </summary>
     public void UpdateHealthbar() {
         if (healthbarTransform == null) {
-            healthbarTransform = transform.FindChild("Healthbar");
+            healthbarTransform = transform.Find("Healthbar");
         }
         healthbarTransform.GetComponent<SpriteRenderer>().material.SetFloat("_Progress", health / ((float)template.maxHealth));
     }
