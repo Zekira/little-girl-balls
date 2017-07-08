@@ -66,7 +66,7 @@ public static class SaveLoad {
      * KeyDown id
      * KeySkip id
      * KeyRestart id
-     * Music Volume (float x2)
+     * Music Volume (byte x2)
      * Other Volume
      * Fullscreen (bool)
      * //Language (??) TODO, later
@@ -103,8 +103,8 @@ public static class SaveLoad {
             PlayerMovement.keyDown = KeyCode.DownArrow;
             PlayerMovement.keySkip = KeyCode.LeftControl;
             PlayerMovement.keyRestart = KeyCode.R;
-            GlobalHelper.MusicVolume = 0.1f;
-            GlobalHelper.OtherVolume = 0.1f;
+            GlobalHelper.MusicVolume = 2;
+            GlobalHelper.OtherVolume = 2;
             GlobalHelper.defaultFullscreen = false;
             return;
         }
@@ -120,8 +120,8 @@ public static class SaveLoad {
             PlayerMovement.keyDown = (KeyCode)reader.ReadInt16();
             PlayerMovement.keySkip = (KeyCode)reader.ReadInt16();
             PlayerMovement.keyRestart = (KeyCode)reader.ReadInt16();
-            GlobalHelper.MusicVolume = reader.ReadSingle();
-            GlobalHelper.OtherVolume = reader.ReadSingle();
+            GlobalHelper.MusicVolume = reader.ReadByte();
+            GlobalHelper.OtherVolume = reader.ReadByte();
             GlobalHelper.defaultFullscreen = reader.ReadBoolean();
         }
     }

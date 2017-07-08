@@ -4,7 +4,7 @@ starttimeline(Timelines/Movement/VerticalInWaitVerticalOut);
 wait(20);
 
 bulletproperty(bullet, scale, 0.33);
-bulletproperty(bullet, id, 16);
+bulletproperty(bullet, id, 7);
 bulletproperty(bullet, innercolor, 1, 1, 1, 1);
 bulletproperty(bullet, outercolor, 0, 0, 1, 1);
 

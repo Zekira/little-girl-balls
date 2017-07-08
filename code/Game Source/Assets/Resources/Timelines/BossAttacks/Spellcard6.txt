@@ -1,4 +1,4 @@
-attackduration(2700);
+attackduration(1500);
 setparenthealth(180);
 
 bulletproperty(bullet, scale, 0.33);

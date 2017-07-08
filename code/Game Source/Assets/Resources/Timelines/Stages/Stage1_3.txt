@@ -130,8 +130,8 @@ createenemy(fairy3_blue);
 enemyproperty(fairy3_blue, startpos, 1.5, 5);
 createenemy(fairy3_blue);
 
-wait(580);
-enemyproperty(midboss, startpos, 0, 3);
+wait(540);
+enemyproperty(midboss, startpos, 3, 6);
 createenemy(midboss);
 wait(160);
 //Maximum boss length: little more than 1800 because of the spellcard animation, which is 90 ticks, so 1890 needs to be filled up;

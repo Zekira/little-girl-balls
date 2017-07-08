@@ -43,9 +43,10 @@ public class Menu : MonoBehaviour {
                     //Mostly main menu items
                     case "Play":
                         ToMenu("Difficulty", true);
-                        //GlobalHelper.LoadLevel(1, GlobalHelper.Difficulty.EASY);
                         break;
-
+                    case "Options":
+                        ToMenu("Settings", true);
+                        break;
                     case "Quit":
                         Application.Quit();
                         break;
@@ -73,6 +74,10 @@ public class Menu : MonoBehaviour {
                         break;
                     case "Title":
                         UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("menu");
+                        break;
+                    //General Cancel
+                    case "Cancel":
+                        GoBack(true);
                         break;
                     default:
 
@@ -145,4 +150,6 @@ public class Menu : MonoBehaviour {
             previousSelectedMenuItems.RemoveAt(previousSelectedMenuItems.Count - 1);
         }
     }
+
+    //public IEnumerator WaitForKey(Func<>)
 }

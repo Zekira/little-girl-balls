@@ -18,8 +18,8 @@ public class GlobalHelper : MonoBehaviour {
     public static int level = 1;
     public enum Difficulty { EASY, NORMAL, HARD, LUNATIC, EXTRA };
     public static Difficulty difficulty = Difficulty.LUNATIC;
-    public static float MusicVolume = 1f;
-    public static float OtherVolume = 1f;
+    public static byte MusicVolume = 1; //(Each stands for 5%)
+    public static byte OtherVolume = 1; //(Each stands for 5%)
     public static bool defaultFullscreen = false;
 
     //These things only make sense in a level, so they're defined, but initialised in Awake()
