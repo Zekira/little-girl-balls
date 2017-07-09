@@ -210,7 +210,7 @@ public class TimelineInterprenter : MonoBehaviour {
                 //case TimelineCommand.Command.ENDIF: //Do nothing
                 //    continue;
                 case TimelineCommand.Command.BULLETPROPERTY:
-                    bulletTemplate = new BulletTemplate(GetBulletTemplate(currentCommand.args[0]));
+                    bulletTemplate = GetBulletTemplate(currentCommand.args[0]);
                     switch (currentCommand.bulletProperty) {
                         case TimelineCommand.BulletProperty.SCRIPTROTATION:
                             if (parentBullet != null) { //If the parent is a bullet also add its angle.
@@ -308,7 +308,7 @@ public class TimelineInterprenter : MonoBehaviour {
                     SetBulletTemplate(currentCommand.args[0], bulletTemplate);
                     continue;
                 case TimelineCommand.Command.ENEMYPROPERTY:
-                    enemyTemplate = new EnemyTemplate(GetEnemyTemplate(currentCommand.args[0]));
+                    enemyTemplate = GetEnemyTemplate(currentCommand.args[0]);
                     switch (currentCommand.enemyProperty) {
                         case TimelineCommand.EnemyProperty.SCALE:
                             enemyTemplate.scale = ParseValue(currentCommand.args[1]);
@@ -608,15 +608,15 @@ public class TimelineInterprenter : MonoBehaviour {
         stringHash = name.GetHashCode();
         if (name[0] == 95) { //Starts with '_'
             if (!globalBulletTemplateVars.ContainsKey(stringHash)) {
-                globalBulletTemplateVars.Add(stringHash, new BulletTemplate());
-                return new BulletTemplate();
+                globalBulletTemplateVars.Add(stringHash, new BulletTemplate(true));
+                return new BulletTemplate(true);
             } else {
                 return globalBulletTemplateVars[stringHash];
             }
         } else {
             if (!bulletTemplateVars.ContainsKey(stringHash)) {
-                bulletTemplateVars.Add(stringHash, new BulletTemplate());
-                return new BulletTemplate();
+                bulletTemplateVars.Add(stringHash, new BulletTemplate(true));
+                return new BulletTemplate(true);
             } else {
                 return bulletTemplateVars[stringHash];
             }
@@ -654,15 +654,15 @@ public class TimelineInterprenter : MonoBehaviour {
         stringHash = name.GetHashCode();
         if (name[0] == 95) { //Starts with '_'
             if (!globalEnemyTemplateVars.ContainsKey(stringHash)) {
-                globalEnemyTemplateVars.Add(stringHash, new EnemyTemplate());
-                return new EnemyTemplate();
+                globalEnemyTemplateVars.Add(stringHash, new EnemyTemplate(true));
+                return new EnemyTemplate(true);
             } else {
                 return globalEnemyTemplateVars[stringHash];
             }
         } else {
             if (!enemyTemplateVars.ContainsKey(stringHash)) {
-                enemyTemplateVars.Add(stringHash, new EnemyTemplate());
-                return new EnemyTemplate();
+                enemyTemplateVars.Add(stringHash, new EnemyTemplate(true));
+                return new EnemyTemplate(true);
             } else {
                 return enemyTemplateVars[stringHash];
             }

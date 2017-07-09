@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// </summary>
 public class Enemy : MonoBehaviour {
 
-    public EnemyTemplate template = new EnemyTemplate();
+    public EnemyTemplate template;
     public int health = 1000;
     public Transform healthbarTransform;
     public int timer = 9999;

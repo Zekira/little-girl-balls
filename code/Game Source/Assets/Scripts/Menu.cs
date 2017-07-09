@@ -139,6 +139,7 @@ public class Menu : MonoBehaviour {
                     case "KeyDefault":
                         Config.SetDefaultKeys();
                         GoBack(true);
+                        ToMenu("KeyConfig", true);
                         break;
                     //Difficulty items
                     case "PlayEasy":

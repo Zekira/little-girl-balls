@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour {
     private float totalSpeedMultiplier;
     private int shotCooldown = 2;
     private DialogueManager dialogueManager;
-    private BulletTemplate mainShot = new BulletTemplate();
+    private BulletTemplate mainShot = new BulletTemplate(true);
     private SpriteAnimator animator;
 
     public Sprite[] moveLeftSprites, moveRightSprites,stationairySprites;    
