@@ -17,21 +17,11 @@ public class PlayerMovement : MonoBehaviour {
     private BulletTemplate mainShot = new BulletTemplate();
     private SpriteAnimator animator;
 
-    public Sprite[] moveLeftSprites, moveRightSprites,stationairySprites;
-
-    //TODO: Make these customisable
-    public static KeyCode keyPause = KeyCode.Escape;
-    public static KeyCode keyFocus = KeyCode.LeftShift;
-    public static KeyCode keyShoot = KeyCode.Z;
-    public static KeyCode keyBomb = KeyCode.X;
-    public static KeyCode keyLeft = KeyCode.LeftArrow;
-    public static KeyCode keyRight = KeyCode.RightArrow;
-    public static KeyCode keyUp = KeyCode.UpArrow;
-    public static KeyCode keyDown = KeyCode.DownArrow;
-    public static KeyCode keySkip = KeyCode.LeftControl;
-    public static KeyCode keyRestart = KeyCode.R;
+    public Sprite[] moveLeftSprites, moveRightSprites,stationairySprites;    
 
     void Awake() {
+        SaveLoad.LoadApplyConfig(); //Just in case
+
         animator = GetComponent<SpriteAnimator>();
         moveLeftSprites = SpriteAnimator.GetSprites(Resources.Load("Graphics/Sprites/Rachel_Left") as Texture2D);
         moveRightSprites = SpriteAnimator.GetSprites(Resources.Load("Graphics/Sprites/Rachel_Right") as Texture2D); //TODO: Not just have this as a flipped left.
@@ -51,11 +41,11 @@ public class PlayerMovement : MonoBehaviour {
 	
 	void Update () {
         //Check restart
-        if (Input.GetKeyDown(keyRestart)) {
+        if (Input.GetKeyDown(Config.keyRestart)) {
             GlobalHelper.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty);
         }
         //Check if pause
-        if (Input.GetKeyDown(keyPause)) {
+        if (Input.GetKeyDown(Config.keyPause)) {
             GlobalHelper.SetPaused(!GlobalHelper.paused);
         }
         //Interact with game world
@@ -67,18 +57,18 @@ public class PlayerMovement : MonoBehaviour {
             }
 
             //Check for going focused/unfocused
-            if (Input.GetKeyDown(keyFocus)) {
+            if (Input.GetKeyDown(Config.keyFocus)) {
                 focused = true;
                 transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
                 transform.GetChild(0).localScale = new Vector3(GlobalHelper.stats.hitboxRadius, GlobalHelper.stats.hitboxRadius, 1f);
-            } else if (Input.GetKeyUp(keyFocus)) {
+            } else if (Input.GetKeyUp(Config.keyFocus)) {
                 focused = false;
                 transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
             }
 
             //Things that shouldn't happen when in deathanimation: movement, shot, and bombs
             if (!GlobalHelper.stats.noMovement) {
-                if (Input.GetKeyDown(keyBomb) && !GlobalHelper.dialogue && GlobalHelper.stats.bombs > 0) { //todo: graphics
+                if (Input.GetKeyDown(Config.keyBomb) && !GlobalHelper.dialogue && GlobalHelper.stats.bombs > 0) { //todo: graphics
                     //Set the spellcard bonus to failure. Does basically nothing if there's no spell active except eat like .01ms
                     GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
                     GlobalHelper.stats.invincibility = 300;
@@ -86,10 +76,10 @@ public class PlayerMovement : MonoBehaviour {
                     GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(0.3f, BulletClear.BulletClearType.BOMB,300);
                 }
                 //Check what movement should happen
-                moveLeft = Input.GetKey(keyLeft) ? 1 : 0;
-                moveRight = Input.GetKey(keyRight) ? 1 : 0;
-                moveUp = Input.GetKey(keyUp) ? 1 : 0;
-                moveDown = Input.GetKey(keyDown) ? 1 : 0;
+                moveLeft = Input.GetKey(Config.keyLeft) ? 1 : 0;
+                moveRight = Input.GetKey(Config.keyRight) ? 1 : 0;
+                moveUp = Input.GetKey(Config.keyUp) ? 1 : 0;
+                moveDown = Input.GetKey(Config.keyDown) ? 1 : 0;
 
                 moveDirection = new Vector2(moveRight - moveLeft, moveUp - moveDown);
 
@@ -112,12 +102,12 @@ public class PlayerMovement : MonoBehaviour {
                     transform.position.z);
 
                 //Check whether the player is shooting or advancing dialogue.
-                if (Input.GetKey(keyShoot) && !GlobalHelper.dialogue && shotCooldown <= 0) {
+                if (Input.GetKey(Config.keyShoot) && !GlobalHelper.dialogue && shotCooldown <= 0) {
                     GlobalHelper.CreateBullet(mainShot, transform.position);
                     shotCooldown = 6;
-                } else if (GlobalHelper.dialogue && Input.GetKey(keySkip)) {
+                } else if (GlobalHelper.dialogue && Input.GetKey(Config.keySkip)) {
                     dialogueManager.AdvanceDialogue();
-                } else if (GlobalHelper.dialogue && Input.GetKeyDown(keyShoot)) {
+                } else if (GlobalHelper.dialogue && Input.GetKeyDown(Config.keyShoot)) {
                     dialogueManager.AdvanceDialogue();
                 }
             }
@@ -133,7 +123,7 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     public void UpdateFocused() {
-        if (Input.GetKey(keyFocus)) { 
+        if (Input.GetKey(Config.keyFocus)) { 
             focused = true;
             transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
             transform.GetChild(0).localScale = new Vector3(GlobalHelper.stats.hitboxRadius, GlobalHelper.stats.hitboxRadius, 1f);
