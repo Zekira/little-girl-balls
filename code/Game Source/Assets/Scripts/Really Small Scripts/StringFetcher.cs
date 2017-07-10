@@ -27,7 +27,7 @@ public class StringFetcher : MonoBehaviour {
         foreach (string s in ((TextAsset)Resources.Load("Text/Strings")).text.Split(new char[] { '\n', '\r' })) {
             string[] entry = s.Split(new char[] { '=' }, 2);
             if (entry.Length == 2) {
-                returnDict.Add(entry[0], entry[1]);
+                returnDict.Add(entry[0], entry[1].Replace("NEWLINE", System.Environment.NewLine));
             }
         }
         return returnDict;
@@ -39,7 +39,10 @@ public class StringFetcher : MonoBehaviour {
         if (strings == null || strings.Count == 0) {
             strings = GetFromFile();
         }
-        strings.TryGetValue(s, out s);
+        string str;
+        if (strings.TryGetValue(s, out str)) {
+            return str;
+        }
         return s;
     }
 }

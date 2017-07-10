@@ -28,6 +28,9 @@ Other options can be one of the following:
 Example:
   charno|happy|left|false|Hi there!|timed|120|introduction|Charno|A pixie|
 
+Note: Use
+  NEWLINE
+to make a new line.
 #===================================================#
 Timeline syntax:
 #===================================================#
@@ -36,7 +39,7 @@ Note: A "number" (or "variable", or "value", etc) must be in the form of either:
   2.30
   varname
   _globalvarname
-No comma's, f's, d's or anything like that. All text must be lowercase.
+No comma's, f's, d's or anything like that in numbers. All text must be lowercase.
 
 Every line is either a comment: (note that the ; is mandatory)
   #[any text];

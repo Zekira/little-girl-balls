@@ -56,7 +56,7 @@ public class DialogueEntry {
         returnEntry.currentEmotion = (emotion)System.Enum.Parse(typeof(emotion), info[1].ToUpperInvariant().Replace("\n", "").Replace("\r", ""));
         returnEntry.leftSpeaking = info[2].ToUpperInvariant().Replace("\n", "").Replace("\r", "") == "LEFT" ? true : false;
         returnEntry.showOther = info[3].ToUpperInvariant().Replace("\n", "").Replace("\r", "") == "TRUE" ? true : false;
-        returnEntry.text = info[4].Replace("\\n", System.Environment.NewLine);
+        returnEntry.text = info[4].Replace("NEWLINE", System.Environment.NewLine);
         returnEntry.special = new string[info.Length-5];
         for (int i = 0; i < info.Length-5; i++) {
             returnEntry.special[i] = info[i + 5];

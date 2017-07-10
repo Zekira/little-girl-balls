@@ -18,6 +18,8 @@ public class GlobalHelper : MonoBehaviour {
     public static int level = 1;
     public enum Difficulty { EASY, NORMAL, HARD, LUNATIC, EXTRA };
     public static Difficulty difficulty = Difficulty.LUNATIC;
+    public enum Character { RACHEL_A, RACHEL_B, RACHEL_C };
+    public static Character character = Character.RACHEL_B;
 
     //These things only make sense in a level, so they're defined, but initialised in Awake()
     public static Transform spellcardBackground, secondCounter, msecondCounter,canvas;
@@ -213,7 +215,7 @@ public class GlobalHelper : MonoBehaviour {
         bulletTransform.eulerAngles = new Vector3(0f, 0f, -bulletTemplate.rotation * Mathf.Rad2Deg);
 
         spriteRenderer = createdObject.GetComponent<SpriteRenderer>();
-        spriteRenderer.sprite = bulletSprites[bulletTemplate.bulletID];
+        //spriteRenderer.sprite = bulletSprites[bulletTemplate.bulletID]; Done through bulletmaterialisation
         //If the property block is empty, initalise it here because it's needed.
         spriteRenderer.GetPropertyBlock(bulletMatPropertyBlock);
         //Change the color the sprites should render

@@ -13,7 +13,11 @@ public class Bullet : MonoBehaviour {
     private bool updateCollisions = true;
     private bool deactivated = false;
     private static Vector3 otherpos;
+    private Transform thisTransform;
 
+    private void Start() {
+        thisTransform = transform;
+    }
     /// <summary>
     /// Set all values to default, and the template to the argument. Does NOT affect a TimelineInterprenter attached; use its own reset for that.
     /// </summary>
@@ -30,7 +34,7 @@ public class Bullet : MonoBehaviour {
             //Move it
             posx += bulletTemplate.movement.x;
             posy += bulletTemplate.movement.y;
-            transform.position = new Vector3(posx, posy, posz);
+            thisTransform.position = new Vector3(posx, posy, posz);
             //Do collision checks only once every other frame because they are intensive.
             if (updateCollisions) {
                 if (posx * posx + posy * posy > 64) { //AKA when it's so far out of the field it's irrelevant

@@ -1,5 +1,5 @@
 attackduration(900);
-setparenthealth(150);
+setparenthealth(1500);
 
 movetowardspoint(0, 3, 40);
 wait(40);

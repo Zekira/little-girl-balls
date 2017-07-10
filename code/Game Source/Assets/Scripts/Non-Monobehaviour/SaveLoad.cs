@@ -24,7 +24,7 @@ public static class SaveLoad {
             return;
         }
         using (BinaryWriter writer = new BinaryWriter(File.Open(spellcardHistoryPath, FileMode.Create))) {
-            for (int i = 0; i < histories.Count; i += 4) { //instead of i++ this to make clear they really should be in triplets
+            for (int i = 0; i < histories.Count; i += 4) { //instead of i++ this to make clear they really should be in groups of four
                 writer.Write(histories[i]);
                 writer.Write(histories[i + 1]);
                 writer.Write(histories[i + 2]);

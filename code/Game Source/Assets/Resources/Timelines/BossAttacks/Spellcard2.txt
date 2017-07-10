@@ -1,5 +1,5 @@
 attackduration(900);
-setparenthealth(170);
+setparenthealth(1700);
 
 laserproperty(laser, warnduration, 60);
 laserproperty(laser, shotduration, 70);

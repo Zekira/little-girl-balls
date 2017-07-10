@@ -51,7 +51,7 @@ public class SpellcardManager : MonoBehaviour {
             spellcardUI.SetActive(true);
             GlobalHelper.spellcardBackground.gameObject.SetActive(true);
             SetSpellcardName(name);
-            int historyvalues = GetHistory(currentSpellId, 0); //TODO: Characters & shottypes
+            int historyvalues = GetHistory(currentSpellId, (int)GlobalHelper.character);
             spellcardUI.transform.Find("History").GetComponent<Text>().text = (historyvalues >> 16) + "/" + ((historyvalues & 0xffff) + 1);
             SetHistory(currentSpellId, 0, historyvalues >> 16, (historyvalues & 0xffff) + 1);
             spellcardUI.transform.Find("Bonus").GetComponent<Text>().text = currentValue.ToString();
@@ -173,7 +173,7 @@ public class SpellcardManager : MonoBehaviour {
     public void EndSpellcard() {
         StartCoroutine(ShowBonus());
         int historyvalues = GetHistory(currentSpellId, 0); //TODO: Characters & shottypes
-        SetHistory(currentSpellId, 0, (historyvalues >> 16) + (failed ? 0 : 1), historyvalues & 0xffff); //The second argument is already set at the beginning of the spell
+        SetHistory(currentSpellId, (int)GlobalHelper.character, (historyvalues >> 16) + (failed ? 0 : 1), historyvalues & 0xffff); //The second argument is already set at the beginning of the spell
     }
 
     private IEnumerator ShowBonus() {

@@ -94,6 +94,12 @@ public class PlayerStats : MonoBehaviour {
             } else {
                 SetLives(--lives, lifepieces);
                 SetBombs(2, bombpieces);
+                Vector3 position;
+                for (int i = 0; i < 25 && i < power; i += 5) {
+                    position = PlayerPosGetter.playerPos + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble() - 0.01f);
+                    GlobalHelper.CreateItem(Item.ItemType.POWER, position);
+                }
+                SetPower(power > 50 ? power - 50 : 0);
             }
         }
     }

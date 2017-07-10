@@ -41,7 +41,7 @@ public class Enemy : MonoBehaviour {
                 //Bomb damage. Going through phases by bombs is cheap so you can't do that.
                 if (GlobalHelper.bulletClear.bulletClearType == BulletClear.BulletClearType.BOMB && GlobalHelper.bulletClear.destroyBulletsHeight < 5f) {
                     if (bombTimer <= 0 && health > 1) {
-                        TakeDamage(1);
+                        TakeDamage(10);
                         bombTimer = 5;
                     }
                     bombTimer--;

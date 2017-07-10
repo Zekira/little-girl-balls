@@ -3,16 +3,18 @@ using System.Collections;
 
 public class Laser : MonoBehaviour {
 
-    public LaserTemplate template = new LaserTemplate();
+    public LaserTemplate template = LaserTemplate.basic;
     public int timer = 0;
     Vector3 playerPos;
     float sin, cos, angle;
     Vector3 rotationVector;
     Vector3 movementVector;
     private int grazeCooldown = 0;
+    private Transform thisTransform;
 
     void Start() {
-        transform.Rotate(new Vector3(0f, 0f, template.rotation * Mathf.Rad2Deg));
+        thisTransform = transform;
+        thisTransform.Rotate(new Vector3(0f, 0f, template.rotation * Mathf.Rad2Deg));
         movementVector = new Vector3(template.movement.x, template.movement.y, 0f);
         rotationVector = new Vector3(0f, 0f, template.rotationSpeed * Mathf.Rad2Deg);
     }
@@ -20,20 +22,20 @@ public class Laser : MonoBehaviour {
     void Update() {
         if (!GlobalHelper.paused) {
             if (rotationVector.sqrMagnitude > 0) {
-                transform.position += movementVector;
+                thisTransform.position += movementVector;
             }
             if (rotationVector.z != 0) {
-                transform.Rotate(rotationVector);
+                thisTransform.Rotate(rotationVector);
             }
 
             if (timer < template.warnDuration && timer > template.warnDuration - 10) {
                 //widening animation that lasts for 10 ticks
-                transform.localScale = new Vector3(Mathf.Lerp(0.06f, template.width, (timer-template.warnDuration+10) / 10f), 99f, 1f);
+                thisTransform.localScale = new Vector3(Mathf.Lerp(0.06f, template.width, (timer-template.warnDuration+10) / 10f), 99f, 1f);
             } else if (timer > template.warnDuration && timer < template.warnDuration + template.shotDuration) {
                 //collision check
                 playerPos = PlayerPosGetter.playerPos; //The player position in the regular coordinate system
-                playerPos -= transform.position; //The player position in a coordinate system through this object, parallel with the previous one
-                angle = transform.localEulerAngles.z;
+                playerPos -= thisTransform.position; //The player position in a coordinate system through this object, parallel with the previous one
+                angle = thisTransform.localEulerAngles.z;
                 sin = Mathf.Sin(angle * Mathf.Deg2Rad);
                 cos = Mathf.Cos(angle * Mathf.Deg2Rad);
                 playerPos = new Vector3(playerPos.x * cos + playerPos.y * sin, -playerPos.x * sin + playerPos.y * cos, 0f); //The player position in a coordinate system where the laser points straight down.
@@ -49,7 +51,7 @@ public class Laser : MonoBehaviour {
                 Destroy(this.gameObject);
             }
 
-            if (GlobalHelper.bulletClear.destroyBulletsHeight < transform.position.y && GlobalHelper.bulletClear.bulletClearType == BulletClear.BulletClearType.FULLCLEAR) {
+            if (GlobalHelper.bulletClear.destroyBulletsHeight < thisTransform.position.y && GlobalHelper.bulletClear.bulletClearType == BulletClear.BulletClearType.FULLCLEAR) {
                 Destroy(this.gameObject);
             }
 

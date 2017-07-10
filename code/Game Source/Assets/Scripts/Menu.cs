@@ -16,14 +16,27 @@ public class Menu : MonoBehaviour {
     public Transform connectedTransform; //To be set in the inspector. What transform is modified by this transform
     public static List<Transform> previousSelectedMenuItems = new List<Transform>();
 
+    private Color activeColor;
+    private Color inactiveColor;
+
     void Awake() {
+        activeColor = GetComponent<Text>().color;
+        inactiveColor = new Vector4(activeColor.r / 2, activeColor.g / 2, activeColor.b / 2, 0.5f);
         SaveLoad.LoadApplyConfig(); //Just in case
         if (selectedObject == null || selectedObject.gameObject.activeInHierarchy == false) {
             GameObject.FindWithTag("MenuBase").GetComponent<Menu>().Select(false);
         }
     }
-	
-	void Update () {
+
+    void OnEnable() {
+        if (!selectable) {
+            GetComponent<Text>().color = inactiveColor;
+        } else {
+            GetComponent<Text>().color = activeColor;
+        }
+    }
+
+    void Update () {
         if (IsSelected()) {
             if (cooldown > 0) {
                 cooldown--;
@@ -107,34 +120,34 @@ public class Menu : MonoBehaviour {
                         break;
                     //Key Config
                     case "KeyLeft":
-                        WaitForKey(Config.SetKeyLeft);
+                        WaitForKey(Config.SetKeyLeft, Config.keyLeft);
                         break;
                     case "KeyRight":
-                        WaitForKey(Config.SetKeyRight);
+                        WaitForKey(Config.SetKeyRight, Config.keyRight);
                         break;
                     case "KeyUp":
-                        WaitForKey(Config.SetKeyUp);
+                        WaitForKey(Config.SetKeyUp, Config.keyUp);
                         break;
                     case "KeyDown":
-                        WaitForKey(Config.SetKeyDown);
+                        WaitForKey(Config.SetKeyDown, Config.keyDown);
                         break;
                     case "KeyShoot":
-                        WaitForKey(Config.SetKeyShoot);
+                        WaitForKey(Config.SetKeyShoot, Config.keyShoot);
                         break;
                     case "KeyBomb":
-                        WaitForKey(Config.SetKeyBomb);
+                        WaitForKey(Config.SetKeyBomb, Config.keyBomb);
                         break;
                     case "KeyFocus":
-                        WaitForKey(Config.SetKeyFocus);
+                        WaitForKey(Config.SetKeyFocus, Config.keyFocus);
                         break;
                     case "KeySkip":
-                        WaitForKey(Config.SetKeySkip);
+                        WaitForKey(Config.SetKeySkip, Config.keySkip);
                         break;
                     case "KeyPause":
-                        WaitForKey(Config.SetKeyPause);
+                        WaitForKey(Config.SetKeyPause, Config.keyPause);
                         break;
                     case "KeyRestart":
-                        WaitForKey(Config.SetKeyRestart);
+                        WaitForKey(Config.SetKeyRestart, Config.keyRestart);
                         break;
                     case "KeyDefault":
                         Config.SetDefaultKeys();
@@ -143,22 +156,45 @@ public class Menu : MonoBehaviour {
                         break;
                     //Difficulty items
                     case "PlayEasy":
-                        GlobalHelper.LoadLevel(1, GlobalHelper.Difficulty.EASY);
+                        GlobalHelper.difficulty = GlobalHelper.Difficulty.EASY;
+                        ToMenu("Characters", false);
                         break;
                     case "PlayNormal":
-                        GlobalHelper.LoadLevel(1, GlobalHelper.Difficulty.NORMAL);
+                        GlobalHelper.difficulty = GlobalHelper.Difficulty.NORMAL;
+                        ToMenu("Characters", false);
                         break;
                     case "PlayHard":
-                        GlobalHelper.LoadLevel(1, GlobalHelper.Difficulty.HARD);
+                        GlobalHelper.difficulty = GlobalHelper.Difficulty.HARD;
+                        ToMenu("Characters", false);
                         break;
                     case "PlayLunatic":
-                        GlobalHelper.LoadLevel(1, GlobalHelper.Difficulty.LUNATIC);
+                        GlobalHelper.difficulty = GlobalHelper.Difficulty.LUNATIC;
+                        ToMenu("Characters", false);
+                        break;
+                    //Character items
+                    case "Char1":
+                        GlobalHelper.character = GlobalHelper.Character.RACHEL_A;
+                        GlobalHelper.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty);
+                        break;
+                    case "Char2":
+                        GlobalHelper.character = GlobalHelper.Character.RACHEL_B;
+                        GlobalHelper.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty);
+                        break;
+                    case "Char3":
+
+                        break;
+                    case "Char4":
+
+                        break;
+                    case "Char5":
+
+                        break;
+                    case "Char6":
+
                         break;
                     //Game menu items
                     case "Resume":
-                        GlobalHelper.paused = false;
-                        GlobalHelper.player.GetComponent<PlayerMovement>().UpdateFocused();
-                        transform.parent.gameObject.SetActive(false); //The "Pause Camvas" canvas
+                        GlobalHelper.SetPaused(false);
                         break;
                     case "Restart":
                         GlobalHelper.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty);
@@ -192,13 +228,13 @@ public class Menu : MonoBehaviour {
     }
 
     public void Select(bool fromPrev) {
-        StartCoroutine(Coselect(fromPrev));
+        StartCoroutine(CoSelect(fromPrev));
     }
 
     /// <summary>
     /// Selects an object, and if it can't be selected, it goes to next one (which direction is specified by "fromPrev": true: to next, false: to prev
     /// </summary>
-    private IEnumerator Coselect(bool fromPrev) {
+    private IEnumerator CoSelect(bool fromPrev) {
         if (selectable) {
             selectedObject = transform;
             //animation shit
@@ -231,13 +267,14 @@ public class Menu : MonoBehaviour {
         selectedObject.parent.gameObject.SetActive(!hidePrevious);
         parent.gameObject.SetActive(true);
         for (int i = 0; i < parent.childCount; i++) {
+            if (parent.GetChild(i).GetComponent<Menu>() != null) {
+                parent.GetChild(i).GetComponent<Menu>().Deselect();
+            }
+        }
+        for (int i = 0; i < parent.childCount; i++) {
             if (parent.GetChild(i).tag == "MenuBase") {
                 if (parent.GetChild(i).GetComponent<Menu>() != null) {
                     parent.GetChild(i).GetComponent<Menu>().Select(true);
-                }
-            } else {
-                if (parent.GetChild(i).GetComponent<Menu>() != null) {
-                    parent.GetChild(i).GetComponent<Menu>().Deselect();
                 }
             }
         }
@@ -253,16 +290,16 @@ public class Menu : MonoBehaviour {
     }
 
     /// <summary>
-    /// Call function methodToCall() when any keyboard key is pressed.
+    /// Call function methodToCall() when any keyboard key is pressed. AllowedKey is a specifically allowed key that skips the 'is this used by something else' check.
     /// </summary>
-    public void WaitForKey(System.Action<Transform, KeyCode, bool> methodToCall) {
-        StartCoroutine(CoWaitForKey(methodToCall));
+    public void WaitForKey(System.Action<Transform, KeyCode, bool> methodToCall, KeyCode allowedKey) {
+        StartCoroutine(CoWaitForKey(methodToCall, allowedKey));
     }
 
     /// <summary>
-    /// Call function methodToCall() when any keyboard key is pressed.
+    /// Call function methodToCall() when any keyboard key is pressed. AllowedKey is a specifically allowed key that skips the 'is this used by something else' check.
     /// </summary>
-    private IEnumerator CoWaitForKey(System.Action<Transform, KeyCode, bool> methodToCall) {
+    private IEnumerator CoWaitForKey(System.Action<Transform, KeyCode, bool> methodToCall, KeyCode allowedKey) {
         connectedTransform.GetComponent<Text>().text = StringFetcher.GetString("WAITFORINPUT");
         checkingKeyInput = true;
         yield return null;
@@ -272,6 +309,11 @@ public class Menu : MonoBehaviour {
                     if (i == (int)Config.keyLeft || i == (int)Config.keyRight || i == (int)Config.keyUp || i == (int)Config.keyDown || i == (int)Config.keyShoot ||
                         i == (int)Config.keyBomb || i == (int)Config.keyPause || i == (int)Config.keySkip || i == (int)Config.keyRestart || i == (int)Config.keyFocus) {
                         connectedTransform.GetComponent<Text>().text = StringFetcher.GetString("KEYINUSE");
+                        if (i == (int)allowedKey) {
+                            methodToCall(connectedTransform, (KeyCode)i, true);
+                            checkingKeyInput = false;
+                            break;
+                        }
                         continue;
                     }
                     methodToCall(connectedTransform, (KeyCode)i, true);

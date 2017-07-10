@@ -1,43 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public struct EnemyTemplate {
-    public float scale;
-    public int enemyID;
-    public bool isBoss;
-    public int maxHealth;
-    public int dropValueCount;
-    public int dropPowerCount;
-    public int dropPowerLargeCount;
-    public int dropPowerFullCount;
-    public int dropScoreCount;
-    public Vector2 startpostion;
-    public uint baseScore;
-    public List<string> attackPath; //NECCESSARY; should be at least one long.
-    public List<int> spellTimers;
-    public DialogueEntry.character character; //For the bosses' spellcard portrait.
-
-
-    public EnemyTemplate(bool basic) {
-        scale = 1f;
-        enemyID = 0;
-        isBoss = false;
-        maxHealth = 1;
-        dropValueCount = 0;
-        dropPowerCount = 0;
-        dropPowerLargeCount = 0;
-        dropPowerFullCount = 0;
-        dropScoreCount = 0;
-        startpostion = new Vector2(0f, 0f);
-        baseScore = 0;
-        attackPath = new List<string>(); //NECCESSARY; should be at least one long.
-        spellTimers = new List<int>();
-        character = DialogueEntry.character.RACHEL; //For the bosses' spellcard portrait.
-}
-}
-
-/*/// <summary>
-/// A class representing the data belonging to an enemy, whether it actually exists or not.
+/// <summary>
+/// A class representing the data belonging to an enemy, whether it actually exists or not. Not a struct because if the lists. (And because there are far less enemies than bullets/lasers, performance difference is minimal)
 /// </summary>
 public class EnemyTemplate {
     public float scale = 1f;
@@ -75,4 +40,4 @@ public class EnemyTemplate {
         spellTimers = template.spellTimers;
         character = template.character;
     }
-}*/
+}

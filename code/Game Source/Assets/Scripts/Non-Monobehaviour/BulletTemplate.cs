@@ -2,6 +2,9 @@
 using System.Collections;
 
 public struct BulletTemplate {
+
+    public static BulletTemplate basic = new BulletTemplate(true);
+
     public Vector2 movement;
     public bool enemyShot;
     public bool harmless;
@@ -19,7 +22,7 @@ public struct BulletTemplate {
     public float scriptRotation;
     public Vector4 scriptRotationMatrix;
 
-    public BulletTemplate(bool basic) {
+    private BulletTemplate(bool basic) {
         movement = new Vector2();
         enemyShot = true;
         harmless = false;

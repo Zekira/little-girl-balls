@@ -5082,10 +5082,10 @@ MonoBehaviour:
   difficulty: 0
   highscore: 500000
   score: 0
-  lives: 2
+  lives: 6
   lifepieces: 0
   bombs: 2
-  bombpieces: 3
+  bombpieces: 0
   power: 0
   value: 10000
   graze: 0
@@ -7842,7 +7842,7 @@ Terrain:
   m_TreeMaximumFullLODCount: 50
   m_DetailObjectDistance: 80
   m_DetailObjectDensity: 1
-  m_HeightmapPixelError: 5
+  m_HeightmapPixelError: 28
   m_SplatMapDistance: 1000
   m_HeightmapMaximumLOD: 0
   m_CastShadows: 1

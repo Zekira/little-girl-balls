@@ -308,7 +308,7 @@ public class TimelineInterprenter : MonoBehaviour {
                     SetBulletTemplate(currentCommand.args[0], bulletTemplate);
                     continue;
                 case TimelineCommand.Command.ENEMYPROPERTY:
-                    enemyTemplate = GetEnemyTemplate(currentCommand.args[0]);
+                    enemyTemplate = new EnemyTemplate(GetEnemyTemplate(currentCommand.args[0]));
                     switch (currentCommand.enemyProperty) {
                         case TimelineCommand.EnemyProperty.SCALE:
                             enemyTemplate.scale = ParseValue(currentCommand.args[1]);
@@ -370,7 +370,7 @@ public class TimelineInterprenter : MonoBehaviour {
                     SetEnemyTemplate(currentCommand.args[0], enemyTemplate);
                     continue;
                 case TimelineCommand.Command.LASERPROPERTY:
-                    LaserTemplate laserTemplate = new LaserTemplate(GetLaserTemplate(currentCommand.args[0]));
+                    LaserTemplate laserTemplate = GetLaserTemplate(currentCommand.args[0]);
                     switch (currentCommand.laserProperty) {
                         case TimelineCommand.LaserProperty.WARNDURATION:
                             laserTemplate.warnDuration = Mathf.RoundToInt(ParseValue(currentCommand.args[1]));
@@ -454,7 +454,7 @@ public class TimelineInterprenter : MonoBehaviour {
                     continue;
                 case TimelineCommand.Command.MOVETOWARDSPOINT:
                     StopCoroutine("moveTowardsSmooth");
-                    StartCoroutine(moveTowardsSmooth(new Vector3(ParseValue(currentCommand.args[0]), ParseValue(currentCommand.args[1]), transform.position.z), ParseValue(currentCommand.args[2])));
+                    StartCoroutine(MoveTowardsSmooth(new Vector3(ParseValue(currentCommand.args[0]), ParseValue(currentCommand.args[1]), transform.position.z), ParseValue(currentCommand.args[2])));
                     //TODO: Test
                     continue;
                 case TimelineCommand.Command.DESTROYPARENT: //Destroys whatever this is attached to.
@@ -560,7 +560,7 @@ public class TimelineInterprenter : MonoBehaviour {
     /// <param name="name">The name of the var</param>
     /// <param name="value">The value of the var</param>
     private void SetNumber(string name, float value) {
-        if (name[0] == 95) { //Starts with '_'
+        if (name[0] == 95) { //Starts with '_', so global
             stringHash = name.GetHashCode();
             if (globalNumberVars.ContainsKey(stringHash)) {
                 globalNumberVars[stringHash] = value;
@@ -585,7 +585,7 @@ public class TimelineInterprenter : MonoBehaviour {
     private float GetNumber(string name) { 
         stringHash = name.GetHashCode();
         float returnFloat;
-        if (name[0] == 95) { //Starts with '_'
+        if (name[0] == 95) { //Starts with '_', so global
             if (!globalNumberVars.TryGetValue(stringHash, out returnFloat)) {
                 globalNumberVars.Add(stringHash, 0f);
                 return 0f;
@@ -606,17 +606,17 @@ public class TimelineInterprenter : MonoBehaviour {
     /// <returns></returns>
     private BulletTemplate GetBulletTemplate(string name) {
         stringHash = name.GetHashCode();
-        if (name[0] == 95) { //Starts with '_'
+        if (name[0] == 95) { //Starts with '_', so global
             if (!globalBulletTemplateVars.ContainsKey(stringHash)) {
-                globalBulletTemplateVars.Add(stringHash, new BulletTemplate(true));
-                return new BulletTemplate(true);
+                globalBulletTemplateVars.Add(stringHash, BulletTemplate.basic);
+                return BulletTemplate.basic;
             } else {
                 return globalBulletTemplateVars[stringHash];
             }
         } else {
             if (!bulletTemplateVars.ContainsKey(stringHash)) {
-                bulletTemplateVars.Add(stringHash, new BulletTemplate(true));
-                return new BulletTemplate(true);
+                bulletTemplateVars.Add(stringHash, BulletTemplate.basic);
+                return BulletTemplate.basic;
             } else {
                 return bulletTemplateVars[stringHash];
             }
@@ -630,7 +630,7 @@ public class TimelineInterprenter : MonoBehaviour {
     /// <param name="value">The value of the var</param>
     private void SetBulletTemplate(string name, BulletTemplate value) {
         stringHash = name.GetHashCode();
-        if (name[0] == 95) { //Starts with '_'
+        if (name[0] == 95) { //Starts with '_', so global
             if (globalBulletTemplateVars.ContainsKey(stringHash)) {
                 globalBulletTemplateVars[stringHash] = value;
             } else {
@@ -651,18 +651,21 @@ public class TimelineInterprenter : MonoBehaviour {
     /// <param name="name">The var name to retrieve</param>
     /// <returns></returns>
     private EnemyTemplate GetEnemyTemplate(string name) {
+        //if (EnemyTemplate.basic.attackPath.Count > 0 && EnemyTemplate.basic.attackPath[0] != null) {
+        //    Debug.Log(EnemyTemplate.basic.attackPath[0]);
+        //}
         stringHash = name.GetHashCode();
-        if (name[0] == 95) { //Starts with '_'
+        if (name[0] == 95) { //Starts with '_', so global
             if (!globalEnemyTemplateVars.ContainsKey(stringHash)) {
-                globalEnemyTemplateVars.Add(stringHash, new EnemyTemplate(true));
-                return new EnemyTemplate(true);
+                globalEnemyTemplateVars.Add(stringHash, new EnemyTemplate());
+                return new EnemyTemplate();
             } else {
                 return globalEnemyTemplateVars[stringHash];
             }
         } else {
             if (!enemyTemplateVars.ContainsKey(stringHash)) {
-                enemyTemplateVars.Add(stringHash, new EnemyTemplate(true));
-                return new EnemyTemplate(true);
+                enemyTemplateVars.Add(stringHash, new EnemyTemplate());
+                return new EnemyTemplate();
             } else {
                 return enemyTemplateVars[stringHash];
             }
@@ -676,7 +679,7 @@ public class TimelineInterprenter : MonoBehaviour {
     /// <param name="value">The value of the var</param>
     private void SetEnemyTemplate(string name, EnemyTemplate value) {
         stringHash = name.GetHashCode();
-        if (name[0] == 95) { //Starts with '_'
+        if (name[0] == 95) { //Starts with '_', so global
             if (globalEnemyTemplateVars.ContainsKey(stringHash)) {
                 globalEnemyTemplateVars[stringHash] = value;
             } else {
@@ -693,17 +696,17 @@ public class TimelineInterprenter : MonoBehaviour {
 
     private LaserTemplate GetLaserTemplate(string name) {
         stringHash = name.GetHashCode();
-        if (name[0] == 95) { //Starts with '_'
+        if (name[0] == 95) { //Starts with '_', so global
             if (!globalLaserTemplateVars.ContainsKey(stringHash)) {
-                globalLaserTemplateVars.Add(stringHash, new LaserTemplate());
-                return new LaserTemplate();
+                globalLaserTemplateVars.Add(stringHash, LaserTemplate.basic);
+                return LaserTemplate.basic;
             } else {
                 return globalLaserTemplateVars[stringHash];
             }
         } else {
             if (!laserTemplateVars.ContainsKey(stringHash)) {
-                laserTemplateVars.Add(stringHash, new LaserTemplate());
-                return new LaserTemplate();
+                laserTemplateVars.Add(stringHash, LaserTemplate.basic);
+                return LaserTemplate.basic;
             } else {
                 return laserTemplateVars[stringHash];
             }
@@ -712,7 +715,7 @@ public class TimelineInterprenter : MonoBehaviour {
 
     private void SetLaserTemplate(string name, LaserTemplate value) {
         stringHash = name.GetHashCode();
-        if (name[0] == 95) { //Starts with '_'
+        if (name[0] == 95) { //Starts with '_',so global
         } else {
             if (laserTemplateVars.ContainsKey(stringHash)) {
                 laserTemplateVars[stringHash] = value;
@@ -800,11 +803,11 @@ public class TimelineInterprenter : MonoBehaviour {
         }
         //Evaluate before the dot. UTF-16 '0' = 48, '9' = 57, so '0' - 48 = 0, and '9' - 48 = 9.
         for (i = 0; i < dotPosition; i++) {
-            returnValue += tenPower(value[i] - 48, dotPosition - i - 1);
+            returnValue += TenPower(value[i] - 48, dotPosition - i - 1);
         }
         //Evaluate behind the dot.
         for (i = dotPosition + 1; i < stringLength; i++) {
-            returnValue += tenPower(value[i] - 48, dotPosition - i);
+            returnValue += TenPower(value[i] - 48, dotPosition - i);
         }
         if (negative) {
             returnValue = 0 - returnValue;
@@ -815,7 +818,7 @@ public class TimelineInterprenter : MonoBehaviour {
     /// <summary>
     /// Returns f * 10^power.
     /// </summary>
-    private static float tenPower(float f, int power) {
+    private static float TenPower(float f, int power) {
         if (power > 0) {
             for (int i = 0; i < power; i++) {
                 f *= 10f;
@@ -823,7 +826,7 @@ public class TimelineInterprenter : MonoBehaviour {
             return f;
         } else {
             for (int i = 0; i < -power; i++) {
-                f /= 10f;
+                f *= 0.1f;
             }
             return f;
         }
@@ -832,7 +835,7 @@ public class TimelineInterprenter : MonoBehaviour {
     /// <summary>
     /// Moves from the current position to endPos, taking "time" ticks. (It's a float, but has the same 60-ticks-is-a-second rule.)
     /// </summary>
-    private IEnumerator moveTowardsSmooth(Vector3 endPos, float time) {
+    private IEnumerator MoveTowardsSmooth(Vector3 endPos, float time) {
         time = Mathf.Round(time);
         Vector3 startPos = transform.position;
         float linearProgress = 0f;
