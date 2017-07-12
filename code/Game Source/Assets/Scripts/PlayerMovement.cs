@@ -89,19 +89,19 @@ public class PlayerMovement : MonoBehaviour {
             if (Input.GetKeyDown(Config.keyFocus)) {
                 focused = true;
                 thisTransform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
-                thisTransform.GetChild(0).localScale = new Vector3(GlobalHelper.stats.hitboxRadius, GlobalHelper.stats.hitboxRadius, 1f);
+                thisTransform.GetChild(0).localScale = new Vector3(PlayerStats.hitboxRadius, PlayerStats.hitboxRadius, 1f);
             } else if (Input.GetKeyUp(Config.keyFocus)) {
                 focused = false;
                 thisTransform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
             }
 
             //Things that shouldn't happen when in deathanimation: movement, shot, and bombs
-            if (!GlobalHelper.stats.noMovement) {
-                if (Input.GetKeyDown(Config.keyBomb) && !GlobalHelper.dialogue && GlobalHelper.stats.bombs > 0) { //todo: graphics
+            if (!PlayerStats.noMovement) {
+                if (Input.GetKeyDown(Config.keyBomb) && !GlobalHelper.dialogue && PlayerStats.bombs > 0) { //todo: graphics
                     //Set the spellcard bonus to failure. Does basically nothing if there's no spell active except eat like .01ms
                     GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
-                    GlobalHelper.stats.invincibility = 300;
-                    GlobalHelper.stats.SetBombs((byte)(GlobalHelper.stats.bombs - 1), GlobalHelper.stats.bombpieces);
+                    PlayerStats.invincibility = 300;
+                    PlayerStats.SetBombs((byte)(PlayerStats.bombs - 1), PlayerStats.bombpieces);
                     GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(0.3f, BulletClear.BulletClearType.BOMB,300);
                 }
                 //Check what movement should happen
@@ -154,7 +154,7 @@ public class PlayerMovement : MonoBehaviour {
         if (Input.GetKey(Config.keyFocus)) { 
             focused = true;
             thisTransform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
-            thisTransform.GetChild(0).localScale = new Vector3(GlobalHelper.stats.hitboxRadius, GlobalHelper.stats.hitboxRadius, 1f);
+            thisTransform.GetChild(0).localScale = new Vector3(PlayerStats.hitboxRadius, PlayerStats.hitboxRadius, 1f);
         } else {
             focused = false;
             thisTransform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
@@ -165,17 +165,17 @@ public class PlayerMovement : MonoBehaviour {
         switch (GlobalHelper.character) {
             case GlobalHelper.Character.RACHEL_A:
                 GlobalHelper.CreateBullet(mainShot, PlayerPosGetter.playerPos);
-                if (GlobalHelper.stats.power >= 200) {
+                if (PlayerStats.power >= 200) {
                     GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos + new Vector3(-0.2f, -0.1f, 0f));
                     GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos + new Vector3(0.2f, -0.1f, 0f));
                 }
-                if (GlobalHelper.stats.power == 400) {
+                if (PlayerStats.power == 400) {
                     GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos + new Vector3(-0.4f, -0.2f, 0f));
                     GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos + new Vector3(0.4f, -0.2f, 0f));
-                } else if (GlobalHelper.stats.power >= 300) {
+                } else if (PlayerStats.power >= 300) {
                     GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos + new Vector3(0f, -0.3f, 0f));
                 }
-                if (GlobalHelper.stats.power >= 100 && GlobalHelper.stats.power < 200) {
+                if (PlayerStats.power >= 100 && PlayerStats.power < 200) {
                     GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos + new Vector3(0f, -0.3f, 0f));
                 }
                 shotCooldown = 6;
@@ -190,7 +190,7 @@ public class PlayerMovement : MonoBehaviour {
                 mainShot.rotation = -0.7853f;
                 mainShot.movement = new Vector2(-0.1414f, 0.1414f);
                 GlobalHelper.CreateBullet(mainShot, PlayerPosGetter.playerPos);
-                if (GlobalHelper.stats.power == 400) {
+                if (PlayerStats.power == 400) {
                     subShot.movement = new Vector2(0.031f, 0.197f);
                     subShot.rotation = 0.157f;
                     GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
@@ -218,7 +218,7 @@ public class PlayerMovement : MonoBehaviour {
                     subShot.movement = new Vector2(-0.112f, 0.162f);
                     subShot.rotation = -0.628f;
                     GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
-                } else if (GlobalHelper.stats.power >= 300) {
+                } else if (PlayerStats.power >= 300) {
                     subShot.movement = new Vector2(0.039f, 0.196f);
                     subShot.rotation = 0.196f;
                     GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
@@ -239,7 +239,7 @@ public class PlayerMovement : MonoBehaviour {
                     subShot.movement = new Vector2(-0.111f, 0.166f);
                     subShot.rotation = -0.589f;
                     GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
-                } else if (GlobalHelper.stats.power >= 200) {
+                } else if (PlayerStats.power >= 200) {
                     subShot.movement = new Vector2(0.052f, 0.193f);
                     subShot.rotation = 0.261f;
                     GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
@@ -253,7 +253,7 @@ public class PlayerMovement : MonoBehaviour {
                     subShot.movement = new Vector2(-0.1f, 0.173f);
                     subShot.rotation = -0.523f;
                     GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
-                } else if (GlobalHelper.stats.power >= 100) {
+                } else if (PlayerStats.power >= 100) {
                     subShot.movement = new Vector2(0.077f, 0.185f);
                     subShot.rotation = 0.392f;
                     GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);

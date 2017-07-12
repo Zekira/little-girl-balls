@@ -97,12 +97,12 @@ public class Enemy : MonoBehaviour {
         if (byDamage) {
             if (template.isBoss) {
                 if (GetSpell(template.attackPath[currentAttack]) != "") {
-                    GlobalHelper.stats.AddScore(GlobalHelper.levelManager.GetComponent<SpellcardManager>().currentValue);
+                    PlayerStats.AddScore(GlobalHelper.levelManager.GetComponent<SpellcardManager>().currentValue);
                 } else {
-                    GlobalHelper.stats.AddScore(template.baseScore);
+                    PlayerStats.AddScore(template.baseScore);
                 }
             } else {
-                GlobalHelper.stats.AddScore(template.baseScore);
+                PlayerStats.AddScore(template.baseScore);
             }
             DropItems();
         } else {

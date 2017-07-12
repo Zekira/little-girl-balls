@@ -43,7 +43,7 @@ public class Laser : MonoBehaviour {
                     GlobalHelper.stats.TakeDamage();
                 }
                 if (grazeCooldown <= 0 && Mathf.Abs(playerPos.x) < (template.width + 0.4) / 2 && playerPos.y > 0) {
-                    GlobalHelper.stats.Graze();
+                    PlayerStats.Graze();
                     grazeCooldown = 4;
                 }
             } else if (timer > template.warnDuration + template.shotDuration) {

@@ -60,11 +60,11 @@ public class Bullet : MonoBehaviour {
                         otherpos = PlayerPosGetter.playerPos;
                         deltax = otherpos.x - posx;
                         deltay = otherpos.y - posy;
-                        if (!GlobalHelper.stats.noMovement && deltax * deltax + deltay * deltay < 0.5f * bulletTemplate.scale / 2f * bulletTemplate.scale / 2f + GlobalHelper.stats.hitboxRadius * GlobalHelper.stats.hitboxRadius * 0.33f) {
+                        if (!PlayerStats.noMovement && deltax * deltax + deltay * deltay < 0.5f * bulletTemplate.scale / 2f * bulletTemplate.scale / 2f + PlayerStats.hitboxRadius * PlayerStats.hitboxRadius * 0.33f) {
                             GlobalHelper.stats.TakeDamage();
                             Deactivate();
-                        } else if (!grazed && deltax * deltax + deltay * deltay < GlobalHelper.stats.grazeRadius * GlobalHelper.stats.grazeRadius) {
-                            GlobalHelper.stats.Graze();
+                        } else if (!grazed && deltax * deltax + deltay * deltay < PlayerStats.grazeRadius * PlayerStats.grazeRadius) {
+                            PlayerStats.Graze();
                             grazed = true;
                         }
                     } else { //If the bullet is not harmful to the player, it should check enemies and damage them.
@@ -75,7 +75,7 @@ public class Bullet : MonoBehaviour {
                                 deltay = otherpos.y - posy;
                                 if (deltax * deltax + deltay * deltay < 1) {
                                     enemy.GetComponent<Enemy>().TakeDamage(bulletTemplate.bulletDamage);
-                                    GlobalHelper.stats.SetScore(GlobalHelper.stats.score + 10);
+                                    PlayerStats.SetScore(PlayerStats.score + 10);
                                     Deactivate();
                                 }
                             }

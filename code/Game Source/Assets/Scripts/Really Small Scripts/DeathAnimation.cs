@@ -14,8 +14,8 @@ public class DeathAnimation : MonoBehaviour {
             if (time >= 60) {
                 scale = 0;
                 time = 0;
-                GlobalHelper.stats.noMovement = false;
-                transform.parent.position = GlobalHelper.stats.startPosition;
+                PlayerStats.noMovement = false;
+                transform.parent.position = PlayerStats.startPosition;
                 gameObject.SetActive(false);
             }
             time++;

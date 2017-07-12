@@ -7,34 +7,36 @@ using UnityEngine.UI;
 public class PlayerStats : MonoBehaviour {
 
     //Things that go on the right
-    public enum Difficulty { EASY, NORMAL, HARD, LUNATIC, EXTRA};
-    public Difficulty difficulty = Difficulty.EASY;
-    public uint highscore = 0;
-    public uint score = 0;
+    public static ulong highscore = 0;
+    public static ulong[] stageHighScore = { 0, 0, 0, 0, 0, 0, 0 }; //TODO: do stuff with this
+    public static ulong score = 0;
     [Range(0,6)]
-    public byte lives = 3;
+    public static byte lives = 3;
     [Range(0,2)]
-    public byte lifepieces = 0;
+    public static byte lifepieces = 0;
     [Range(0,6)]
-    public byte bombs = 2;
+    public static byte bombs = 2;
     [Range(0,3)]
-    public byte bombpieces = 0;
+    public static byte bombpieces = 0;
     [Range(0,400)]
-    public int power = 0;
-    public uint value = 10000;
-    public int graze = 0;
-    public int grazeInATick = 0;
+    public static int power = 0;
+    public static uint value = 10000;
+    public static int graze = 0;
+    public static int grazeInATick = 0;
 
-    public int invincibility = 0;
-    public bool noMovement = false;
-    public Vector3 startPosition;
-    public float hitboxRadius = 0.15f;
-    public float grazeRadius = 1f;
+    //Other stuff
+    public static int invincibility = 0;
+    public static bool noMovement = false;
+    public static Vector3 startPosition;
+    public static float hitboxRadius = 0.15f;
+    public static float grazeRadius = 1f;
+    public static uint totalTimePlayed = 0;
+    public static uint timePlayed = 0;
 
-    public Sprite[] bombSprites = { null, null, null, null, null};
-    public Sprite[] lifeSprites = { null, null, null, null };
+    public static Sprite[] bombSprites = { null, null, null, null, null}; //Both set in the inspector
+    public static Sprite[] lifeSprites = { null, null, null, null };
 
-    private GameObject UIVariable;
+    private static GameObject UIVariable;
 
     void Start() {
         UIVariable = GameObject.FindWithTag("UIVariable");
@@ -52,15 +54,20 @@ public class PlayerStats : MonoBehaviour {
             lifeSprites[i] = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
         }
         //Set the scores to their values
-        SetLives(lives, lifepieces);
-        SetBombs(bombs, bombpieces);
+        SetLives(7, 0);
+        SetBombs(2, 0);
         SetHighscore(highscore);
-        SetScore(score);
-        SetPower(power, false);
+        SetScore(0);
+        SetPower(0, false);
     }
 
     void Update() {
         if (!GlobalHelper.paused) {
+            if ((totalTimePlayed & 7) == 0) { //periodically save
+                SaveLoad.SavePlayerData(GlobalHelper.character);
+            }
+            totalTimePlayed++;
+            timePlayed++;
             if (grazeInATick > 0) {
                 SetGraze(graze + grazeInATick);
                 grazeInATick = 0;
@@ -90,7 +97,7 @@ public class PlayerStats : MonoBehaviour {
             transform.Find("DeathAnimation").gameObject.SetActive(true);
             invincibility = 210;
             if (lives == 0) { //Getting hit with zero lives in stock is a bad idea.
-                //Debug.Log("<b>Game over lul git good skrub</b>");
+                Debug.Log("<b>Game over lul git good skrub</b>");
             } else {
                 SetLives(--lives, lifepieces);
                 SetBombs(2, bombpieces);
@@ -109,7 +116,7 @@ public class PlayerStats : MonoBehaviour {
     /// </summary>
     /// <param name="total">Amount of full bombs</param>
     /// <param name="part">Amount of parts in the next bomb</param>
-    public void SetBombs(byte total, byte part) {
+    public static void SetBombs(byte total, byte part) {
         if (bombs == 6) { //You can't have bombpieces when you're already full.
             part = 0;
         }
@@ -133,7 +140,7 @@ public class PlayerStats : MonoBehaviour {
     /// </summary>
     /// <param name="total">Amount of full lives</param>
     /// <param name="part">Amount of parts in the next life</param>
-    public void SetLives(byte total, byte part) {
+    public static void SetLives(byte total, byte part) {
         if (lives == 6) {
             part = 0;
         }
@@ -154,7 +161,7 @@ public class PlayerStats : MonoBehaviour {
     /// <summary>
     /// Sets the graze and updates the UI.
     /// </summary
-    public void SetGraze(int amount) {
+    private static void SetGraze(int amount) {
         graze = amount;
         UIVariable.transform.Find("Graze").GetComponent<Text>().text = GlobalHelper.Commafy(graze);
     }
@@ -162,7 +169,7 @@ public class PlayerStats : MonoBehaviour {
     /// <summary>
     /// Adds 1 to graze and updates the UI.
     /// </summary>
-    public void IncrementGraze() {
+    private static void IncrementGraze() {
         graze++;
         UIVariable.transform.Find("Graze").GetComponent<Text>().text = GlobalHelper.Commafy(graze);
     }
@@ -170,7 +177,7 @@ public class PlayerStats : MonoBehaviour {
     /// <summary>
     /// Grazes if alive. Use this instead of incrementgraze if you want to wait with registering it until the end of the tick.
     /// </summary>
-    public void Graze() {
+    public static void Graze() {
         if (!noMovement) {
             grazeInATick++;
         }
@@ -179,7 +186,7 @@ public class PlayerStats : MonoBehaviour {
     /// <summary>
     /// Sets the score to amount, updating the highscore if neccessary. Also updates the UI.
     /// </summary>
-    public void SetScore(uint amount) {
+    public static void SetScore(ulong amount) {
         score = amount;
         UIVariable.transform.Find("Score").GetComponent<Text>().text = GlobalHelper.Commafy(score);
         if (score > highscore) {
@@ -190,21 +197,21 @@ public class PlayerStats : MonoBehaviour {
     /// <summary>
     /// Adds amount to score, updating the highscore if neccessary. Also updates the UI.
     /// </summary>
-    public void AddScore(uint amount) {
+    public static void AddScore(uint amount) {
         SetScore(score += amount);
     }
 
     /// <summary>
     /// Sets the power to up to 400, and gives a score bonus.
     /// </summary>
-    public void SetPower(int amount) {
+    public static void SetPower(int amount) {
         SetPower(amount, true);
     }
 
     /// <summary>
     /// Sets the power up to 400, and optionally gives a score bonus.
     /// </summary>
-    public void SetPower(int amount, bool worthScore) {
+    public static void SetPower(int amount, bool worthScore) {
         if (amount <= 400) {
             power = amount;
             UIVariable.transform.Find("PowerLarge").GetComponent<Text>().text = (power / 100).ToString();
@@ -223,14 +230,14 @@ public class PlayerStats : MonoBehaviour {
     /// <summary>
     ///  Adds amount to the power, up to 400, or gives a bonus if it's already 400. Also updates the UI.
     /// </summary>
-    public void AddPower(int amount) {
+    public static void AddPower(int amount) {
         SetPower(power + amount);
     }
 
     /// <summary>
     /// Sets the highscore to amount; usually unneccessary as this is also done by SetScore() and AddScore().
     /// </summary>
-    public void SetHighscore(uint amount) {
+    public static void SetHighscore(ulong amount) {
         highscore = amount;
         UIVariable.transform.Find("HighScore").GetComponent<Text>().text = GlobalHelper.Commafy(highscore);
     }

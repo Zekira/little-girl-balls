@@ -10,7 +10,7 @@ public class GlobalHelper : MonoBehaviour {
 
     //Things needed all the time that make (some) sense even when not in a level.
     public static System.Random random = new System.Random(); //NOTE: Handle ALL random events through this; if I want to be able to add replays, I should save the seeds and input them here.
-    public static int totalFiredBullets; //Fun statistic to keep track of.
+    public static ulong totalFiredBullets; //Fun statistic to keep track of.
     public static int currentBullets;
 
     public static bool paused = false;
@@ -20,6 +20,12 @@ public class GlobalHelper : MonoBehaviour {
     public static Difficulty difficulty = Difficulty.LUNATIC;
     public enum Character { RACHEL_A, RACHEL_B, RACHEL_C };
     public static Character character = Character.RACHEL_B;
+    public static byte musicHeard = 0; //See SaveLoad.cs for more info
+    public static byte bestUnlockedStage = 0;
+    public static short mainAttempts = 0;
+    public static short mainFinishes = 0;
+    public static short extraAttempts = 0;
+    public static short extraFinishes = 0;
 
     //These things only make sense in a level, so they're defined, but initialised in Awake()
     public static Transform spellcardBackground, secondCounter, msecondCounter,canvas;
@@ -44,6 +50,7 @@ public class GlobalHelper : MonoBehaviour {
     //Things that make finding objects in other classes easier, but only make sense when in a level: the only time GlobalHelper is a script attached to an object.
     //Also sets up things needed for the level and such as this only runs when loading the level.
     void Awake() {
+        SaveLoad.LoadPlayerData(character);
         spellcardBackground = GameObject.FindWithTag("SpellcardBackground").transform;
         canvas = GameObject.FindWithTag("UI").transform;
         bossUI = GameObject.FindWithTag("BossUI");
@@ -120,6 +127,20 @@ public class GlobalHelper : MonoBehaviour {
     /// <param name="number">The number to add commas to</param>
     /// <returns>The number as a string with commas</returns>
     public static string Commafy(long number) {
+        string returnString = number.ToString();
+        int length = returnString.Length;
+        for (int i = 3; i < length; i += 3) {
+            returnString = returnString.Insert(length - i, ",");
+        }
+        return returnString;
+    }
+
+    /// <summary>
+    /// Adds commas to numbers. 1234567 -> 1,234,567
+    /// </summary>
+    /// <param name="number">The number to add commas to</param>
+    /// <returns>The number as a string with commas</returns>
+    public static string Commafy(ulong number) {
         string returnString = number.ToString();
         int length = returnString.Length;
         for (int i = 3; i < length; i += 3) {
@@ -306,7 +327,9 @@ public class GlobalHelper : MonoBehaviour {
         }
     }
 
-    //(Re)sets the scene to the level scene with level "level".
+    /// <summary>
+    /// (Re)sets the scene to the level scene with level "level".
+    /// </summary>
     public static void LoadLevel(int level, Difficulty difficulty) {
         paused = true;
         GlobalHelper.difficulty = difficulty;
@@ -315,6 +338,7 @@ public class GlobalHelper : MonoBehaviour {
     }
 
     public static void SetPaused(bool paused) {
+        Menu.previousSelectedMenuItems = new List<Transform>();
         GlobalHelper.paused = paused;
         player.GetComponent<PlayerMovement>().UpdateFocused(); //Updating focus is needed when unpausing, otherwise it wouldn't register releasing/holding the button during the pause
         canvas.Find("Pause Canvas").gameObject.SetActive(paused);

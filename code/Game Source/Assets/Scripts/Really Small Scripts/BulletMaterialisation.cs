@@ -25,15 +25,19 @@ public class BulletMaterialisation : MonoBehaviour {
 
     void OnEnable () {
         timer = 9; //This counts down from 9 to 0.
+        transform.position += new Vector3(0f, 0f, -5f);
+        template = bullet.bulletTemplate;
+        if (template.enemyShot) {
+            spriteRenderer.sprite = materialiseSprite;
+        } else {
+            spriteRenderer.sprite = null;
+        }
+        scale = template.scale;
 	}
 	
 	void Update () {
         if (!GlobalHelper.paused) {
             if (timer == 9) { //Initialising the process of spawning.
-                transform.position += new Vector3(0f, 0f, -5f);
-                template = bullet.bulletTemplate;
-                spriteRenderer.sprite = materialiseSprite;
-                scale = template.scale;
             }
             if (timer == 0) { //Stopping and spawning the actual bullet
                 timer = 9; //For the next time this gets spawned
