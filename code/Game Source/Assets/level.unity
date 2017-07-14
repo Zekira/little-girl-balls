@@ -2202,7 +2202,6 @@ GameObject:
   - component: {fileID: 571692524}
   - component: {fileID: 571692523}
   - component: {fileID: 571692522}
-  - component: {fileID: 571692521}
   - component: {fileID: 571692520}
   m_Layer: 5
   m_Name: Canvas
@@ -2223,23 +2222,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 339cc131996fa394e8fd365ae11ce8fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &571692521
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11413726, guid: 8a5ba6be82880db4ebb05cb673308b22,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 571692519}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1301386320, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
-  m_BlockingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
 --- !u!114 &571692522
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3518,7 +3500,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 761611391}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 8}
+  m_LocalPosition: {x: 0, y: 0, z: 8.888}
   m_LocalScale: {x: 0.7, y: 0.7, z: 1}
   m_Children:
   - {fileID: 227276275}
@@ -3606,7 +3588,6 @@ GameObject:
   m_Component:
   - component: {fileID: 789243191}
   - component: {fileID: 789243193}
-  - component: {fileID: 789243192}
   m_Layer: 5
   m_Name: Score Canvas
   m_TagString: Untagged
@@ -3634,23 +3615,6 @@ RectTransform:
   m_AnchoredPosition: {x: -0.000030517578, y: -0.000030517578}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &789243192
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11400956, guid: 8a5ba6be82880db4ebb05cb673308b22,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 789243190}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1301386320, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
-  m_BlockingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
 --- !u!223 &789243193
 Canvas:
   m_ObjectHideFlags: 0
@@ -4332,7 +4296,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5.4165325
+  orthographic size: 5.436016
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -4529,7 +4493,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1278107102}
   - component: {fileID: 1278107104}
-  - component: {fileID: 1278107103}
   m_Layer: 5
   m_Name: Dialogue Canvas
   m_TagString: Untagged
@@ -4557,23 +4520,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1278107103
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11470574, guid: 8a5ba6be82880db4ebb05cb673308b22,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1278107101}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1301386320, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
-  m_BlockingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
 --- !u!223 &1278107104
 Canvas:
   m_ObjectHideFlags: 0
@@ -4604,7 +4550,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1326542787}
   - component: {fileID: 1326542789}
-  - component: {fileID: 1326542788}
   m_Layer: 5
   m_Name: Pause Canvas
   m_TagString: Untagged
@@ -4637,23 +4582,6 @@ RectTransform:
   m_AnchoredPosition: {x: -115.000015, y: -90.000015}
   m_SizeDelta: {x: 229.99997, y: -179.99997}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1326542788
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11416742, guid: 8a5ba6be82880db4ebb05cb673308b22,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1326542786}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1301386320, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
-  m_BlockingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
 --- !u!223 &1326542789
 Canvas:
   m_ObjectHideFlags: 0
@@ -5079,33 +5007,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e825a9a5ef5034449716ff5790aeada, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  difficulty: 0
-  highscore: 500000
-  score: 0
-  lives: 6
-  lifepieces: 0
-  bombs: 2
-  bombpieces: 0
-  power: 0
-  value: 10000
-  graze: 0
-  grazeInATick: 0
   invincibility: 0
-  noMovement: 0
-  startPosition: {x: 0, y: -4, z: 0}
-  hitboxRadius: 0.15
-  grazeRadius: 1
-  bombSprites:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  lifeSprites:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!114 &1425317266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7867,7 +7769,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1938431012}
   - component: {fileID: 1938431014}
-  - component: {fileID: 1938431013}
   m_Layer: 5
   m_Name: Boss Canvas
   m_TagString: Untagged
@@ -7896,23 +7797,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1938431013
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11437796, guid: 8a5ba6be82880db4ebb05cb673308b22,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1938431011}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1301386320, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
-  m_BlockingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
 --- !u!223 &1938431014
 Canvas:
   m_ObjectHideFlags: 0
@@ -8142,7 +8026,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1972311191}
   - component: {fileID: 1972311193}
-  - component: {fileID: 1972311192}
   m_Layer: 5
   m_Name: Static Canvas
   m_TagString: Untagged
@@ -8172,23 +8055,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1972311192
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11413530, guid: 8a5ba6be82880db4ebb05cb673308b22,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1972311190}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1301386320, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
-  m_BlockingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
 --- !u!223 &1972311193
 Canvas:
   m_ObjectHideFlags: 0

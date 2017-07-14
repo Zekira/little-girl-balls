@@ -93,6 +93,7 @@ public class Bullet : MonoBehaviour {
     /// </summary>
     public void Deactivate() {
         if (!deactivated) {
+            GetComponent<SpriteRenderer>().sprite = null;
             deactivated = true;
             GlobalHelper.currentBullets--;
             GlobalHelper.backupBullets.Add(gameObject);

@@ -1,0 +1,52 @@
+//Test card
+attackduration(15000);
+setparenthealth(2000);
+
+bulletproperty(bullet, scale, 0.33);
+bulletproperty(bullet, id, 7);
+bulletproperty(bullet, innercolor, 1, 1, 1, 1);
+bulletproperty(bullet, outercolor, 0, 1, 1, 1);
+bulletproperty(bullet, advancedpath, Timelines/Supplementary/DelayedHoming_3);
+
+bulletproperty(bullet2, scale, 0.33);
+bulletproperty(bullet2, id, 7);
+bulletproperty(bullet2, innercolor, 1, 1, 1, 1);
+bulletproperty(bullet2, outercolor, 0, 1, 1, 1);
+
+laserproperty(laser, warnduration, 60);
+laserproperty(laser, shotduration, 60);
+laserproperty(laser, innercolor, 1, 1, 1, 1);
+laserproperty(laser, outercolor, 0, 0, 1, 1);
+
+movetowardspoint(0, 3, 20);
+
+repeat(10);
+repeat(10);
+repeat(4);
+	random(angle, 0, 6.28);
+	repeat(15);
+		repeat(4);
+			bulletproperty(bullet2, movementpolar, angle, 0.033);
+			createbullet(bullet2);
+			add(angle, angle, 0.0524);
+		endrepeat;
+		repeat(4);
+			bulletproperty(bullet, scriptrotation, angle);
+			createbullet(bullet);
+			add(angle, angle, 0.0524);
+		endrepeat;
+	endrepeat;
+	wait(35);
+endrepeat;
+
+set(angle, 0);
+laserproperty(laser, rotationspeed, 0.003);
+repeat(12);
+	add(angle, angle, 0.524);
+	laserproperty(laser, rotation, angle);
+	createlaser(laser);
+	wait(5);
+endrepeat;
+wait(6);
+endrepeat;
+endrepeat;

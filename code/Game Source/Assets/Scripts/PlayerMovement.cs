@@ -22,6 +22,7 @@ public class PlayerMovement : MonoBehaviour {
     public Sprite[] moveLeftSprites, moveRightSprites,stationairySprites;    
 
     void Awake() {
+        focused = false;
         thisTransform = transform;
         SaveLoad.LoadApplyConfig(); //Just in case
 
@@ -100,7 +101,7 @@ public class PlayerMovement : MonoBehaviour {
                 if (Input.GetKeyDown(Config.keyBomb) && !GlobalHelper.dialogue && PlayerStats.bombs > 0) { //todo: graphics
                     //Set the spellcard bonus to failure. Does basically nothing if there's no spell active except eat like .01ms
                     GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
-                    PlayerStats.invincibility = 300;
+                    GlobalHelper.stats.invincibility = 300;
                     PlayerStats.SetBombs((byte)(PlayerStats.bombs - 1), PlayerStats.bombpieces);
                     GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(0.3f, BulletClear.BulletClearType.BOMB,300);
                 }

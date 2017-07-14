@@ -35,12 +35,17 @@ enemyproperty(fairy3_blue, basescore, 1000);
 
 //enemyproperty(midboss, attackpath, Timelines/BossAttacks/1_3Non1, Timelines/BossAttacks/Spellcard2, Timelines/BossAttacks/1_3Non2, Timelines/BossAttacks/Spellcard6, Timelines/BossAttacks/1_3Non3, Timelines/BossAttacks/Spellcard10);
 enemyproperty(midboss, attackpath, Timelines/BossAttacks/1_3Non1, Timelines/BossAttacks/Spellcard2);
+//enemyproperty(midboss, attackpath, Timelines/BossAttacks/Spellcard99);
 enemyproperty(midboss, id, 0);
 enemyproperty(midboss, maxhealth, 100); //Set by the attacks themselves anyway;
 enemyproperty(midboss, droppower, 10);
 enemyproperty(midboss, dropscore, 10);
 enemyproperty(midboss, basescore, 8000);
 enemyproperty(midboss, boss, 1);
+enemyproperty(midboss, startpos, 3, 6);
+
+//createenemy(midboss);
+//wait(9999);
 
 enemyproperty(boss, attackpath, Timelines/BossAttacks/1_3Non2, Timelines/BossAttacks/Spellcard6, Timelines/BossAttacks/1_3Non3, Timelines/BossAttacks/Spellcard10);
 enemyproperty(boss, id, 0);
@@ -131,7 +136,6 @@ enemyproperty(fairy3_blue, startpos, 1.5, 5);
 createenemy(fairy3_blue);
 
 wait(540);
-enemyproperty(midboss, startpos, 3, 6);
 createenemy(midboss);
 wait(160);
 //Maximum boss length: little more than 1800 because of the spellcard animation, which is 90 ticks, so 1890 needs to be filled up;

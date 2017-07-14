@@ -25,19 +25,20 @@ public class BulletMaterialisation : MonoBehaviour {
 
     void OnEnable () {
         timer = 9; //This counts down from 9 to 0.
-        transform.position += new Vector3(0f, 0f, -5f);
-        template = bullet.bulletTemplate;
-        if (template.enemyShot) {
-            spriteRenderer.sprite = materialiseSprite;
-        } else {
-            spriteRenderer.sprite = null;
-        }
-        scale = template.scale;
 	}
 	
 	void Update () {
         if (!GlobalHelper.paused) {
             if (timer == 9) { //Initialising the process of spawning.
+                transform.position += new Vector3(0f, 0f, -5f);
+                template = bullet.bulletTemplate;
+                if (template.enemyShot) {
+                    spriteRenderer.sprite = materialiseSprite;
+                }
+                scale = template.scale;
+                if (template.advancedAttackPath != null && template.advancedAttackPath != "") {
+                    timer--; //spaghetti; timelineinterprenter takes a tick to setup
+                }
             }
             if (timer == 0) { //Stopping and spawning the actual bullet
                 timer = 9; //For the next time this gets spawned
@@ -54,8 +55,10 @@ public class BulletMaterialisation : MonoBehaviour {
                 spriteRenderer.color = Vector4.one;
                 //If this is an advanced bullet, enable it here.
                 if (template.advancedAttackPath != "") {
-                    GetComponent<TimelineInterprenter>().enabled = true;
-                    GetComponent<TimelineInterprenter>().patternPath = template.advancedAttackPath;
+                    TimelineInterprenter interprenter = GetComponent<TimelineInterprenter>();
+                    interprenter.enabled = true;
+                    interprenter.patternPath = template.advancedAttackPath;
+                    interprenter.Reset(template.advancedAttackPath);
                 }
                 this.enabled = false;
             } else {

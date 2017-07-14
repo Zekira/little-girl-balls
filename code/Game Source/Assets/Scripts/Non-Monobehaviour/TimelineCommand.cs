@@ -9,7 +9,7 @@ public class TimelineCommand {
     //private static Dictionary<int, int> commandListsIds = new Dictionary<int, int>();
 
     public enum Command { STARTTIMELINE, DIALOGUE, REPEAT, ENDREPEAT, IF, ELSE, ENDIF, WAIT, BOSSWAIT, BULLETPROPERTY, ENEMYPROPERTY, LASERPROPERTY, CREATEBULLET, CREATEENEMY, CREATELASER,
-                        MOVEPARENT, DESTROYPARENT, SETPARENTHEALTH, ANGLETOPLAYER, ANGLETOPOINT, GETPOSITION, GETPLAYERPOSITION, RANDOM, MOVETOWARDSPOINT,
+                        MOVEPARENT, MOVEPARENTPOLAR, DESTROYPARENT, SETPARENTHEALTH, ANGLETOPLAYER, ANGLETOPOINT, GETPOSITION, GETPLAYERPOSITION, RANDOM, MOVETOWARDSPOINT,
                         SET, ADD, SUB, MUL, DIV, MOD, POW, SIN, ASIN, COS, ACOS, TAN, ATAN, ABS,
                         ATTACKDURATION };
     public enum EnemyProperty { SCALE, ATTACKPATH, ID, MAXHEALTH, BOSS, BOSSPORTRAIT, DROPVALUE, DROPPOWER, DROPSCORE, STARTPOS, BASESCORE };
@@ -113,6 +113,7 @@ public class TimelineCommand {
                         }
                         break;
                     case "moveparent":
+                    case "moveparentpolar":
                     case "getposition":
                     case "getplayerposition":
                     case "set":

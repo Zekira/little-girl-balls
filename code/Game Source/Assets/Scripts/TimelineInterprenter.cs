@@ -5,7 +5,7 @@ using System;
 /// <summary>
 /// A class reading .txt's describing either enemy or bullet info. Important in those .txt's is the wait(x) function, which is in ticks and not second, because second would not allow replays.
 /// </summary>
-public class TimelineInterprenter : MonoBehaviour {
+public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are still, maybe something else
     public string patternPath = "";
     public bool levelTimeline = false; //Set via inspector
     public int commandsId;
@@ -452,10 +452,24 @@ public class TimelineInterprenter : MonoBehaviour {
                         transform.position += new Vector3(ParseValue(currentCommand.args[0]), ParseValue(currentCommand.args[1]), 0f);
                     }
                     continue;
+                case TimelineCommand.Command.MOVEPARENTPOLAR:
+                    num3 = ParseValue(currentCommand.args[0]); //angle
+                    num2 = ParseValue(currentCommand.args[1]); //length
+                    num1 = Mathf.Sin(num3) * num2; //x
+                    num2 = Mathf.Cos(num3) * num2; //y
+                    if (parentBullet != null) { //If this is a bullet, posx,y(,z) should be modified, not its direct position
+                        Bullet bullet = parentBullet;
+                        pos.x = num1 * bullet.bulletTemplate.scriptRotationMatrix.x + num2 * bullet.bulletTemplate.scriptRotationMatrix.y;
+                        pos.y = num1 * bullet.bulletTemplate.scriptRotationMatrix.z + num2 * bullet.bulletTemplate.scriptRotationMatrix.w;
+                        bullet.posx += pos.x;
+                        bullet.posy += pos.y;
+                    } else {
+                        transform.position += new Vector3(num1, num2, 0f);
+                    }
+                    continue;
                 case TimelineCommand.Command.MOVETOWARDSPOINT:
                     StopCoroutine("moveTowardsSmooth");
                     StartCoroutine(MoveTowardsSmooth(new Vector3(ParseValue(currentCommand.args[0]), ParseValue(currentCommand.args[1]), transform.position.z), ParseValue(currentCommand.args[2])));
-                    //TODO: Test
                     continue;
                 case TimelineCommand.Command.DESTROYPARENT: //Destroys whatever this is attached to.
                     if (parentBullet != null) { //Destroying bullets is wasteful, they should be added to the dead bullet pile.
@@ -475,12 +489,16 @@ public class TimelineInterprenter : MonoBehaviour {
                     parentEnemy.template.maxHealth = parentEnemy.health;
                     parentEnemy.UpdateHealthbar();
                     continue;
-                case TimelineCommand.Command.ANGLETOPLAYER: //Returns the angle to the player.
+                case TimelineCommand.Command.ANGLETOPLAYER: //Returns the angle to the player. Undoes the difference made by the ScriptRotationMatrix
                     pos = transform.position;
                     playerpos = PlayerPosGetter.playerPos;
                     num1 = pos.x - playerpos.x;
                     num2 = pos.y - playerpos.y;
-                    SetNumber(currentCommand.args[0], Mathf.Atan2(-num1, -num2));
+                    num1 = Mathf.Atan2(-num1, -num2);
+                    if (parentBullet != null) {
+                        num1 -= parentBullet.bulletTemplate.scriptRotation;
+                    }
+                    SetNumber(currentCommand.args[0], num1);
                     continue;
                 case TimelineCommand.Command.ANGLETOPOINT:
                     pos = transform.position;

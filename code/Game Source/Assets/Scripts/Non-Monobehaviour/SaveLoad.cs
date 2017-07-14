@@ -143,7 +143,7 @@ public static class SaveLoad {
             writer.Seek(0, SeekOrigin.Begin);
             //Global stuff
             writer.Write(PlayerStats.totalTimePlayed);
-            writer.Write(GlobalHelper.totalFiredBullets);
+            writer.Write(GlobalHelper.totalFiredBullets + GlobalHelper.previousFiredBullets);
             writer.Write(GlobalHelper.musicHeard);
 
             writer.Seek((int)character * playerDataPlayerSize, SeekOrigin.Current);
@@ -167,6 +167,7 @@ public static class SaveLoad {
         if (!File.Exists(playerDataPath)) {
             PlayerStats.totalTimePlayed = 0;
             GlobalHelper.totalFiredBullets = 0;
+            GlobalHelper.previousFiredBullets = 0;
             GlobalHelper.musicHeard = 0;
 
             GlobalHelper.bestUnlockedStage = 0;
@@ -184,7 +185,8 @@ public static class SaveLoad {
 
         using (BinaryReader reader = new BinaryReader(File.OpenRead(playerDataPath))) {
             PlayerStats.totalTimePlayed = reader.ReadUInt32();
-            GlobalHelper.totalFiredBullets = reader.ReadUInt64();
+            GlobalHelper.previousFiredBullets = reader.ReadUInt64();
+            GlobalHelper.totalFiredBullets = 0;
             GlobalHelper.musicHeard = reader.ReadByte();
 
             reader.BaseStream.Seek(playerDataPlayerSize * (int)character, SeekOrigin.Current); //stackoverflow says it's usually save. But when things bug, look here first.

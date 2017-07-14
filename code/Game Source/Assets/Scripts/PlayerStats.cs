@@ -25,7 +25,7 @@ public class PlayerStats : MonoBehaviour {
     public static int grazeInATick = 0;
 
     //Other stuff
-    public static int invincibility = 0;
+    public int invincibility = 0;
     public static bool noMovement = false;
     public static Vector3 startPosition;
     public static float hitboxRadius = 0.15f;
@@ -37,6 +37,10 @@ public class PlayerStats : MonoBehaviour {
     public static Sprite[] lifeSprites = { null, null, null, null };
 
     private static GameObject UIVariable;
+
+    void OnEnable() {
+        noMovement = false;    //This otherwise never gets reset
+    }
 
     void Start() {
         UIVariable = GameObject.FindWithTag("UIVariable");

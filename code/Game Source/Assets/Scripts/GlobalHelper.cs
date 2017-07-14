@@ -11,6 +11,7 @@ public class GlobalHelper : MonoBehaviour {
     //Things needed all the time that make (some) sense even when not in a level.
     public static System.Random random = new System.Random(); //NOTE: Handle ALL random events through this; if I want to be able to add replays, I should save the seeds and input them here.
     public static ulong totalFiredBullets; //Fun statistic to keep track of.
+    public static ulong previousFiredBullets;
     public static int currentBullets;
 
     public static bool paused = false;
@@ -19,7 +20,7 @@ public class GlobalHelper : MonoBehaviour {
     public enum Difficulty { EASY, NORMAL, HARD, LUNATIC, EXTRA };
     public static Difficulty difficulty = Difficulty.LUNATIC;
     public enum Character { RACHEL_A, RACHEL_B, RACHEL_C };
-    public static Character character = Character.RACHEL_B;
+    public static Character character = Character.RACHEL_A;
     public static byte musicHeard = 0; //See SaveLoad.cs for more info
     public static byte bestUnlockedStage = 0;
     public static short mainAttempts = 0;
@@ -43,13 +44,12 @@ public class GlobalHelper : MonoBehaviour {
     private static GameObject createdObject;
     private static MaterialPropertyBlock bulletMatPropertyBlock;
     private static Bullet bullet;
-    private static Vector3 bulletpos;
     private static SpriteRenderer spriteRenderer;
     private static Transform bulletTransform;
 
     //Things that make finding objects in other classes easier, but only make sense when in a level: the only time GlobalHelper is a script attached to an object.
     //Also sets up things needed for the level and such as this only runs when loading the level.
-    void Awake() {
+    void OnEnable() {
         SaveLoad.LoadPlayerData(character);
         spellcardBackground = GameObject.FindWithTag("SpellcardBackground").transform;
         canvas = GameObject.FindWithTag("UI").transform;
@@ -74,8 +74,6 @@ public class GlobalHelper : MonoBehaviour {
 
         bulletMatPropertyBlock = new MaterialPropertyBlock();
 
-        dialogue = false;
-        autoCollectItems = false;
         activeBosses = 0;
 
         LoadEnemySprites();
@@ -87,9 +85,11 @@ public class GlobalHelper : MonoBehaviour {
         AudioSource audio = GameObject.FindWithTag("BGM").GetComponent<AudioSource>();
         audio.clip = (AudioClip) Resources.Load("Audio/Music/Stage" + level);
         audio.Play();
-        
-        paused = false;
 
+        dialogue = false;
+        autoCollectItems = false;
+        paused = false;
+    
     }
 
     //Event to tick all timelineinterprenters
@@ -203,34 +203,22 @@ public class GlobalHelper : MonoBehaviour {
         }
         bullet = createdObject.GetComponent<Bullet>();
         bullet.Reset(bulletTemplate);
-        if (bulletTemplate.advancedAttackPath != "") { //If there's advanced stuff happening, enable the TimelineInterprenter
-            TimelineInterprenter interprenter = createdObject.GetComponent<TimelineInterprenter>();
-            interprenter.enabled = true;
-            interprenter.Reset(bulletTemplate.advancedAttackPath);
-        } else {
-            createdObject.GetComponent<TimelineInterprenter>().enabled = false;
-        }
-        //Modifies the bullet based on whether it's harmful (eg shot by the enemy or player). Harmful bullets can be grazed and kill you, unharmful bullets have damage attached and don't harm you.
-        if (bulletTemplate.enemyShot) {
-            bulletpos = new Vector3(bulletPosition.x, bulletPosition.y, totalFiredBullets / 100000f);
-        } else {
-            bulletpos = new Vector3(bulletPosition.x, bulletPosition.y, 5 + totalFiredBullets / 100000f); //Player shot bullets should not cover actual harmful bullets.
-        }
+        createdObject.GetComponent<TimelineInterprenter>().enabled = false;
         //Sets the position
         if (!bulletTemplate.positionIsRelative) {
-            bulletpos.x = bulletTemplate.position.x;
-            bulletpos.y = bulletTemplate.position.y;
+            bullet.posx = bulletTemplate.position.x;
+            bullet.posy = bulletTemplate.position.y;
         } else {
-            bulletpos.x += bulletTemplate.position.x;
-            bulletpos.y += bulletTemplate.position.y;
+            bullet.posx = bulletPosition.x + bulletTemplate.position.x;
+            bullet.posy = bulletPosition.y + bulletTemplate.position.y;
         }
-        //Set the bullet's internal position vars; reading transform.position is a laggy operation apparantly, so this solves that.
-        bullet.posx = bulletpos.x;
-        bullet.posy = bulletpos.y;
-        bullet.posz = bulletpos.z;
+        bullet.posz = totalFiredBullets * 1e-6f;
+        if (!bulletTemplate.enemyShot) {
+            bullet.posz += 5f; //Player shot bullets should not cover actual harmful bullets.
+        }
         //Set the actual position
         bulletTransform = createdObject.transform;
-        bulletTransform.position = bulletpos;
+        bulletTransform.position = new Vector3(bullet.posx, bullet.posy, bullet.posz);
 
         bulletTransform.localScale = bulletTemplate.scale * Vector3.one;
         bulletTransform.eulerAngles = new Vector3(0f, 0f, -bulletTemplate.rotation * Mathf.Rad2Deg);
@@ -342,7 +330,7 @@ public class GlobalHelper : MonoBehaviour {
         GlobalHelper.paused = paused;
         player.GetComponent<PlayerMovement>().UpdateFocused(); //Updating focus is needed when unpausing, otherwise it wouldn't register releasing/holding the button during the pause
         canvas.Find("Pause Canvas").gameObject.SetActive(paused);
-        canvas.Find("Dialogue Canvas").gameObject.SetActive(dialogue && !paused);
+        canvas.Find("Dialogue Canvas").gameObject.SetActive(/*dialogue &&*/ !paused); //It's empty anyways if there's no dialogue going on, so no need to hide it then
         if (paused) {
             GameObject.FindWithTag("BGM").GetComponent<AudioSource>().Pause();
         } else {

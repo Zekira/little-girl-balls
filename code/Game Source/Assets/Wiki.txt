@@ -91,6 +91,8 @@ id: what all properties have been saved to.
 This creates a bullet, enemy, or laser, found by 'id'.
   moveparent(<x>, <y>);
 Adds 'x' to the x-position of the object this is attached to and 'y' to the y-position. This is influenced by "scriptrotation".
+  moveparentpolar(<angle>, <length>);
+Moves the parent
   destroyparent;
 Removes the object this is attached to from the game.
   setparenthealth(<value>);
@@ -152,7 +154,7 @@ Default: 1
 Whether the bullet can be cleared by bombs/deaths.
 Default: 0
   scriptrotation, <angle>
-Rotates the results of the following 'angle' radians: bulletProperty's scriprotation, movement, position, rotation; laserProperty's rotation; moveparent
+Rotates the results of the following 'angle' radians: bulletProperty's scriprotation, movement, movementpolar, position, rotation; laserProperty's rotation; moveparent, moveparentpolar. Specifically NOT angletoplayer
 Default: 0
   advancedpath, <path>
 Adds a Timeline to the created bullet. Same path rules as starttimeline(<path>);
