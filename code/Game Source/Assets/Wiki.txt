@@ -20,10 +20,11 @@ Showing the other side must be one of the following:
 The dialogue can be any arbitrary text, where \n is used for newlines.
 
 Other options can be one of the following:
-  timelinetick   timed|<time>   introduction|<name>|<title>
+  timelinetick   timed|<time>   introduction|<name>|<title>   bossname|<name>
 'time' must be any natural number. Every 60 is a second. This makes it so the dialogue can't be skipped, but continues automatically after 'time'/60 seconds.
 'name' and 'title' can be any arbitrary text. Shows this text underneath the dialogue at that character's side.
 'timelinetick' makes all Timelines continue for 1 game tick (so: until they come accross a wait(time); function)
+'bossname' sets the boss' name in the upperleft corner.
 
 Example:
   charno|happy|left|false|Hi there!|timed|120|introduction|Charno|A pixie|
@@ -84,6 +85,8 @@ Attaches another Timeline to this object that starts getting executed immediatly
   dialogue(<path>);
 path: The place the dialogue is located within within the Resources folder in unity. TODO: From outside unity.
 Starts the dialogue. Timelines normally don't run while dialogue is active.
+  bossname(<name>);
+Sets the boss' name in the upperleft corner.
   createbullet(<id>);
   createenemy(<id>);
   createlaser(<id>);

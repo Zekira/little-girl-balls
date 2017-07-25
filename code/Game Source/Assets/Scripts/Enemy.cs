@@ -25,6 +25,7 @@ public class Enemy : MonoBehaviour {
             GlobalHelper.bossUI.gameObject.SetActive(true);
             SetUIStarCount();
             currentAttack = -1;
+            SetTimer(template.spellTimers[0]);
 
             NextPhase(false, 0);
         }
@@ -62,17 +63,21 @@ public class Enemy : MonoBehaviour {
                 }
                 //Updates the UI's timer.
                 if (template.isBoss) {
-                    GlobalHelper.GetTimer(true).GetComponent<Text>().text = (Mathf.Min(timer / 60, 99)).ToString();
-                    temptimer = timer % 60 * 100 / 60;
-                    if (timer < 6000) {
-                        GlobalHelper.GetTimer(false).GetComponent<Text>().text = (temptimer / 10).ToString() + (temptimer % 10).ToString();
-                    } else {
-                        GlobalHelper.GetTimer(false).GetComponent<Text>().text = "99";
-                    }
+                    SetTimer(timer);
                 }
             }
         }
 	}
+
+    public void SetTimer(int ticks) {
+        GlobalHelper.GetTimer(true).GetComponent<Text>().text = (Mathf.Min(ticks / 60, 99)).ToString();
+        temptimer = ticks % 60 * 100 / 60;
+        if (ticks < 6000) {
+            GlobalHelper.GetTimer(false).GetComponent<Text>().text = (temptimer / 10).ToString() + (temptimer % 10).ToString();
+        } else {
+            GlobalHelper.GetTimer(false).GetComponent<Text>().text = "99";
+        }
+    }
 
     /// <summary>
     /// Starts what should happen when this enemy takes damage: reducing the health, and if it's a boss, updating the healthbar.

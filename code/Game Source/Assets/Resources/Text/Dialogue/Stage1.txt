@@ -1,6 +1,7 @@
 rachel|happy|left|false|Yay my first incident!|introduction|Rachel|Temple Maid
 rachel|happy|left|false|Usually nothing happens, but now something does!
 rachel|happy|left|false|I'm so excited!
-charno|happy|right|true|I sense evil!|timelinetick|introduction|Lumina|yay placeholder art
+charno|happy|right|true|I sense evil!|timelinetick
+charno|happy|right|true|I, Lumina, will cleanse this world of all evil!|introduction|Lumina|not charno. honestly|bossname|LUMINA
 rachel|happy|left|true|What? I'm not -
 charno|happy|right|true|Begone, evil!

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using UnityEngine.UI;
 /// <summary>
 /// A class reading .txt's describing either enemy or bullet info. Important in those .txt's is the wait(x) function, which is in ticks and not second, because second would not allow replays.
 /// </summary>
@@ -120,6 +121,9 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                     GlobalHelper.levelManager.GetComponent<DialogueManager>().StartDialogue(currentCommand.args[0]);
                     cooldown = 1;
                     return; //The next loop should not happen immediatly, but after the dialogue has been processed. That's checked within Update().
+                case TimelineCommand.Command.BOSSNAME:
+                    GlobalHelper.bossUI.transform.Find("Name").GetComponent<Text>().text = currentCommand.args[0];
+                    continue;
                 case TimelineCommand.Command.REPEAT:
                     //Executes everything between here and the matching endrepeat args[0] times.
                     count = Mathf.RoundToInt(ParseValue(currentCommand.args[0])) - 1;

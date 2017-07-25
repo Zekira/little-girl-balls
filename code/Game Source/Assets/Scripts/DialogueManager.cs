@@ -127,6 +127,7 @@ public class DialogueManager : MonoBehaviour {
                     int waitTime = 0;
                     int.TryParse(text[i + 1], out waitTime);
                     StartCoroutine(DialogueWait(waitTime));
+                    i += 1;
                     continue;
                 case "introduction":
                     Transform transform;
@@ -141,6 +142,11 @@ public class DialogueManager : MonoBehaviour {
                     }
                     transform.Find("Name").GetComponent<Text>().text = text[i + 1];
                     transform.Find("Title").GetComponent<Text>().text = text[i + 2];
+                    i += 2;
+                    continue;
+                case "bossname":
+                    GlobalHelper.bossUI.transform.Find("Name").GetComponent<Text>().text = text[i + 1];
+                    i += 1;
                     continue;
                 default:
                     continue;

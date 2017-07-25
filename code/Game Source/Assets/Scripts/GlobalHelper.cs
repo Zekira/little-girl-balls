@@ -32,7 +32,7 @@ public class GlobalHelper : MonoBehaviour {
     public static Transform spellcardBackground, secondCounter, msecondCounter,canvas;
     public static GameObject bossUI, player, levelManager;
     public static List<GameObject> backupBullets, backupItems;
-    public static List<Sprite> itemSprites, bulletSprites;
+    public static List<Sprite> itemSprites, bulletSprites, snakeSprites;
     public static List<Sprite[]> enemySprites;
     public static PlayerStats stats;
     public static BulletClear bulletClear;
@@ -66,19 +66,15 @@ public class GlobalHelper : MonoBehaviour {
         backupBullets = new List<GameObject>(); //Bullet objects that are deactivated but can be used
         backupItems = new List<GameObject>(); //Item objects that are deactivated but can be used
 
-        itemSprites = new List<Sprite>(); //All sprite textures
-        bulletSprites = new List<Sprite>(); //All bullet textures
-        enemySprites = new List<Sprite[]>(); //All enemy textures
+        LoadEnemySprites();
+        LoadBulletSprites();
+        LoadItemSprites();
         Texture2D bulletMaterialiseTexture = (Texture2D) Resources.Load("Graphics/MaterialiseSprite");
         BulletMaterialisation.materialiseSprite = Sprite.Create(bulletMaterialiseTexture, new Rect(0, 0, bulletMaterialiseTexture.width, bulletMaterialiseTexture.height), Vector2.one * 0.5f);
 
         bulletMatPropertyBlock = new MaterialPropertyBlock();
 
         activeBosses = 0;
-
-        LoadEnemySprites();
-        LoadBulletSprites();
-        LoadItemSprites();
 
         GameObject.FindWithTag("UIVariable").transform.Find("Difficulty").GetComponent<RawImage>().texture = (Texture2D)Resources.Load("Graphics/Difficulty/" + (int)difficulty);
 
@@ -298,20 +294,30 @@ public class GlobalHelper : MonoBehaviour {
     }
 
     public static void LoadBulletSprites() {
+        bulletSprites = new List<Sprite>();
         foreach (Texture2D texture in Resources.LoadAll<Texture2D>("Graphics/Bullets")) {
             bulletSprites.Add(Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 128));
         }
     }
 
     public static void LoadItemSprites() {
+        itemSprites = new List<Sprite>();
         foreach (Texture2D texture in Resources.LoadAll<Texture2D>("Graphics/Items")) {
             itemSprites.Add(Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100));
         }
     }
 
     public static void LoadEnemySprites() {
+        enemySprites = new List<Sprite[]>();
         foreach (Texture2D texture in Resources.LoadAll<Texture2D>("Graphics/Enemies")) {
             enemySprites.Add(SpriteAnimator.GetSprites(texture));
+        }
+    }
+
+    public static void LoadSnakeSprites() {
+        snakeSprites = new List<Sprite>();
+        foreach (Texture2D texture in Resources.LoadAll<Texture2D>("Graphics/Snake")) {
+            snakeSprites.Add(Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 128));
         }
     }
 

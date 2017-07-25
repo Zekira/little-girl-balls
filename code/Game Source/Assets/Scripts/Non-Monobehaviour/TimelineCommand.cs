@@ -8,7 +8,7 @@ public class TimelineCommand {
     public static Dictionary<int, List<TimelineCommand>> commandLists = new Dictionary<int, List<TimelineCommand>>();
     //private static Dictionary<int, int> commandListsIds = new Dictionary<int, int>();
 
-    public enum Command { STARTTIMELINE, DIALOGUE, REPEAT, ENDREPEAT, IF, ELSE, ENDIF, WAIT, BOSSWAIT, BULLETPROPERTY, ENEMYPROPERTY, LASERPROPERTY, CREATEBULLET, CREATEENEMY, CREATELASER,
+    public enum Command { STARTTIMELINE, DIALOGUE, BOSSNAME, REPEAT, ENDREPEAT, IF, ELSE, ENDIF, WAIT, BOSSWAIT, BULLETPROPERTY, ENEMYPROPERTY, LASERPROPERTY, CREATEBULLET, CREATEENEMY, CREATELASER,
                         MOVEPARENT, MOVEPARENTPOLAR, DESTROYPARENT, SETPARENTHEALTH, ANGLETOPLAYER, ANGLETOPOINT, GETPOSITION, GETPLAYERPOSITION, RANDOM, MOVETOWARDSPOINT,
                         SET, ADD, SUB, MUL, DIV, MOD, POW, SIN, ASIN, COS, ACOS, TAN, ATAN, ABS,
                         ATTACKDURATION };
@@ -107,6 +107,7 @@ public class TimelineCommand {
                     case "setparenthealth":
                     case "angletoplayer":
                     case "attackduration":
+                    case "bossname":
                         if (args.Count != 1) {
                             Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 1.");
                             foundError = true;
