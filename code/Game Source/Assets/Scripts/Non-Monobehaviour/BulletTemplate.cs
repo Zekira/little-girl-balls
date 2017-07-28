@@ -20,6 +20,7 @@ public struct BulletTemplate {
     public bool clearImmune;
     public string advancedAttackPath;
     public float scriptRotation;
+    public int snakeLength;
     public Vector4 scriptRotationMatrix;
 
     private BulletTemplate(bool basic) {
@@ -39,6 +40,7 @@ public struct BulletTemplate {
         advancedAttackPath = "";
         scriptRotation = 0f;
         scriptRotationMatrix = new Vector4(1f, 0f, 0f, 1f);
+        snakeLength = 0;
     }
 
     /// <summary>

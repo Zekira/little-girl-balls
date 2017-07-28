@@ -1,3 +1,4 @@
+https://docs.unity3d.com/Manual/StyledText.html can be used here for rich text.
 HIGHSCORE=Hi-Score
 SCORE=Score
 LIVES=Lives
@@ -19,7 +20,7 @@ REPLAY=Replay
 PLAYERDATA=Player Data
 OPTIONS=Options
 QUIT=Quit Game
-PAUSED=Game Paused
+PAUSED=<b><i>Game Paused</i></b>
 RESUME=Resume Game
 RESTART=Restart Game
 RETURNTOTITLE=Return To Title

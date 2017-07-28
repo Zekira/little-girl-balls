@@ -10,6 +10,7 @@ public class Bullet : MonoBehaviour {
 
     public Snake relatedSnake = null;
     public int relatedSnakeIndex = 0;
+    public int relatedSnakeLength = 0; //temp var for testing
 
     public float posx, posy, posz;
     private static float deltax = 0f;
@@ -97,6 +98,11 @@ public class Bullet : MonoBehaviour {
     /// </summary>
     public void Deactivate() {
         if (!deactivated) {
+            if (relatedSnake != null) {
+                relatedSnake.Remove(relatedSnakeIndex);
+                relatedSnake = null;
+                relatedSnakeIndex = -1;
+            }
             GetComponent<SpriteRenderer>().sprite = null;
             deactivated = true;
             GlobalHelper.currentBullets--;

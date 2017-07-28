@@ -13,7 +13,7 @@ public class TimelineCommand {
                         SET, ADD, SUB, MUL, DIV, MOD, POW, SIN, ASIN, COS, ACOS, TAN, ATAN, ABS,
                         ATTACKDURATION };
     public enum EnemyProperty { SCALE, ATTACKPATH, ID, MAXHEALTH, BOSS, BOSSPORTRAIT, DROPVALUE, DROPPOWER, DROPSCORE, STARTPOS, BASESCORE };
-    public enum BulletProperty { MOVEMENT, MOVEMENTPOLAR, ENEMYSHOT, SCALE, ID, INNERCOLOR, OUTERCOLOR, ROTATION, POSITION, RELATIVEPOS, CLEARIMMUNE, SCRIPTROTATION, ADVANCEDPATH, HARMLESS };
+    public enum BulletProperty { MOVEMENT, MOVEMENTPOLAR, ENEMYSHOT, SCALE, ID, INNERCOLOR, OUTERCOLOR, ROTATION, POSITION, RELATIVEPOS, CLEARIMMUNE, SCRIPTROTATION, ADVANCEDPATH, HARMLESS, SNAKELENGTH };
     public enum LaserProperty { WARNDURATION, SHOTDURATION, OUTERCOLOR, INNERCOLOR, WIDTH, MOVEMENT, POSITION, RELATIVEPOS, ROTATION, ROTATIONSPEED };
 
     public Command command;
@@ -160,6 +160,7 @@ public class TimelineCommand {
                             case "clearimmune":
                             case "scriptrotation":
                             case "harmless":
+                            case "snakelength":
                                 if (args.Count != 3) {
                                     Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 1.");
                                     foundError = true;
@@ -187,7 +188,7 @@ public class TimelineCommand {
                                 }
                                 break;
                             default:
-                                Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): Unknown Enemy Property \"<i>" + args[1] + "</i>\"");
+                                Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): Unknown Bullet Property \"<i>" + args[1] + "</i>\"");
                                 foundError = true;
                                 break;
                         }
@@ -266,7 +267,7 @@ public class TimelineCommand {
                                 }
                                 break;
                             default:
-                                Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): Unknown Enemy Property \"<i>" + args[1] + "</i>\"");
+                                Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): Unknown Laser Property \"<i>" + args[1] + "</i>\"");
                                 foundError = true;
                                 break;
                         }

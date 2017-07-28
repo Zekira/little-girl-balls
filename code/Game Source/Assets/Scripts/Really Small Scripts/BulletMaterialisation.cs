@@ -9,6 +9,7 @@ public class BulletMaterialisation : MonoBehaviour {
 
     private BulletTemplate template;
     public static Sprite materialiseSprite;
+    public Sprite actualSprite;
     private Color color;
     public float scale;
     public int timer;
@@ -32,8 +33,11 @@ public class BulletMaterialisation : MonoBehaviour {
             if (timer == 9) { //Initialising the process of spawning.
                 transform.position += new Vector3(0f, 0f, -5f);
                 template = bullet.bulletTemplate;
+                actualSprite = spriteRenderer.sprite;
                 if (template.enemyShot) {
                     spriteRenderer.sprite = materialiseSprite;
+                } else {
+                    spriteRenderer.sprite = null;
                 }
                 scale = template.scale;
                 if (template.advancedAttackPath != null && template.advancedAttackPath != "") {
@@ -50,7 +54,7 @@ public class BulletMaterialisation : MonoBehaviour {
                 }
                 thisTransform.position -= new Vector3(0f, 0f, -5f);
                 bullet.enabled = true;
-                spriteRenderer.sprite = GlobalHelper.bulletSprites[template.bulletID];
+                spriteRenderer.sprite = actualSprite;
                 thisTransform.localScale = template.scale * Vector3.one;
                 spriteRenderer.color = Vector4.one;
                 //If this is an advanced bullet, enable it here.

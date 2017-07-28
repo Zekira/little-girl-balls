@@ -7,25 +7,29 @@ public class Snake {
     public Transform[] bullets;
 
     public Snake(Transform[] bullets) {
-        //Loop through the first half and update both ends
-        int j = 0;
-        for (int i = 0; i < (bullets.Length/2) + 1; i++) {
-            j = bullets.Length - i;
-            bullets[i].GetComponent<Bullet>().relatedSnake = this;
-            bullets[j].GetComponent<Bullet>().relatedSnake = this;
-            bullets[i].GetComponent<Bullet>().relatedSnakeIndex = i;
-            bullets[i].GetComponent<Bullet>().relatedSnakeIndex = j;
-            //Set the sprites
-            if (bullets.Length == 1) {
-                bullets[i].GetComponent<SpriteRenderer>().sprite = GlobalHelper.snakeSprites[0];
-                break;
-            }
-            if (i < 3) {
-                bullets[i].GetComponent<SpriteRenderer>().sprite = GlobalHelper.snakeSprites[i];
-                bullets[j].GetComponent<SpriteRenderer>().sprite = GlobalHelper.snakeSprites[6-i];
-            } else {
-                bullets[i].GetComponent<SpriteRenderer>().sprite = GlobalHelper.snakeSprites[3];
-                bullets[j].GetComponent<SpriteRenderer>().sprite = GlobalHelper.snakeSprites[3];
+        if (bullets.Length == 1) {
+            bullets[0].GetComponent<Bullet>().relatedSnake = this;
+            bullets[0].GetComponent<Bullet>().relatedSnakeIndex = 0;
+            bullets[0].GetComponent<SpriteRenderer>().sprite = GlobalHelper.snakeSprites[0];
+        } else if (bullets.Length != 0) {
+            //Loop through the first half and update both ends from ends to middle
+            int j = 0;
+            for (int i = 0; i < (bullets.Length / 2) + 1; i++) {
+                j = bullets.Length - i - 1;
+                bullets[i].GetComponent<Bullet>().relatedSnake = this;
+                bullets[j].GetComponent<Bullet>().relatedSnake = this;
+                bullets[i].GetComponent<Bullet>().relatedSnakeLength = bullets.Length;
+                bullets[j].GetComponent<Bullet>().relatedSnakeLength = bullets.Length;
+                bullets[i].GetComponent<Bullet>().relatedSnakeIndex = i;
+                bullets[j].GetComponent<Bullet>().relatedSnakeIndex = j;
+                //Set the sprites TODO: Doing it like this is inefficient; no need to keep setting the middle sprites to the same thing over and over. Also the ends are buggy
+                if (i < 3) {
+                    bullets[i].GetComponent<SpriteRenderer>().sprite = GlobalHelper.snakeSprites[i];
+                    bullets[j].GetComponent<SpriteRenderer>().sprite = GlobalHelper.snakeSprites[6 - i];
+                } else {
+                    bullets[i].GetComponent<SpriteRenderer>().sprite = GlobalHelper.snakeSprites[3];
+                    bullets[j].GetComponent<SpriteRenderer>().sprite = GlobalHelper.snakeSprites[3];
+                }
             }
         }
         this.bullets = bullets;
@@ -54,8 +58,14 @@ public class Snake {
 
     //Removes an entry and optionally splits it
     public Snake[] Remove(int index) {
-        Transform[] bullets1 = new Transform[(index < 0 || index >= bullets.Length ? 0 : index)];
-        Transform[] bullets2 = new Transform[(index < 0 || index >= bullets.Length ? bullets.Length : bullets.Length - index - 1)];
+        if (index < 0 || index >= bullets.Length) {
+            foreach (Transform t in bullets) {
+                Debug.Log(t.GetComponent<Bullet>().relatedSnakeIndex); //Seems like the last one has +[snakelength] on its relatedSnakeIndex TODO
+            }
+            return new Snake[] { this };
+        }
+        Transform[] bullets1 = new Transform[index];
+        Transform[] bullets2 = new Transform[bullets.Length - index - 1];
         for (int i = 0; i < bullets.Length; i++) {
             if (i < index) {
                 bullets1[i] = bullets[i];
@@ -73,7 +83,13 @@ public class Snake {
     }
 
     public Snake Add(Transform[] bullets) {
-        Transform[] newBullets = new Transform[bullets.Length + this.bullets.Length - 1];
+        if (this.bullets.Length == 0) {
+            return new Snake(bullets);
+        }
+        if (bullets.Length == 0) {
+            return new Snake(this.bullets);
+        }
+        Transform[] newBullets = new Transform[bullets.Length + this.bullets.Length];
         for (int i = 0; i < newBullets.Length; i++) {
             if (i < this.bullets.Length) {
                 newBullets[i] = this.bullets[i];

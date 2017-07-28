@@ -308,6 +308,9 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                         case TimelineCommand.BulletProperty.HARMLESS:
                             bulletTemplate.harmless = ParseValue(currentCommand.args[1]) > 0 ? true : false;
                             break;
+                        case TimelineCommand.BulletProperty.SNAKELENGTH:
+                            bulletTemplate.snakeLength = Mathf.RoundToInt(ParseValue(currentCommand.args[1]));
+                            break;
                     }
                     SetBulletTemplate(currentCommand.args[0], bulletTemplate);
                     continue;
@@ -435,7 +438,12 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                     if (parentBullet != null) { //If a bulet is firing this, pass the script rotation data onto the new bullet.
                         bulletTemplate.Rotate(parentBullet.bulletTemplate.scriptRotation + bulletTemplate.rotation);
                     }
-                    GlobalHelper.CreateBullet(GetBulletTemplate(currentCommand.args[0]), transform.position);
+                    bulletTemplate = GetBulletTemplate(currentCommand.args[0]);
+                    if (bulletTemplate.snakeLength > 0) {
+                        GlobalHelper.thisObject.GetComponent<GlobalHelper>().CreateSnake(bulletTemplate.snakeLength, bulletTemplate, transform.position);
+                    } else {
+                        GlobalHelper.CreateBullet(bulletTemplate, transform.position);
+                    }
                     continue;
                 case TimelineCommand.Command.CREATEENEMY:
                     GlobalHelper.CreateEnemy(GetEnemyTemplate(currentCommand.args[0]));

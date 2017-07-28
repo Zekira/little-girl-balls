@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 /// <summary>
@@ -39,6 +40,7 @@ public class GlobalHelper : MonoBehaviour {
     public static CharacterPortraits characterPortraits;
     public static bool dialogue, autoCollectItems;
     public static int activeBosses;
+    public static GameObject thisObject;
 
     //Things used in createbullet and createenemy that differ everytime but is a waste to keep creating and destroying and better to just keep access to all the time.
     private static GameObject createdObject;
@@ -50,6 +52,7 @@ public class GlobalHelper : MonoBehaviour {
     //Things that make finding objects in other classes easier, but only make sense when in a level: the only time GlobalHelper is a script attached to an object.
     //Also sets up things needed for the level and such as this only runs when loading the level.
     void OnEnable() {
+        thisObject = gameObject;
         SaveLoad.LoadPlayerData(character);
         spellcardBackground = GameObject.FindWithTag("SpellcardBackground").transform;
         canvas = GameObject.FindWithTag("UI").transform;
@@ -69,6 +72,7 @@ public class GlobalHelper : MonoBehaviour {
         LoadEnemySprites();
         LoadBulletSprites();
         LoadItemSprites();
+        LoadSnakeSprites();
         Texture2D bulletMaterialiseTexture = (Texture2D) Resources.Load("Graphics/MaterialiseSprite");
         BulletMaterialisation.materialiseSprite = Sprite.Create(bulletMaterialiseTexture, new Rect(0, 0, bulletMaterialiseTexture.width, bulletMaterialiseTexture.height), Vector2.one * 0.5f);
 
@@ -220,7 +224,7 @@ public class GlobalHelper : MonoBehaviour {
         bulletTransform.eulerAngles = new Vector3(0f, 0f, -bulletTemplate.rotation * Mathf.Rad2Deg);
 
         spriteRenderer = createdObject.GetComponent<SpriteRenderer>();
-        //spriteRenderer.sprite = bulletSprites[bulletTemplate.bulletID]; Done through bulletmaterialisation
+        spriteRenderer.sprite = bulletSprites[bulletTemplate.bulletID];
         //If the property block is empty, initalise it here because it's needed.
         spriteRenderer.GetPropertyBlock(bulletMatPropertyBlock);
         //Change the color the sprites should render
@@ -341,6 +345,30 @@ public class GlobalHelper : MonoBehaviour {
             GameObject.FindWithTag("BGM").GetComponent<AudioSource>().Pause();
         } else {
             GameObject.FindWithTag("BGM").GetComponent<AudioSource>().UnPause();
+        }
+    }
+
+    public void CreateSnake (int length, BulletTemplate template, Vector3 position) {
+        StartCoroutine(CoCreateSnake(length, template, position));
+    }
+
+    private IEnumerator CoCreateSnake(int length, BulletTemplate template, Vector3 position) {
+        Snake newSnake = new Snake(new Transform[] { });
+        GameObject createdBullet;
+        int i = 0;
+        while (i < length) {
+            if (!paused && !dialogue) {
+                if(bulletClear.destroyBulletsHeight < 0 && bulletClear.bulletClearType == BulletClear.BulletClearType.FULLCLEAR) {
+                    break;
+                }
+                createdBullet = CreateBullet(template, position);
+                newSnake = newSnake.Add(new Transform[] { createdBullet.transform });
+                i++;
+            }
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
         }
     }
 }
