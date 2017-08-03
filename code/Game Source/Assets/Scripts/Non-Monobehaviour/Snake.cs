@@ -5,6 +5,7 @@ using UnityEngine;
 public class Snake {
 
     public Transform[] bullets;
+    public static Bullet bulleti, bulletj;
 
     public Snake(Transform[] bullets) {
         if (bullets.Length == 1) {
@@ -16,19 +17,19 @@ public class Snake {
             int j = 0;
             for (int i = 0; i < (bullets.Length / 2) + 1; i++) {
                 j = bullets.Length - i - 1;
-                bullets[i].GetComponent<Bullet>().relatedSnake = this;
-                bullets[j].GetComponent<Bullet>().relatedSnake = this;
-                bullets[i].GetComponent<Bullet>().relatedSnakeLength = bullets.Length;
-                bullets[j].GetComponent<Bullet>().relatedSnakeLength = bullets.Length;
-                bullets[i].GetComponent<Bullet>().relatedSnakeIndex = i;
-                bullets[j].GetComponent<Bullet>().relatedSnakeIndex = j;
+                bulleti = bullets[i].GetComponent<Bullet>();
+                bulletj = bullets[j].GetComponent<Bullet>();
+                bulleti.relatedSnake = this;
+                bulletj.relatedSnake = this;
+                bulleti.relatedSnakeIndex = i;
+                bulletj.relatedSnakeIndex = j;
                 //Set the sprites TODO: Doing it like this is inefficient; no need to keep setting the middle sprites to the same thing over and over. Also the ends are buggy
                 if (i < 3) {
-                    bullets[i].GetComponent<SpriteRenderer>().sprite = GlobalHelper.snakeSprites[i];
-                    bullets[j].GetComponent<SpriteRenderer>().sprite = GlobalHelper.snakeSprites[6 - i];
+                    bulleti.SetSprite(GlobalHelper.snakeSprites[i]);
+                    bulletj.SetSprite(GlobalHelper.snakeSprites[6 - i]);
                 } else {
-                    bullets[i].GetComponent<SpriteRenderer>().sprite = GlobalHelper.snakeSprites[3];
-                    bullets[j].GetComponent<SpriteRenderer>().sprite = GlobalHelper.snakeSprites[3];
+                    bulleti.SetSprite(GlobalHelper.snakeSprites[3]);
+                    bulletj.SetSprite(GlobalHelper.snakeSprites[3]);
                 }
             }
         }

@@ -3,6 +3,7 @@ using System.Collections;
 /// <summary>
 /// A class representing the physical instance of a BulletTemplate attached to a GameObject.
 /// </summary>
+/// //TODO: Make collisions' wait between checks longer if further from the player.
 public class Bullet : MonoBehaviour {
 
     public BulletTemplate bulletTemplate;
@@ -10,7 +11,6 @@ public class Bullet : MonoBehaviour {
 
     public Snake relatedSnake = null;
     public int relatedSnakeIndex = 0;
-    public int relatedSnakeLength = 0; //temp var for testing
 
     public float posx, posy, posz;
     private static float deltax = 0f;
@@ -19,6 +19,8 @@ public class Bullet : MonoBehaviour {
     private bool deactivated = false;
     private static Vector3 otherpos;
     private Transform thisTransform;
+    private SpriteRenderer spriteRenderer;
+    private BulletMaterialisation materialisation;
 
     private void Start() {
         thisTransform = transform;
@@ -103,11 +105,24 @@ public class Bullet : MonoBehaviour {
                 relatedSnake = null;
                 relatedSnakeIndex = -1;
             }
-            GetComponent<SpriteRenderer>().sprite = null;
+            SetSprite(null);
             deactivated = true;
             GlobalHelper.currentBullets--;
             GlobalHelper.backupBullets.Add(gameObject);
             gameObject.SetActive(false);
+        }
+    }
+
+    public void SetSprite(Sprite sprite) {
+        if (materialisation == null) {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+            materialisation = GetComponent<BulletMaterialisation>();
+        }
+        if (materialisation.enabled) {
+            materialisation.materialiseSprite = sprite;
+        } else {
+            spriteRenderer.sprite = sprite;
+            materialisation.materialiseSprite = sprite;
         }
     }
 }
