@@ -74,7 +74,7 @@ public class GlobalHelper : MonoBehaviour {
         LoadItemSprites();
         LoadSnakeSprites();
         Texture2D bulletMaterialiseTexture = (Texture2D) Resources.Load("Graphics/MaterialiseSprite");
-        BulletMaterialisation.defaultMaterialiseSprite = Sprite.Create(bulletMaterialiseTexture, new Rect(0, 0, bulletMaterialiseTexture.width, bulletMaterialiseTexture.height), Vector2.one * 0.5f);
+        BulletMaterialisation.materialiseSprite = Sprite.Create(bulletMaterialiseTexture, new Rect(0, 0, bulletMaterialiseTexture.width, bulletMaterialiseTexture.height), Vector2.one * 0.5f);
 
         bulletMatPropertyBlock = new MaterialPropertyBlock();
 
@@ -224,7 +224,7 @@ public class GlobalHelper : MonoBehaviour {
         bulletTransform.eulerAngles = new Vector3(0f, 0f, -bulletTemplate.rotation * Mathf.Rad2Deg);
 
         spriteRenderer = createdObject.GetComponent<SpriteRenderer>();
-        bullet.SetSprite(bulletSprites[bulletTemplate.bulletID]);
+        bullet.SetSpriteDirectly(bulletSprites[bulletTemplate.bulletID]);
         //If the property block is empty, initalise it here because it's needed.
         spriteRenderer.GetPropertyBlock(bulletMatPropertyBlock);
         //Change the color the sprites should render

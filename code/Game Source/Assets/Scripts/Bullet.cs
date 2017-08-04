@@ -113,16 +113,28 @@ public class Bullet : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Sets the sprite of a bullet to be something, or if it's materialising, what the bullet should be. To be used when the bullet already exists
+    /// </summary>
     public void SetSprite(Sprite sprite) {
         if (materialisation == null) {
             spriteRenderer = GetComponent<SpriteRenderer>();
             materialisation = GetComponent<BulletMaterialisation>();
         }
-        if (materialisation.enabled) {
-            materialisation.materialiseSprite = sprite;
-        } else {
-            spriteRenderer.sprite = sprite;
-            materialisation.materialiseSprite = sprite;
+        materialisation.actualSprite = sprite;
+        if (!materialisation.enabled) {
+            SetSpriteDirectly(sprite);
         }
+    }
+
+    /// <summary>
+    /// Sets the sprite of a bullet to be something directly. Only to be used when creating the bullet as it would otherwise fail when BulletMaterialisation is active.
+    /// </summary>
+    public void SetSpriteDirectly (Sprite sprite) {
+        if (materialisation == null) {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+            materialisation = GetComponent<BulletMaterialisation>();
+        }
+        spriteRenderer.sprite = sprite;
     }
 }

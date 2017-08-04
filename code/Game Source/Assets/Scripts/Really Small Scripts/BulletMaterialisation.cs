@@ -8,8 +8,7 @@ using System.Collections;
 public class BulletMaterialisation : MonoBehaviour {
 
     private BulletTemplate template;
-    public static Sprite defaultMaterialiseSprite;
-    public Sprite materialiseSprite;
+    public static Sprite materialiseSprite;
     public Sprite actualSprite;
     private Color color;
     public float scale;
@@ -26,7 +25,6 @@ public class BulletMaterialisation : MonoBehaviour {
     }
 
     void OnEnable () {
-        //materialiseSprite = defaultMaterialiseSprite;
         timer = 9; //This counts down from 9 to 0.
 	}
 	
@@ -35,11 +33,11 @@ public class BulletMaterialisation : MonoBehaviour {
             if (timer == 9) { //Initialising the process of spawning.
                 transform.position += new Vector3(0f, 0f, -5f);
                 template = bullet.bulletTemplate;
-                //actualSprite = spriteRenderer.sprite;
-                if (template.enemyShot) {
-                    bullet.SetSprite(materialiseSprite);
+                actualSprite = spriteRenderer.sprite;
+                if (template.enemyShot) { //Player bullets don't need the distracting spawn animation
+                    bullet.SetSpriteDirectly(materialiseSprite);
                 } else {
-                    bullet.SetSprite(null);
+                    bullet.SetSpriteDirectly(null);
                 }
                 scale = template.scale;
                 if (template.advancedAttackPath != null && template.advancedAttackPath != "") {
@@ -56,7 +54,7 @@ public class BulletMaterialisation : MonoBehaviour {
                 }
                 thisTransform.position -= new Vector3(0f, 0f, -5f);
                 bullet.enabled = true;
-                bullet.SetSprite(actualSprite);
+                bullet.SetSpriteDirectly(actualSprite);
                 thisTransform.localScale = template.scale * Vector3.one;
                 spriteRenderer.color = Vector4.one;
                 //If this is an advanced bullet, enable it here.

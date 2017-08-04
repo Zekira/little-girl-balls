@@ -11,7 +11,7 @@ public class Snake {
         if (bullets.Length == 1) {
             bullets[0].GetComponent<Bullet>().relatedSnake = this;
             bullets[0].GetComponent<Bullet>().relatedSnakeIndex = 0;
-            bullets[0].GetComponent<SpriteRenderer>().sprite = GlobalHelper.snakeSprites[0];
+            bullets[0].GetComponent<Bullet>().SetSprite(GlobalHelper.snakeSprites[0]);
         } else if (bullets.Length != 0) {
             //Loop through the first half and update both ends from ends to middle
             int j = 0;
@@ -23,10 +23,10 @@ public class Snake {
                 bulletj.relatedSnake = this;
                 bulleti.relatedSnakeIndex = i;
                 bulletj.relatedSnakeIndex = j;
-                //Set the sprites TODO: Doing it like this is inefficient; no need to keep setting the middle sprites to the same thing over and over. Also the ends are buggy
+                //Set the sprites TODO: Doing it like this is inefficient; no need to keep setting the middle sprites to the same thing over and over. Also the end is buggy
                 if (i < 3) {
-                    bulleti.SetSprite(GlobalHelper.snakeSprites[i]);
                     bulletj.SetSprite(GlobalHelper.snakeSprites[6 - i]);
+                    bulleti.SetSprite(GlobalHelper.snakeSprites[i]);
                 } else {
                     bulleti.SetSprite(GlobalHelper.snakeSprites[3]);
                     bulletj.SetSprite(GlobalHelper.snakeSprites[3]);
@@ -37,7 +37,7 @@ public class Snake {
     }
 
     public Snake[] Split(int splitIndex) {
-        if (splitIndex >= bullets.Length) {
+        if (splitIndex >= bullets.Length || splitIndex < 0) {
             //Can't split
             return new Snake[] { this };
         }
@@ -60,10 +60,7 @@ public class Snake {
     //Removes an entry and optionally splits it
     public Snake[] Remove(int index) {
         if (index < 0 || index >= bullets.Length) {
-            foreach (Transform t in bullets) {
-                Debug.Log(t.GetComponent<Bullet>().relatedSnakeIndex); //Seems like the last one has +[snakelength] on its relatedSnakeIndex TODO
-            }
-            return new Snake[] { this };
+            return new Snake[] { this }; //can't remove
         }
         Transform[] bullets1 = new Transform[index];
         Transform[] bullets2 = new Transform[bullets.Length - index - 1];

@@ -165,6 +165,8 @@ Default:
   harmless, <0 (false) or 1 (true)>
 Whether this bullet can hurt the player. Different from enemyshot, as this doesn't influence graze or anything. Just disables player collisions.
 default: 0
+  snakelength, <length>
+If this is larger than 0, it forms a snake of bullets that spawns ever 0.05 seconds <length> amount of times, and overwrites the graphics with the snake bullet graphic
 ======
 Enemy:
   scale, <x>

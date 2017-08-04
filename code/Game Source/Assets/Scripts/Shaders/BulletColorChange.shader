@@ -8,7 +8,6 @@ Shader "Custom/ColorChange" //Basically took Unity's default sprite shader and m
 		//_Color("Tint", Color) = (1,1,1,1) //Removed
 		[PerRendererData] _Color1("Replace Red With", Color) = (1,1,1,1) //Added
 		[PerRendererData] _Color2("Replace Green With", Color) = (1,1,1,1) //Added
-		[PerRendererData] _Alpha("Alpha", Range(0,1)) = 1 //Added
 		[MaterialToggle] PixelSnap("Pixel snap", Float) = 0
 	}
 
@@ -69,7 +68,6 @@ Shader "Custom/ColorChange" //Basically took Unity's default sprite shader and m
 	sampler2D _MainTex;
 	sampler2D _AlphaTex;
 	float _AlphaSplitEnabled;
-	float _Alpha; //Added
 	float4 _Color1; //Added
 	float4 _Color2; //Added
 
@@ -84,13 +82,13 @@ Shader "Custom/ColorChange" //Basically took Unity's default sprite shader and m
 
 		if (color.r > 0 || color.g > 0) { //Added
 			float denominator = color.r + color.g; //Added
+			color.a *= _Color1.a * color.r/(denominator) + _Color2.a * color.g/(denominator); //Added; if this is at the bottom of this if-block, it fails for some reason
 			float redPart = color.r*color.r/denominator; //Added
 			float greenPart = color.g*color.g/denominator; //Added
 			color.r = _Color1.r * redPart + _Color2.r * greenPart; //Added
 			color.g = _Color1.g * redPart + _Color2.g * greenPart; //Added
 			color.b = _Color1.b * redPart + _Color2.b * greenPart; //Added
 		}
-		color.a *= _Alpha; //Added
 
 		return color;
 	}
