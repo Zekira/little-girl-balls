@@ -1,0 +1,45 @@
+attackduration(9999);
+starttimeline(Timelines/Movement/MoveHorizontal);
+
+random(random, 25, 75);
+wait(random);
+
+bulletproperty(bullet, scale, 0.33);
+bulletproperty(bullet, id, 11);
+bulletproperty(bullet, outercolor, 1, 1, 1, 1);
+bulletproperty(bullet, innercolor, 0, 1, 1, 1);
+
+angletoplayer(angle);
+bulletproperty(bullet, rotation, angle);
+bulletproperty(bullet, movementpolar, angle, 0.08);
+//createbullet(bullet);
+add(angle, angle, 0.2);
+bulletproperty(bullet, rotation, angle);
+bulletproperty(bullet, movementpolar, angle, 0.08);
+//createbullet(bullet);
+add(angle, angle, -0.4);
+bulletproperty(bullet, rotation, angle);
+bulletproperty(bullet, movementpolar, angle, 0.08);
+//createbullet(bullet);
+add(angle, angle, 0.2);
+
+wait(8);
+
+angletoplayer(angle);
+bulletproperty(bullet, scale, 0.25);
+bulletproperty(bullet, id, 8);
+bulletproperty(bullet, innercolor, 1, 1, 1, 1);
+bulletproperty(bullet, outercolor, 0, 0.3, 1, 0.5);
+bulletproperty(bullet, snakelength, 15);
+
+bulletproperty(bullet, rotation, angle);
+bulletproperty(bullet, movementpolar, angle, 0.08);
+createbullet(bullet);
+add(angle, angle, 0.2);
+bulletproperty(bullet, rotation, angle);
+bulletproperty(bullet, movementpolar, angle, 0.08);
+createbullet(bullet);
+add(angle, angle, -0.4);
+bulletproperty(bullet, rotation, angle);
+bulletproperty(bullet, movementpolar, angle, 0.08);
+createbullet(bullet);

@@ -10,7 +10,7 @@ public class Bullet : MonoBehaviour {
     public bool grazed;
 
     public Snake relatedSnake = null;
-    public int relatedSnakeIndex = 0;
+    public int relatedSnakeIndex = -1;
 
     public float posx, posy, posz;
     private static float deltax = 0f;

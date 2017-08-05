@@ -348,25 +348,51 @@ public class GlobalHelper : MonoBehaviour {
         }
     }
 
+    /*public static Transform[] RemoveInactive(Transform[] transforms) {
+        List<int> inactiveIndices = new List<int>();
+        for (int i = 0; i < transforms.Length; i++) {
+            if (!transforms[i].gameObject.activeInHierarchy) {
+                inactiveIndices.Add(i);
+            }
+        }
+        if (inactiveIndices.Count == 0) {
+            return transforms;
+        }
+        Transform[] returnTransform = new Transform[transforms.Length - inactiveIndices.Count];
+        int j = 0;
+        for (int i = 0; i < transforms.Length; i++) {
+            if (!inactiveIndices.Contains(i)) {
+                returnTransform[j] = transforms[i];
+                j++;
+            }
+        }
+        return returnTransform;
+    }*/
+
     public void CreateSnake (int length, BulletTemplate template, Vector3 position) {
         StartCoroutine(CoCreateSnake(length, template, position));
     }
 
     private IEnumerator CoCreateSnake(int length, BulletTemplate template, Vector3 position) {
-        Snake newSnake = new Snake(new Transform[] { });
-        GameObject createdBullet;
-        int i = 0;
+        //First one manually
+        GameObject recentObject = CreateBullet(template, position);
+        new Snake(new Transform[] { recentObject.transform });
+        yield return null;
+        yield return null;
+        yield return null;
+        int i = 1;
         while (i < length) {
             if (!paused && !dialogue) {
-                if(bulletClear.destroyBulletsHeight < 0 && bulletClear.bulletClearType == BulletClear.BulletClearType.FULLCLEAR) {
+                if(bulletClear.destroyBulletsHeight < position.y && bulletClear.bulletClearType == BulletClear.BulletClearType.FULLCLEAR) {
                     break;
                 }
-                createdBullet = CreateBullet(template, position);
-                newSnake = newSnake.Add(new Transform[] { createdBullet.transform });
+                createdObject = CreateBullet(template, position);
+                recentObject.GetComponent<Bullet>().relatedSnake.Add(new Transform[] { createdObject.transform }); //TODO: Optimise
+                recentObject = createdObject;
                 i++;
+                yield return null;
+                yield return null;
             }
-            yield return null;
-            yield return null;
             yield return null;
         }
     }

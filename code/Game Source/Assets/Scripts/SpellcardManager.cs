@@ -71,7 +71,7 @@ public class SpellcardManager : MonoBehaviour {
         }
     }
 
-    private void SetSpellcardName(string name) { //Todo: add support for storing histories
+    private void SetSpellcardName(string name) {
         spellcardUI.SetActive(true);
         spellcardUI.transform.Find("SpellcardName").GetComponent<Text>().text = name;
     }
@@ -172,7 +172,7 @@ public class SpellcardManager : MonoBehaviour {
     /// </summary>
     public void EndSpellcard() {
         StartCoroutine(ShowBonus());
-        int historyvalues = GetHistory(currentSpellId, 0); //TODO: Characters & shottypes
+        int historyvalues = GetHistory(currentSpellId, 0); 
         SetHistory(currentSpellId, (int)GlobalHelper.character, (historyvalues >> 16) + (failed ? 0 : 1), historyvalues & 0xffff); //The second argument is already set at the beginning of the spell
     }
 
