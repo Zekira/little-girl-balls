@@ -1,11 +1,11 @@
 wait(120);
-enemyproperty(fairy_red, attackpath, Timelines/StageEnemies/Fairy1_3);
+enemyproperty(fairy_red, attackpath, Timelines/StageEnemies/Fairy1_3_Snaketest);
 enemyproperty(fairy_red, id, 1);
 enemyproperty(fairy_red, maxhealth, 100);
 enemyproperty(fairy_red, droppower, 10);
 enemyproperty(fairy_red, dropscore, 0);
 enemyproperty(fairy_red, basescore, 1000);
-enemyproperty(fairy_blue, attackpath, Timelines/StageEnemies/Fairy1_3);
+enemyproperty(fairy_blue, attackpath, Timelines/StageEnemies/Fairy1_3_Snaketest);
 enemyproperty(fairy_blue, id, 2);
 enemyproperty(fairy_blue, maxhealth, 10);
 enemyproperty(fairy_blue, droppower, 0);

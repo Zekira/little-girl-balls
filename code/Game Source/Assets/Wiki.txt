@@ -1,6 +1,7 @@
 Note I: The x coordinate of the playfield is between -4 and +4. The y coordinate of the playfield is between -4.65 and +4.65.
 Note II: Error checking is relatively expensive, so I assume everything fits the criteria and don't check anything. It's easy to break the game with this yaknow?
 Note III: <..> means required, [..] means optional. Everything else is literally that character, and case-sensitive.
+NOTE IV: Bullet/Snake speeds above 0.2 units per tick are not supported.
 Examples and options are indented from normal text.
 
 #===================================================#

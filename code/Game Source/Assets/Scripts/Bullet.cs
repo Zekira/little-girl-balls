@@ -15,24 +15,29 @@ public class Bullet : MonoBehaviour {
     public float posx, posy, posz;
     private static float deltax = 0f;
     private static float deltay = 0f;
-    private bool updateCollisions = true;
+    private static float d = 0f;
+    private int updateCollisions = 0;
     private bool deactivated = false;
     private static Vector3 otherpos;
-    private Transform thisTransform;
-    private SpriteRenderer spriteRenderer;
+    private Transform thisTransform; //This and the next set in globalhelper if the bullet doesn't exist
+    private SpriteRenderer spriteRenderer; 
     private BulletMaterialisation materialisation;
 
-    private void Start() {
+    private void SetBasicReferences() {
         thisTransform = transform;
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        materialisation = GetComponent<BulletMaterialisation>();
     }
+
     /// <summary>
     /// Set all values to default, and the template to the argument. Does NOT affect a TimelineInterprenter attached; use its own reset for that.
     /// </summary>
     public void Reset(BulletTemplate template) {
+        SetBasicReferences();
         bulletTemplate = template;
         grazed = false;
         deactivated = false;
-        updateCollisions = true;
+        updateCollisions = 0;
         /*posx = 0; posy = 0; posz = 0; Set by GlobalHelper.Createbullet()*/ /*deltax = 0; deltay = 0; done every tick without saving data, doesn't need to be reset*/
     }
 
@@ -43,11 +48,10 @@ public class Bullet : MonoBehaviour {
             posy += bulletTemplate.movement.y;
             thisTransform.position = new Vector3(posx, posy, posz);
             //Do collision checks only once every other frame because they are intensive.
-            if (updateCollisions) {
+            if (updateCollisions <= 0) {
                 if (posx * posx + posy * posy > 64) { //AKA when it's so far out of the field it's irrelevant
                     Deactivate();
                 }
-                updateCollisions = false;
                 //This block only checks collision; a harmless bullet can't collide with anything.
                 if (!bulletTemplate.harmless) {
                     //Check whether colliding with the player is lethal, and if so, either be grazed or be lethal.
@@ -63,17 +67,8 @@ public class Bullet : MonoBehaviour {
                                 Deactivate();
                             }
                         }
-
-                        otherpos = PlayerPosGetter.playerPos;
-                        deltax = otherpos.x - posx;
-                        deltay = otherpos.y - posy;
-                        if (!PlayerStats.noMovement && deltax * deltax + deltay * deltay < 0.5f * bulletTemplate.scale / 2f * bulletTemplate.scale / 2f + PlayerStats.hitboxRadius * PlayerStats.hitboxRadius * 0.33f) {
-                            GlobalHelper.stats.TakeDamage();
-                            Deactivate();
-                        } else if (!grazed && deltax * deltax + deltay * deltay < PlayerStats.grazeRadius * PlayerStats.grazeRadius) {
-                            PlayerStats.Graze();
-                            grazed = true;
-                        }
+                        CheckPlayerCollision();
+                        return; //it's updateCollisions shouldn't be set to 1 here, but to whatever heckPlayerCollisions() decides
                     } else { //If the bullet is not harmful to the player, it should check enemies and damage them.
                         foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy")) {
                             if (enemy.activeSelf == true) {
@@ -89,10 +84,49 @@ public class Bullet : MonoBehaviour {
                         }
                     }
                 }
+                updateCollisions = 1;
             } else {
-                updateCollisions = true;
+                updateCollisions--;
             }
         }
+    }
+
+    private void CheckPlayerCollision() {
+        otherpos = PlayerPosGetter.playerPos;
+        deltax = otherpos.x - posx;
+        deltay = otherpos.y - posy;
+        d = deltax * deltax + deltay * deltay;
+        if (!PlayerStats.noMovement && d < 0.5f * bulletTemplate.scale / 2f * bulletTemplate.scale / 2f + PlayerStats.hitboxRadius * PlayerStats.hitboxRadius * 0.33f) {
+            GlobalHelper.stats.TakeDamage();
+            Deactivate();
+        } else if (!grazed && d < PlayerStats.grazeRadius * PlayerStats.grazeRadius) {
+            PlayerStats.Graze();
+            grazed = true;
+        }
+        if (d < 1) { //doing this manually as it's faster than a sqrt-based formula
+            updateCollisions = 1;
+            return;
+        } if (d < 4) {
+            updateCollisions = 5;
+            return;
+        } if (d < 9) {
+            updateCollisions = 9;
+            return;
+        } if (d < 16) {
+            updateCollisions = 13;
+            return;
+        } if (d < 25) {
+            updateCollisions = 17;
+            return;
+        } if (d < 36) {
+            updateCollisions = 21;
+            return;
+        } if (d < 49) {
+            updateCollisions = 25;
+            return;
+        }
+        updateCollisions = 29;
+
     }
 
     /// <summary>
@@ -131,10 +165,6 @@ public class Bullet : MonoBehaviour {
     /// Sets the sprite of a bullet to be something directly. Only to be used when creating the bullet as it would otherwise fail when BulletMaterialisation is active.
     /// </summary>
     public void SetSpriteDirectly (Sprite sprite) {
-        if (materialisation == null) {
-            spriteRenderer = GetComponent<SpriteRenderer>();
-            materialisation = GetComponent<BulletMaterialisation>();
-        }
         spriteRenderer.sprite = sprite;
     }
 }

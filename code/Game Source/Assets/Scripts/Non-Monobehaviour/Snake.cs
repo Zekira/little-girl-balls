@@ -17,9 +17,6 @@ public class Snake {
             //Loop through the first half and update both ends from ends to middle
             int j = 0;
             for (int i = 0; i < (bullets.Length + 1) / 2; i++) {
-                if (!bullets[i].gameObject.activeSelf) {
-                    Debug.LogError("Processing an inactive bullet in a snake");
-                }
                 j = bullets.Length - i - 1;
                 bulleti = bullets[i].GetComponent<Bullet>();
                 bulletj = bullets[j].GetComponent<Bullet>();

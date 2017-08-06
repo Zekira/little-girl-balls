@@ -40,29 +40,29 @@ public class PlayerMovement : MonoBehaviour {
         switch (GlobalHelper.character) {
             case GlobalHelper.Character.RACHEL_A:
                 mainShot.bulletDamage = 20;
-                mainShot.innerColor = new Color(0.9f, 1f, 1f, 0.6f);
-                mainShot.outerColor = new Color(0.2f, 0.7f, 0.7f, 0.6f);
+                mainShot.innerColor = new Color(0.9f, 1f, 1f, 0.8f);
+                mainShot.outerColor = new Color(0.2f, 0.7f, 0.7f, 0.8f);
                 mainShot.bulletID = 3;
                 mainShot.movement = new Vector2(0f, 0.2f);
                 mainShot.scale = 0.4f;
 
                 subShot.bulletDamage = 4;
-                subShot.innerColor = new Color(0.9f, 1f, 1f, 0.5f);
-                subShot.outerColor = new Color(0.1f, 0.6f, 0.6f, 0.5f);
+                subShot.innerColor = new Color(0.9f, 1f, 1f, 0.6f);
+                subShot.outerColor = new Color(0.1f, 0.6f, 0.6f, 0.6f);
                 subShot.bulletID = 3;
                 subShot.movement = new Vector2(0f, 0.2f);
                 subShot.scale = 0.25f;
                 break;
             case GlobalHelper.Character.RACHEL_B:
                 mainShot.bulletDamage = 12;
-                mainShot.innerColor = new Color(0.9f, 1f, 1f, 0.6f);
+                mainShot.innerColor = new Color(0.9f, 1f, 1f, 0.8f);
                 mainShot.outerColor = new Color(0.2f, 0.7f, 0.7f, 0.6f);
                 mainShot.bulletID = 3;
                 mainShot.scale = 0.4f;
 
                 subShot.bulletDamage = 2;
-                subShot.innerColor = new Color(0.9f, 1f, 1f, 0.5f);
-                subShot.outerColor = new Color(0.1f, 0.6f, 0.6f, 0.5f);
+                subShot.innerColor = new Color(0.9f, 1f, 1f, 0.6f);
+                subShot.outerColor = new Color(0.1f, 0.6f, 0.6f, 0.6f);
                 subShot.bulletID = 3;
                 subShot.scale = 0.25f;
                 break;

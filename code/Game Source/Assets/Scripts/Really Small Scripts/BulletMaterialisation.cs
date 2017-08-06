@@ -10,8 +10,7 @@ public class BulletMaterialisation : MonoBehaviour {
     private BulletTemplate template;
     public static Sprite materialiseSprite;
     public Sprite actualSprite;
-    private Color color;
-    public float scale;
+    private static Color color;
     public int timer;
 
     private Bullet bullet;
@@ -39,7 +38,6 @@ public class BulletMaterialisation : MonoBehaviour {
                 } else {
                     bullet.SetSpriteDirectly(null);
                 }
-                scale = template.scale;
                 if (template.advancedAttackPath != null && template.advancedAttackPath != "") {
                     timer--; //spaghetti; timelineinterprenter takes a tick to setup
                 }
@@ -69,7 +67,7 @@ public class BulletMaterialisation : MonoBehaviour {
                 color = spriteRenderer.color;
                 color = new Color(color.r, color.b, color.g, ((9f - timer) / 13f));
                 spriteRenderer.color = color;
-                thisTransform.localScale = (0.5f + scale * timer / 5f) * Vector3.one;
+                thisTransform.localScale = (0.5f + template.scale * timer / 5f) * Vector3.one;
                 timer--;
             }
         }

@@ -395,5 +395,6 @@ public class GlobalHelper : MonoBehaviour {
             }
             yield return null;
         }
+        recentObject.GetComponent<Bullet>().relatedSnake.Add(new Transform[] { });
     }
 }
