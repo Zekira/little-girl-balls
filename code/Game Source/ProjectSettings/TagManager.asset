@@ -14,7 +14,6 @@ TagManager:
   - LevelManager
   - SpellcardBackground
   - MenuBase
-  - BGM
   - Enemy
   layers:
   - Default
