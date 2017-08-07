@@ -121,6 +121,9 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                     GlobalHelper.levelManager.GetComponent<DialogueManager>().StartDialogue(currentCommand.args[0]);
                     cooldown = 1;
                     return; //The next loop should not happen immediatly, but after the dialogue has been processed. That's checked within Update().
+                case TimelineCommand.Command.STARTMUSIC:
+                    GlobalHelper.audioManager.PlayMusic((AudioManager.BGM)Enum.Parse(typeof(AudioManager.BGM), currentCommand.args[0].ToUpperInvariant()));
+                    continue;
                 case TimelineCommand.Command.BOSSNAME:
                     GlobalHelper.bossUI.transform.Find("Name").GetComponent<Text>().text = currentCommand.args[0];
                     continue;

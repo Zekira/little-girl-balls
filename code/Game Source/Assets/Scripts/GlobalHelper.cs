@@ -38,6 +38,7 @@ public class GlobalHelper : MonoBehaviour {
     public static PlayerStats stats;
     public static BulletClear bulletClear;
     public static CharacterPortraits characterPortraits;
+    public static AudioManager audioManager;
     public static bool dialogue, autoCollectItems;
     public static int activeBosses;
     public static GameObject thisObject;
@@ -62,6 +63,7 @@ public class GlobalHelper : MonoBehaviour {
         player = GameObject.FindGameObjectWithTag("Player");
         levelManager = GameObject.FindWithTag("LevelManager");
 
+        audioManager = GameObject.FindWithTag("AudioManager").GetComponent<AudioManager>();
         stats = player.GetComponent<PlayerStats>();
         bulletClear = levelManager.GetComponent<BulletClear>();
         characterPortraits = levelManager.GetComponent<CharacterPortraits>();
@@ -81,10 +83,6 @@ public class GlobalHelper : MonoBehaviour {
         activeBosses = 0;
 
         GameObject.FindWithTag("UIVariable").transform.Find("Difficulty").GetComponent<RawImage>().texture = (Texture2D)Resources.Load("Graphics/Difficulty/" + (int)difficulty);
-
-        AudioSource audio = GameObject.FindWithTag("BGM").GetComponent<AudioSource>();
-        audio.clip = (AudioClip) Resources.Load("Audio/Music/Stage" + level);
-        audio.Play();
 
         dialogue = false;
         autoCollectItems = false;
@@ -342,9 +340,9 @@ public class GlobalHelper : MonoBehaviour {
         canvas.Find("Pause Canvas").gameObject.SetActive(paused);
         canvas.Find("Dialogue Canvas").gameObject.SetActive(/*dialogue &&*/ !paused); //It's empty anyways if there's no dialogue going on, so no need to hide it then
         if (paused) {
-            GameObject.FindWithTag("BGM").GetComponent<AudioSource>().Pause();
+            audioManager.PauseMusic();
         } else {
-            GameObject.FindWithTag("BGM").GetComponent<AudioSource>().UnPause();
+            audioManager.UnpauseMusic();
         }
     }
 

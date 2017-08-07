@@ -15,6 +15,7 @@ TagManager:
   - SpellcardBackground
   - MenuBase
   - Enemy
+  - AudioManager
   layers:
   - Default
   - TransparentFX

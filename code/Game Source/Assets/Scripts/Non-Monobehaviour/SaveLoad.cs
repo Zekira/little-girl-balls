@@ -117,7 +117,7 @@ public static class SaveLoad {
      * Global stuff: (Totalling 13 bytes)
      * Time played (uint) = 4 bytes
      * Bullets seen (ulong) = 8 bytes
-     * Music heard (byte: 1 = stage 1 track, 2 = stage 1 track + boss, 3 is up and including to stage 2 track, etc. 12 = up to and including stage 6 boss, 13 = ex stage, 14 = ex boss, 15 = credits) = 1 byte
+     * Music heard (byte: 1 = stage 1 track, 2 = stage 1 track + boss, 3 is up and including to stage 2 track, etc. 12 = up to and including stage 6 boss, 13 = ex stage, 14 = ex boss, 15 = credits, 16 = ending) = 1 byte
      * For each player: (Totalling 77 bytes per player = 462)
      *      Highest unlocked stage (byte: 1 through 7) (Manages stage practice unlocks / extra stage unlock) = 1 byte
      *      Main game attempt count (short x4) = 4*2 bytes

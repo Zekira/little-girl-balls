@@ -1,3 +1,4 @@
+startmusic(stage1);
 wait(120);
 enemyproperty(fairy_red, attackpath, Timelines/StageEnemies/Fairy1_3_Snaketest);
 enemyproperty(fairy_red, id, 1);
