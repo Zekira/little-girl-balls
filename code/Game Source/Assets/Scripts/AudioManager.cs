@@ -13,7 +13,15 @@ public class AudioManager : MonoBehaviour {
     public AudioSource bgm;
     public AudioSource sfx;
 
+    public static bool enabledManager = false;
+
     private void Awake() {
+        if (!enabledManager) { //TODO: Put a copy of the finalised gameobject this is attached to into the main menu as well.
+            DontDestroyOnLoad(gameObject);
+        } else {
+            Destroy(gameObject);
+            return;
+        }
         bgm = bgmTransform.GetComponent<AudioSource>();
         sfx = sfxTransform.GetComponent<AudioSource>();
         //TODO: Initialise the sfx's multiple audio sources here, one for each in the SFX enum

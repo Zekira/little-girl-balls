@@ -6,10 +6,10 @@ using System.Collections.Generic;
 /// Did things slightly wrong and now a lot of classes uses the character and some the emotion enums.
 /// </summary>
 public class DialogueEntry {
-    public enum emotion { ANNOYED, HAPPY, ALERT, THINKING, NEUTRAL, TIRED, SURPRISED, EMBARRASED };
-    public enum character { RACHEL, CHARNO};
-    public emotion currentEmotion;
-    public character currentCharacer;
+    public enum Emotion { ANNOYED, HAPPY, ALERT, THINKING, NEUTRAL, TIRED, SURPRISED, EMBARRASED };
+    public enum Character { RACHEL, CHARNO};
+    public Emotion currentEmotion;
+    public Character currentCharacer;
     public string[] special;
     public string text;
     public bool leftSpeaking = true;
@@ -17,7 +17,7 @@ public class DialogueEntry {
 
     public DialogueEntry() { }
     
-    public DialogueEntry(string t, character c, emotion e, bool leftSpeaks, bool displayOther) {
+    public DialogueEntry(string t, Character c, Emotion e, bool leftSpeaks, bool displayOther) {
         text = t;
         currentCharacer = c;
         currentEmotion = e;
@@ -52,8 +52,8 @@ public class DialogueEntry {
     private static DialogueEntry ParseLine(string text) {
         DialogueEntry returnEntry = new DialogueEntry();
         string[] info = text.Split('|');
-        returnEntry.currentCharacer = (character)System.Enum.Parse(typeof(character), info[0].ToUpperInvariant().Replace("\n","").Replace("\r",""));
-        returnEntry.currentEmotion = (emotion)System.Enum.Parse(typeof(emotion), info[1].ToUpperInvariant().Replace("\n", "").Replace("\r", ""));
+        returnEntry.currentCharacer = (Character)System.Enum.Parse(typeof(Character), info[0].ToUpperInvariant().Replace("\n","").Replace("\r",""));
+        returnEntry.currentEmotion = (Emotion)System.Enum.Parse(typeof(Emotion), info[1].ToUpperInvariant().Replace("\n", "").Replace("\r", ""));
         returnEntry.leftSpeaking = info[2].ToUpperInvariant().Replace("\n", "").Replace("\r", "") == "LEFT" ? true : false;
         returnEntry.showOther = info[3].ToUpperInvariant().Replace("\n", "").Replace("\r", "") == "TRUE" ? true : false;
         returnEntry.text = info[4].Replace("NEWLINE", System.Environment.NewLine);

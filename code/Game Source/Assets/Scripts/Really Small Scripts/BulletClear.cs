@@ -34,13 +34,13 @@ public class BulletClear : MonoBehaviour {
     /// <param name="type"></param>
     /// <param name="time"></param>
     public void Clear(float speed, BulletClearType type, int time) {
-        StartCoroutine(PrivateClear(speed, type, time));
+        StartCoroutine(CoClear(speed, type, time));
     }
 
     /// <summary>
     /// Clears the bullets from top to bottom, lowering "speed" units per tick, ending after "time" ticks, no matter whether it reached the end or not.
     /// </summary>
-    private IEnumerator PrivateClear(float speed, BulletClearType type, int time) {
+    private IEnumerator CoClear(float speed, BulletClearType type, int time) {
         bulletClearType = type;
         float currentHeight = 5f;
         int currentTime = 0;

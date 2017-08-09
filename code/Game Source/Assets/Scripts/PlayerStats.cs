@@ -39,7 +39,7 @@ public class PlayerStats : MonoBehaviour {
     private static GameObject UIVariable;
 
     void OnEnable() {
-        noMovement = false;    //This otherwise never gets reset
+        noMovement = false; //This otherwise never gets reset
     }
 
     void Start() {
@@ -108,7 +108,7 @@ public class PlayerStats : MonoBehaviour {
                 Vector3 position;
                 for (int i = 0; i < 25 && i < power; i += 5) {
                     position = PlayerPosGetter.playerPos + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble() - 0.01f);
-                    GlobalHelper.CreateItem(Item.ItemType.POWER, position);
+                    ThingCreator.CreateItem(Item.ItemType.POWER, position);
                 }
                 SetPower(power > 50 ? power - 50 : 0);
             }
@@ -167,7 +167,7 @@ public class PlayerStats : MonoBehaviour {
     /// </summary
     private static void SetGraze(int amount) {
         graze = amount;
-        UIVariable.transform.Find("Graze").GetComponent<Text>().text = GlobalHelper.Commafy(graze);
+        UIVariable.transform.Find("Graze").GetComponent<Text>().text = NumberFunctions.Commafy(graze);
     }
 
     /// <summary>
@@ -175,7 +175,7 @@ public class PlayerStats : MonoBehaviour {
     /// </summary>
     private static void IncrementGraze() {
         graze++;
-        UIVariable.transform.Find("Graze").GetComponent<Text>().text = GlobalHelper.Commafy(graze);
+        UIVariable.transform.Find("Graze").GetComponent<Text>().text = NumberFunctions.Commafy(graze);
     }
 
     /// <summary>
@@ -192,7 +192,7 @@ public class PlayerStats : MonoBehaviour {
     /// </summary>
     public static void SetScore(ulong amount) {
         score = amount;
-        UIVariable.transform.Find("Score").GetComponent<Text>().text = GlobalHelper.Commafy(score);
+        UIVariable.transform.Find("Score").GetComponent<Text>().text = NumberFunctions.Commafy(score);
         if (score > highscore) {
             SetHighscore(score);
         }
@@ -243,6 +243,6 @@ public class PlayerStats : MonoBehaviour {
     /// </summary>
     public static void SetHighscore(ulong amount) {
         highscore = amount;
-        UIVariable.transform.Find("HighScore").GetComponent<Text>().text = GlobalHelper.Commafy(highscore);
+        UIVariable.transform.Find("HighScore").GetComponent<Text>().text = NumberFunctions.Commafy(highscore);
     }
 }

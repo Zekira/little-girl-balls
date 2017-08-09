@@ -72,7 +72,7 @@ public class PlayerMovement : MonoBehaviour {
 	void Update () {
         //Check restart
         if (Input.GetKeyDown(Config.keyRestart)) {
-            GlobalHelper.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty);
+            SceneSwitcher.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty);
         }
         //Check if pause
         if (Input.GetKeyDown(Config.keyPause)) {
@@ -165,102 +165,102 @@ public class PlayerMovement : MonoBehaviour {
     public void Shoot() {
         switch (GlobalHelper.character) {
             case GlobalHelper.Character.RACHEL_A:
-                GlobalHelper.CreateBullet(mainShot, PlayerPosGetter.playerPos);
+                ThingCreator.CreateBullet(mainShot, PlayerPosGetter.playerPos);
                 if (PlayerStats.power >= 200) {
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos + new Vector3(-0.2f, -0.1f, 0f));
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos + new Vector3(0.2f, -0.1f, 0f));
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos + new Vector3(-0.2f, -0.1f, 0f));
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos + new Vector3(0.2f, -0.1f, 0f));
                 }
                 if (PlayerStats.power == 400) {
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos + new Vector3(-0.4f, -0.2f, 0f));
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos + new Vector3(0.4f, -0.2f, 0f));
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos + new Vector3(-0.4f, -0.2f, 0f));
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos + new Vector3(0.4f, -0.2f, 0f));
                 } else if (PlayerStats.power >= 300) {
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos + new Vector3(0f, -0.3f, 0f));
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos + new Vector3(0f, -0.3f, 0f));
                 }
                 if (PlayerStats.power >= 100 && PlayerStats.power < 200) {
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos + new Vector3(0f, -0.3f, 0f));
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos + new Vector3(0f, -0.3f, 0f));
                 }
                 shotCooldown = 6;
                 break;
             case GlobalHelper.Character.RACHEL_B:
                 mainShot.movement = new Vector2(0f, 0.2f);
                 mainShot.rotation = 0f;
-                GlobalHelper.CreateBullet(mainShot, PlayerPosGetter.playerPos);
+                ThingCreator.CreateBullet(mainShot, PlayerPosGetter.playerPos);
                 mainShot.movement = new Vector2(0.1414f, 0.1414f);
                 mainShot.rotation = 0.7853f;
-                GlobalHelper.CreateBullet(mainShot, PlayerPosGetter.playerPos);
+                ThingCreator.CreateBullet(mainShot, PlayerPosGetter.playerPos);
                 mainShot.rotation = -0.7853f;
                 mainShot.movement = new Vector2(-0.1414f, 0.1414f);
-                GlobalHelper.CreateBullet(mainShot, PlayerPosGetter.playerPos);
+                ThingCreator.CreateBullet(mainShot, PlayerPosGetter.playerPos);
                 if (PlayerStats.power == 400) {
                     subShot.movement = new Vector2(0.031f, 0.197f);
                     subShot.rotation = 0.157f;
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos);
                     subShot.movement = new Vector2(-0.031f, 0.197f);
                     subShot.rotation = -0.157f;
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos);
 
                     subShot.movement = new Vector2(0.062f, 0.190f);
                     subShot.rotation = 0.314f;
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos);
                     subShot.movement = new Vector2(-0.062f, 0.190f);
                     subShot.rotation = -0.314f;
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos);
 
                     subShot.movement = new Vector2(0.091f, 0.178f);
                     subShot.rotation = 0.471f;
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos);
                     subShot.movement = new Vector2(-0.091f, 0.178f);
                     subShot.rotation = -0.471f;
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos);
 
                     subShot.movement = new Vector2(0.112f, 0.162f);
                     subShot.rotation = 0.628f;
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos);
                     subShot.movement = new Vector2(-0.112f, 0.162f);
                     subShot.rotation = -0.628f;
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos);
                 } else if (PlayerStats.power >= 300) {
                     subShot.movement = new Vector2(0.039f, 0.196f);
                     subShot.rotation = 0.196f;
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos);
                     subShot.movement = new Vector2(-0.039f, 0.196f);
                     subShot.rotation = -0.196f;
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos);
 
                     subShot.movement = new Vector2(0.077f, 0.185f);
                     subShot.rotation = 0.392f;
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos);
                     subShot.movement = new Vector2(-0.077f, 0.185f);
                     subShot.rotation = -0.392f;
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos);
 
                     subShot.movement = new Vector2(0.111f, 0.166f);
                     subShot.rotation = 0.589f;
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos);
                     subShot.movement = new Vector2(-0.111f, 0.166f);
                     subShot.rotation = -0.589f;
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos);
                 } else if (PlayerStats.power >= 200) {
                     subShot.movement = new Vector2(0.052f, 0.193f);
                     subShot.rotation = 0.261f;
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos);
                     subShot.movement = new Vector2(-0.052f, 0.193f);
                     subShot.rotation = -0.261f;
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos);
 
                     subShot.movement = new Vector2(0.1f, 0.173f);
                     subShot.rotation = 0.523f;
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos);
                     subShot.movement = new Vector2(-0.1f, 0.173f);
                     subShot.rotation = -0.523f;
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos);
                 } else if (PlayerStats.power >= 100) {
                     subShot.movement = new Vector2(0.077f, 0.185f);
                     subShot.rotation = 0.392f;
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos);
                     subShot.movement = new Vector2(-0.077f, 0.185f);
                     subShot.rotation = -0.392f;
-                    GlobalHelper.CreateBullet(subShot, PlayerPosGetter.playerPos);
+                    ThingCreator.CreateBullet(subShot, PlayerPosGetter.playerPos);
                 }
                 shotCooldown = 8;
                 break;

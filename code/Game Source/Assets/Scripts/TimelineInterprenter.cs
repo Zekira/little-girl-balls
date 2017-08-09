@@ -347,7 +347,7 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                             enemyTemplate.isBoss = ParseValue(currentCommand.args[1]) > 0 ? true : false;
                             break;
                         case TimelineCommand.EnemyProperty.BOSSPORTRAIT: //Enum name of the boss, used with the caster's portrait
-                            enemyTemplate.character = (DialogueEntry.character)Enum.Parse(typeof(DialogueEntry.character), currentCommand.args[1].ToUpperInvariant());
+                            enemyTemplate.character = (DialogueEntry.Character)Enum.Parse(typeof(DialogueEntry.Character), currentCommand.args[1].ToUpperInvariant());
                             break;
                         case TimelineCommand.EnemyProperty.MAXHEALTH:
                             enemyTemplate.maxHealth = Mathf.RoundToInt(ParseValue(currentCommand.args[1]));
@@ -443,16 +443,16 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                     }
                     bulletTemplate = GetBulletTemplate(currentCommand.args[0]);
                     if (bulletTemplate.snakeLength > 0) {
-                        GlobalHelper.thisObject.GetComponent<GlobalHelper>().CreateSnake(bulletTemplate.snakeLength, bulletTemplate, transform.position);
+                        ThingCreator.CreateSnake(bulletTemplate.snakeLength, bulletTemplate, transform.position);
                     } else {
-                        GlobalHelper.CreateBullet(bulletTemplate, transform.position);
+                        ThingCreator.CreateBullet(bulletTemplate, transform.position);
                     }
                     continue;
                 case TimelineCommand.Command.CREATEENEMY:
-                    GlobalHelper.CreateEnemy(GetEnemyTemplate(currentCommand.args[0]));
+                    ThingCreator.CreateEnemy(GetEnemyTemplate(currentCommand.args[0]));
                     continue;
                 case TimelineCommand.Command.CREATELASER:
-                    GlobalHelper.CreateLaser(GetLaserTemplate(currentCommand.args[0]), transform.position);
+                    ThingCreator.CreateLaser(GetLaserTemplate(currentCommand.args[0]), transform.position);
                     continue;
                 case TimelineCommand.Command.MOVEPARENT:
                     if (parentBullet != null) { //If this is a bullet, posx,y(,z) should be modified, not its direct position
@@ -759,20 +759,6 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
     }
 
     /// <summary>
-    /// A faster method than 26 String.Contains(char)'s for my needs.
-    /// </summary>
-    /// <param name="toEvaluate">The string to check if it has letters.</param>
-    /// <returns>True if it contains any of a-z or A-Z.</returns>
-    private static bool ContainsLetters(string toEvaluate) {
-        foreach (char c in toEvaluate) {
-            if (c >= 65 && c <= 122) { //All letters in UTF-16 from A to Z to a to z
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /// <summary>
     /// Returns whatever is between the first open brace and second to last character, seperated by comma's.
     /// </summary>
     /// <param name="toEvaluate">The string to evaluate.</param>
@@ -810,58 +796,10 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
     /// <param name="value">The thing to parse.</param>
     /// <returns></returns>
     private float ParseValue(string value) {
-        if (ContainsLetters(value)) {
+        if (NumberFunctions.ContainsLetters(value)) {
             return GetNumber(value);
         } else {
-            return ParseFloat(value);
-        }
-    }
-
-    private static float ParseFloat(string value) {
-        bool negative = false;
-        if (value[0] == '-') { //Remember the minus sign and remove it from the string.
-            negative = true;
-            value = value.Substring(1);
-        }
-        float returnValue = 0f;
-        int stringLength = value.Length;
-        int dotPosition = stringLength; //Defaults to a dot after the entire string.
-        //Find the dot position if it's there
-        int i;
-        for (i = 0; i < stringLength; i++) {
-            if (value[i] == '.') {
-                dotPosition = i;
-                break;
-            }
-        }
-        //Evaluate before the dot. UTF-16 '0' = 48, '9' = 57, so '0' - 48 = 0, and '9' - 48 = 9.
-        for (i = 0; i < dotPosition; i++) {
-            returnValue += TenPower(value[i] - 48, dotPosition - i - 1);
-        }
-        //Evaluate behind the dot.
-        for (i = dotPosition + 1; i < stringLength; i++) {
-            returnValue += TenPower(value[i] - 48, dotPosition - i);
-        }
-        if (negative) {
-            returnValue = 0 - returnValue;
-        }
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Returns f * 10^power.
-    /// </summary>
-    private static float TenPower(float f, int power) {
-        if (power > 0) {
-            for (int i = 0; i < power; i++) {
-                f *= 10f;
-            }
-            return f;
-        } else {
-            for (int i = 0; i < -power; i++) {
-                f *= 0.1f;
-            }
-            return f;
+            return NumberFunctions.ParseFloat(value);
         }
     }
 

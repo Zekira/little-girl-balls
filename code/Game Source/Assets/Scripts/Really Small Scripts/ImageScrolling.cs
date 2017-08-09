@@ -7,37 +7,29 @@ using System.Collections;
 /// </summary>
 public class ImageScrolling : MonoBehaviour {
 
-    public enum Direction { UP, DOWN, LEFT, RIGHT};
-    public Direction direction;
+    //Set in the inspector
+    public Vector2 direction;
     public float speed = 0.016f;
 
     private float offsetx = 0f;
     private float offsety = 0f;
-    public SpriteRenderer spriteRenderer;
+    private SpriteRenderer spriteRenderer;
     private MaterialPropertyBlock propertyBlock;
 
     void Start() {
         propertyBlock = new MaterialPropertyBlock();
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.GetPropertyBlock(propertyBlock);
+        SetScrollDirection(direction, speed);
+    }
+
+    public void SetScrollDirection(Vector2 direction, float speed) {
+        this.direction = direction.normalized * speed;
     }
 
 	void Update () {
         if (!GlobalHelper.paused) {
-            switch (direction) {
-                case Direction.UP:
-                    offsety = (offsety + speed) % 1;
-                    break;
-                case Direction.DOWN:
-                    offsety = (offsety - speed) % 1;
-                    break;
-                case Direction.LEFT:
-                    offsetx = (offsetx - speed) % 1;
-                    break;
-                case Direction.RIGHT:
-                    offsetx = (offsetx + speed) % 1;
-                    break;
-            }
+            
             propertyBlock.SetFloat("_AmountX", offsetx);
             propertyBlock.SetFloat("_AmountY", offsety);
             spriteRenderer.SetPropertyBlock(propertyBlock);

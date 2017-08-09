@@ -20,6 +20,9 @@ public class SpriteAnimator : MonoBehaviour {
 
     void Update() {
         if (sprites != null) {
+            if (sprites.Length == 1) {
+                return;
+            }
             if (!GlobalHelper.paused) {
                 currentDelay--;
             }

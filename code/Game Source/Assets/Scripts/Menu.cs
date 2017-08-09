@@ -171,16 +171,14 @@ public class Menu : MonoBehaviour {
                         GlobalHelper.difficulty = GlobalHelper.Difficulty.LUNATIC;
                         ToMenu("Characters", false);
                         break;
-                    //Character items
+                    //Character items TODOs
                     case "Char1":
                         GlobalHelper.character = GlobalHelper.Character.RACHEL_A;
-                        previousSelectedMenuItems = new List<Transform>();
-                        GlobalHelper.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty);
+                        SceneSwitcher.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty);
                         break;
                     case "Char2":
                         GlobalHelper.character = GlobalHelper.Character.RACHEL_B;
-                        previousSelectedMenuItems = new List<Transform>();
-                        GlobalHelper.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty);
+                        SceneSwitcher.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty);
                         break;
                     case "Char3":
 
@@ -196,16 +194,14 @@ public class Menu : MonoBehaviour {
                         break;
                     //Game menu items
                     case "Resume":
-                        previousSelectedMenuItems = new List<Transform>();
                         GlobalHelper.SetPaused(false);
                         break;
                     case "Restart":
                         previousSelectedMenuItems = new List<Transform>();
-                        GlobalHelper.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty);
+                        SceneSwitcher.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty);
                         break;
                     case "Title":
-                        previousSelectedMenuItems = new List<Transform>();
-                        UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("menu");
+                        SceneSwitcher.LoadMenu();
                         break;
                     //General Cancel
                     case "Back":

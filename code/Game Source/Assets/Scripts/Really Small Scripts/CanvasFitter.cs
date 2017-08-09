@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Changes the canvas' size to fit regardless of resolution
+/// </summary>
 [ExecuteInEditMode]
 public class CanvasFitter : MonoBehaviour {
 
@@ -10,14 +13,14 @@ public class CanvasFitter : MonoBehaviour {
     void Start () {
         canvas = GetComponent<Canvas>();
         scaler = canvas.GetComponent<CanvasScaler>();
-        fitCanvas();
+        FitCanvas();
     }
 	
 	void Update () {
-        fitCanvas();
+        FitCanvas();
     }
 
-    void fitCanvas() {
+    void FitCanvas() {
         if (scaler == null) {
             scaler = canvas.GetComponent<CanvasScaler>();
         }

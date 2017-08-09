@@ -2,6 +2,9 @@
 using UnityEngine.UI;
 using System.Collections;
 
+/// <summary>
+/// Keeps track of the framerate because unity's is weird
+/// </summary>
 public class FramerateCounter : MonoBehaviour {
 
     private Text text;

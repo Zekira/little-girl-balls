@@ -11,7 +11,7 @@ public class BulletMaterialisation : MonoBehaviour {
     public static Sprite materialiseSprite;
     public Sprite actualSprite;
     private static Color color;
-    public int timer;
+    private int timer = 9;
 
     private Bullet bullet;
     private Transform thisTransform;
@@ -22,15 +22,11 @@ public class BulletMaterialisation : MonoBehaviour {
         thisTransform = transform;
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
-
-    void OnEnable () {
-        timer = 9; //This counts down from 9 to 0.
-	}
 	
 	void Update () {
         if (!GlobalHelper.paused) {
             if (timer == 9) { //Initialising the process of spawning.
-                transform.position += new Vector3(0f, 0f, -5f);
+                thisTransform.position += new Vector3(0f, 0f, -5f);
                 template = bullet.bulletTemplate;
                 actualSprite = spriteRenderer.sprite;
                 if (template.enemyShot) { //Player bullets don't need the distracting spawn animation
@@ -63,7 +59,7 @@ public class BulletMaterialisation : MonoBehaviour {
                     interprenter.Reset(template.advancedAttackPath);
                 }
                 this.enabled = false;
-            } else {
+            } else { //Times 1 through 8
                 color = spriteRenderer.color;
                 color = new Color(color.r, color.b, color.g, ((9f - timer) / 13f));
                 spriteRenderer.color = color;

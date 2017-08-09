@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 /// <summary>
 /// A class representing the physical instance of both enemies and bosses (stored in EnemyTemplate.isBoss), and for bosses some spellcard stuff.
+/// This should honestly be split up into multiple classes for clarity, but I can't be bothered. Most stuff is handled in Update() and NextPhase()
 /// </summary>
 public class Enemy : MonoBehaviour {
 
@@ -11,7 +12,7 @@ public class Enemy : MonoBehaviour {
     public Transform healthbarTransform;
     public int timer = 9999;
     public int currentAttack = 0;
-    public bool timeoutAttack = false; //This makes the boss immune until the end.
+    public bool timeoutAttack = false; //This makes the boss immune until the end of the attack.
 
     private int bombTimer = 5;
     private bool midDelay = false;
@@ -200,19 +201,19 @@ public class Enemy : MonoBehaviour {
         //Drop stuff depending on what's stated in the template, with a random offset, and z-value set to how important it is (+randomness to prevent z-fighting).
         for (int i = 0; i < template.dropPowerCount; i++) {
             position = basePosition + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble() - 0.01f);
-            GlobalHelper.CreateItem(Item.ItemType.POWER, position);
+            ThingCreator.CreateItem(Item.ItemType.POWER, position);
         }
         for (int i = 0; i < template.dropPowerLargeCount; i++) {
             position = basePosition + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble() - 0.02f);
-            GlobalHelper.CreateItem(Item.ItemType.LARGEPOWER, position);
+            ThingCreator.CreateItem(Item.ItemType.LARGEPOWER, position);
         }
         if (template.dropPowerFullCount >= 1) {
             position = basePosition + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble() - 0.03f);
-            GlobalHelper.CreateItem(Item.ItemType.FULLPOWER, position);
+            ThingCreator.CreateItem(Item.ItemType.FULLPOWER, position);
         }
         for (int i = 0; i < template.dropScoreCount; i++) {
             position = basePosition + new Vector3(-0.25f + (float)GlobalHelper.random.NextDouble() / 2f, -0.25f + (float)GlobalHelper.random.NextDouble() / 2f, 2f + 0.01f * (float)GlobalHelper.random.NextDouble());
-            GlobalHelper.CreateItem(Item.ItemType.POINT, position);
+            ThingCreator.CreateItem(Item.ItemType.POINT, position);
         }
     }
 

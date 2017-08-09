@@ -822,9 +822,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f486527f62ea4674bb7721df5984ebdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  direction: 0
+  direction: {x: 0, y: 1}
   speed: 0.008
-  spriteRenderer: {fileID: 0}
 --- !u!1 &220747615
 GameObject:
   m_ObjectHideFlags: 0
@@ -1000,9 +999,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f486527f62ea4674bb7721df5984ebdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  direction: 1
+  direction: {x: 0, y: -1}
   speed: 0.004
-  spriteRenderer: {fileID: 0}
 --- !u!1 &239293384
 GameObject:
   m_ObjectHideFlags: 0
@@ -9161,6 +9159,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  bgm: {fileID: 0}
+  sfx: {fileID: 0}
 --- !u!1 &2131405883
 GameObject:
   m_ObjectHideFlags: 0

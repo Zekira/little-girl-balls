@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 
 /// <summary>
-/// Made to handle spellcards and their score/history.
+/// Made to handle spellcards and their score/history. This is the biggest pile of spaghetti in combination with the Enemy class but it probably won't need to be touched.
 /// </summary>
 public class SpellcardManager : MonoBehaviour {
 
@@ -18,7 +18,7 @@ public class SpellcardManager : MonoBehaviour {
     private float timeTaken = 0;
     private Enemy parentEnemy;
     private GameObject spellcardUI;
-    private DialogueEntry.character portraitCharacter;
+    private DialogueEntry.Character portraitCharacter;
 
     private List<short> histories = new List<short>();
 
@@ -82,7 +82,7 @@ public class SpellcardManager : MonoBehaviour {
         GameObject spellcardCaster = GlobalHelper.bossUI.transform.Find("SpellcardCaster").gameObject;
         spellcardCaster.SetActive(true);
         Image spellcardCasterImage = spellcardCaster.GetComponent<Image>();
-        spellcardCasterImage.sprite = GlobalHelper.levelManager.GetComponent<CharacterPortraits>().GetSprite(portraitCharacter, DialogueEntry.emotion.HAPPY);
+        spellcardCasterImage.sprite = GlobalHelper.levelManager.GetComponent<CharacterPortraits>().GetSprite(portraitCharacter, DialogueEntry.Emotion.HAPPY);
         float linearProgress = 0f;
         float progress = 0f;
         RectTransform spellcardCasterTransform = spellcardCaster.GetComponent<RectTransform>();
@@ -181,7 +181,7 @@ public class SpellcardManager : MonoBehaviour {
         spellcardBonus.gameObject.SetActive(true);
         if (!failed) {
             spellcardBonus.Find("Title").GetComponent<Text>().text = StringFetcher.GetString("SPELLBONUS");
-            spellcardBonus.Find("Score").GetComponent<Text>().text = GlobalHelper.Commafy(currentValue);
+            spellcardBonus.Find("Score").GetComponent<Text>().text = NumberFunctions.Commafy(currentValue);
         } else {
             spellcardBonus.Find("Title").GetComponent<Text>().text = StringFetcher.GetString("BONUSFAILED");
             spellcardBonus.Find("Score").GetComponent<Text>().text = "";

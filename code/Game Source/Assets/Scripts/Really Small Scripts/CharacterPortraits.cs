@@ -10,24 +10,24 @@ public class CharacterPortraits : MonoBehaviour {
     private Sprite[] charnoSprites;
 
     void Start() {
-        LoadSprites(new DialogueEntry.character[]
-            {DialogueEntry.character.RACHEL,
-             DialogueEntry.character.CHARNO});
+        LoadSprites(new DialogueEntry.Character[]
+            {DialogueEntry.Character.RACHEL,
+             DialogueEntry.Character.CHARNO});
     }
 
     /// <summary>
     /// Gets the sprite associated with a character with an emotion. If it isn't there, it loads it, which is a laggy process which should be avoided here.
     /// </summary>
-    public Sprite GetSprite(DialogueEntry.character character, DialogueEntry.emotion emotion) {
+    public Sprite GetSprite(DialogueEntry.Character character, DialogueEntry.Emotion emotion) {
         switch (character) {
-            case DialogueEntry.character.RACHEL:
+            case DialogueEntry.Character.RACHEL:
                 if (rachelSprites == null || rachelSprites.Length != 8) {
-                    LoadSprites(new DialogueEntry.character[] { DialogueEntry.character.RACHEL });
+                    LoadSprites(new DialogueEntry.Character[] { DialogueEntry.Character.RACHEL });
                 }
                 return rachelSprites[(int)emotion];
-            case DialogueEntry.character.CHARNO:
+            case DialogueEntry.Character.CHARNO:
                 if (charnoSprites == null || charnoSprites.Length != 8) {
-                    LoadSprites(new DialogueEntry.character[] { DialogueEntry.character.CHARNO });
+                    LoadSprites(new DialogueEntry.Character[] { DialogueEntry.Character.CHARNO });
                 }
                 return charnoSprites[(int)emotion];
         }
@@ -37,14 +37,14 @@ public class CharacterPortraits : MonoBehaviour {
     /// <summary>
     /// Loads all sprites of all characters into their respective arrays. Not doing 2D arrays because that looks less nice in code.
     /// </summary>
-    public void LoadSprites(DialogueEntry.character[] characters) {
+    public void LoadSprites(DialogueEntry.Character[] characters) {
         foreach (var character in characters) {
             switch (character) {
-                case DialogueEntry.character.RACHEL:
-                    rachelSprites = SetSprites(DialogueEntry.character.RACHEL.ToString());
+                case DialogueEntry.Character.RACHEL:
+                    rachelSprites = SetSprites(DialogueEntry.Character.RACHEL.ToString());
                     break;
-                case DialogueEntry.character.CHARNO:
-                    charnoSprites = SetSprites(DialogueEntry.character.CHARNO.ToString());
+                case DialogueEntry.Character.CHARNO:
+                    charnoSprites = SetSprites(DialogueEntry.Character.CHARNO.ToString());
                     break;
             }
         }
@@ -57,7 +57,7 @@ public class CharacterPortraits : MonoBehaviour {
         Sprite[] returnArray = new Sprite[8]; //There are ALWAYS at most 8 emotions.
         Texture2D texture;
         for (int i = 0; i < 8; i++) {
-            texture = (Texture2D) Resources.Load("Graphics/Characters/" + character + "_" + ((DialogueEntry.emotion)i).ToString());
+            texture = (Texture2D) Resources.Load("Graphics/Characters/" + character + "_" + ((DialogueEntry.Emotion)i).ToString());
             returnArray[i] = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), 0.5f * Vector2.one);
         }
         return returnArray;
@@ -66,13 +66,13 @@ public class CharacterPortraits : MonoBehaviour {
     /// <summary>
     /// Makes the arrays belonging to their characters empty.
     /// </summary>
-    public void UnloadSprites(DialogueEntry.character[] characters) {
+    public void UnloadSprites(DialogueEntry.Character[] characters) {
         foreach (var character in characters) {
             switch (character) {
-                case DialogueEntry.character.RACHEL:
+                case DialogueEntry.Character.RACHEL:
                     rachelSprites = null;
                     break;
-                case DialogueEntry.character.CHARNO:
+                case DialogueEntry.Character.CHARNO:
                     charnoSprites = null;
                     break;
             }

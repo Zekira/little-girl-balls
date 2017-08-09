@@ -23,7 +23,7 @@ public class Bullet : MonoBehaviour {
     private SpriteRenderer spriteRenderer; 
     private BulletMaterialisation materialisation;
 
-    private void SetBasicReferences() {
+    private void Awake() {
         thisTransform = transform;
         spriteRenderer = GetComponent<SpriteRenderer>();
         materialisation = GetComponent<BulletMaterialisation>();
@@ -33,7 +33,6 @@ public class Bullet : MonoBehaviour {
     /// Set all values to default, and the template to the argument. Does NOT affect a TimelineInterprenter attached; use its own reset for that.
     /// </summary>
     public void Reset(BulletTemplate template) {
-        SetBasicReferences();
         bulletTemplate = template;
         grazed = false;
         deactivated = false;
@@ -57,6 +56,7 @@ public class Bullet : MonoBehaviour {
                     //Check whether colliding with the player is lethal, and if so, either be grazed or be lethal.
                     //A bullet is 1 unit long if its scale is 1.
                     if (bulletTemplate.enemyShot) {
+                        //Deactivating enemy bullets due to bombs
                         if (posy > GlobalHelper.bulletClear.destroyBulletsHeight) { //Destroy it if the clear "animation" is happening and it's above the height.
                             if ((int)GlobalHelper.bulletClear.bulletClearType <= 1) { //If the clear is due to death/bombs...
                                 if (!bulletTemplate.clearImmune) {
@@ -68,7 +68,7 @@ public class Bullet : MonoBehaviour {
                             }
                         }
                         CheckPlayerCollision();
-                        return; //it's updateCollisions shouldn't be set to 1 here, but to whatever heckPlayerCollisions() decides
+                        return; //its updateCollisions shouldn't be set to 1 here, but to whatever heckPlayerCollisions() decides
                     } else { //If the bullet is not harmful to the player, it should check enemies and damage them.
                         foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy")) {
                             if (enemy.activeSelf == true) {

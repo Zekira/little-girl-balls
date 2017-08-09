@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Sets the setting of what this is attached to to what the saved value is
+/// </summary>
 public class OptionMenuValueLoader : MonoBehaviour {
 
 	// this is bad code and i should feel bad

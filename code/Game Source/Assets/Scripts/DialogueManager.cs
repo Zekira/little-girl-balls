@@ -62,7 +62,7 @@ public class DialogueManager : MonoBehaviour {
         }
 
         currentLine++;
-        if (currentLine >= dialogue.Count) {
+        if (currentLine >= dialogue.Count) { //Dialogue can't continue if it's done
             Hide();
             GlobalHelper.dialogue = false;
             return;

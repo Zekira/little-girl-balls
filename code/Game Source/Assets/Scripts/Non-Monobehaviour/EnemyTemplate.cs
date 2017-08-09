@@ -18,7 +18,7 @@ public class EnemyTemplate {
     public uint baseScore = 0;
     public List<string> attackPath = new List<string>(); //NECCESSARY; should be at least one long.
     public List<int> spellTimers = new List<int>();
-    public DialogueEntry.character character = DialogueEntry.character.RACHEL; //For the bosses' spellcard portrait.
+    public DialogueEntry.Character character = DialogueEntry.Character.RACHEL; //For the bosses' spellcard portrait.
 
 
     public EnemyTemplate() {
