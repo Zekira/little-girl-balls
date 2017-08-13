@@ -101,4 +101,14 @@ public class Snake {
         }
         return new Snake(newBullets);
     }
+
+    public Snake Add(Transform bullet) {
+        Transform[] newBullets = new Transform[bullets.Length + 1];
+        int i = 0;
+        for (; i < bullets.Length; i++) {
+            newBullets[i] = bullets[i];
+        }
+        newBullets[i] = bullet;
+        return new Snake(newBullets);
+    }
 }

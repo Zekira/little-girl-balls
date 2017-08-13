@@ -17,6 +17,7 @@ public class Bullet : MonoBehaviour {
     private static float deltay = 0f;
     private static float d = 0f;
     private int updateCollisions = 0;
+    public static bool updatePosition = true; //Decided by FranerateCounter
     private bool deactivated = false;
     private static Vector3 otherpos;
     private Transform thisTransform; //This and the next set in globalhelper if the bullet doesn't exist
@@ -42,11 +43,14 @@ public class Bullet : MonoBehaviour {
 
 	void Update () {
         if (!GlobalHelper.paused) {
-            //Move it
+            //Set the internal position
             posx += bulletTemplate.movement.x;
             posy += bulletTemplate.movement.y;
-            thisTransform.position = new Vector3(posx, posy, posz);
-            //Do collision checks only once every other frame because they are intensive.
+            //Move it, and move it only every other tick when there is lag
+            if (updatePosition) {
+                thisTransform.position = new Vector3(posx, posy, posz);
+            }
+            //Do collision checks only sometimes because they are intensive.
             if (updateCollisions <= 0) {
                 if (posx * posx + posy * posy > 64) { //AKA when it's so far out of the field it's irrelevant
                     Deactivate();

@@ -163,7 +163,7 @@ public class GlobalHelper : MonoBehaviour {
                     break;
                 }
                 createdObject = ThingCreator.CreateBullet(template, position);
-                recentObject.GetComponent<Bullet>().relatedSnake.Add(new Transform[] { createdObject.transform }); //TODO: Optimise
+                recentObject.GetComponent<Bullet>().relatedSnake.Add(createdObject.transform);
                 recentObject = createdObject;
                 i++;
                 yield return null;
