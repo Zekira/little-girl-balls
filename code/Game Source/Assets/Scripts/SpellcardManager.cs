@@ -48,6 +48,7 @@ public class SpellcardManager : MonoBehaviour {
         if (name != "") {
             startValue = (uint)(GlobalHelper.difficulty + GlobalHelper.level) * 1000000;
             currentValue = startValue;
+            GlobalHelper.parent3d.SetActive(false);
             spellcardUI.SetActive(true);
             GlobalHelper.spellcardBackground.gameObject.SetActive(true);
             SetSpellcardName(name);
@@ -61,6 +62,7 @@ public class SpellcardManager : MonoBehaviour {
                 StartCoroutine(DecreaseScore());
             }
         } else {
+            GlobalHelper.parent3d.SetActive(true);
             spellcardUI.SetActive(false);
             GlobalHelper.spellcardBackground.gameObject.SetActive(false);
             currentValue = template.baseScore;
@@ -171,13 +173,14 @@ public class SpellcardManager : MonoBehaviour {
     /// This shows the "Got Spell Card Bonus! [x]" or "Bonus Failed...", and updates the history
     /// </summary>
     public void EndSpellcard() {
+        GlobalHelper.parent3d.SetActive(true);
         StartCoroutine(ShowBonus());
         int historyvalues = GetHistory(currentSpellId, 0); 
         SetHistory(currentSpellId, (int)GlobalHelper.character, (historyvalues >> 16) + (failed ? 0 : 1), historyvalues & 0xffff); //The second argument is already set at the beginning of the spell
     }
 
     private IEnumerator ShowBonus() {
-        Transform spellcardBonus = GameObject.FindWithTag("UI").transform.Find("Boss Canvas").Find("SpellcardBonus");
+        Transform spellcardBonus = GlobalHelper.canvas.Find("Boss Canvas").Find("SpellcardBonus");
         spellcardBonus.gameObject.SetActive(true);
         if (!failed) {
             spellcardBonus.Find("Title").GetComponent<Text>().text = StringFetcher.GetString("SPELLBONUS");

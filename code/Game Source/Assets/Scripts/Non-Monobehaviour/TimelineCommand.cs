@@ -11,7 +11,7 @@ public class TimelineCommand {
     public enum Command { STARTTIMELINE, DIALOGUE, STARTMUSIC, BOSSNAME, REPEAT, ENDREPEAT, IF, ELSE, ENDIF, WAIT, BOSSWAIT, BULLETPROPERTY, ENEMYPROPERTY, LASERPROPERTY, CREATEBULLET, CREATEENEMY, CREATELASER,
                         MOVEPARENT, MOVEPARENTPOLAR, DESTROYPARENT, SETPARENTHEALTH, ANGLETOPLAYER, ANGLETOPOINT, GETPOSITION, GETPLAYERPOSITION, RANDOM, MOVETOWARDSPOINT,
                         SET, ADD, SUB, MUL, DIV, MOD, POW, SIN, ASIN, COS, ACOS, TAN, ATAN, ABS,
-                        ATTACKDURATION };
+                        ATTACKDURATION, LOG };
     public enum EnemyProperty { SCALE, ATTACKPATH, ID, MAXHEALTH, BOSS, BOSSPORTRAIT, DROPVALUE, DROPPOWER, DROPSCORE, STARTPOS, BASESCORE };
     public enum BulletProperty { MOVEMENT, MOVEMENTPOLAR, ENEMYSHOT, SCALE, ID, INNERCOLOR, OUTERCOLOR, ROTATION, POSITION, RELATIVEPOS, CLEARIMMUNE, SCRIPTROTATION, ADVANCEDPATH, HARMLESS, SNAKELENGTH };
     public enum LaserProperty { WARNDURATION, SHOTDURATION, OUTERCOLOR, INNERCOLOR, WIDTH, MOVEMENT, POSITION, RELATIVEPOS, ROTATION, ROTATIONSPEED };
@@ -134,6 +134,7 @@ public class TimelineCommand {
                     case "tan":
                     case "atan":
                     case "abs":
+                    case "log":
                         if (args.Count != 2) {
                             Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 2.");
                             foundError = true;

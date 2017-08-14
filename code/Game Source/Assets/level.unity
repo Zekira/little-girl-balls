@@ -1594,7 +1594,7 @@ GameObject:
   - component: {fileID: 450015845}
   m_Layer: 0
   m_Name: LevelManager
-  m_TagString: LevelManager
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -1702,6 +1702,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 352f711e414b96c489f8aac51274d610, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tspellcardBackground: {fileID: 761611392}
+  tcanvas: {fileID: 571692524}
+  tbossUI: {fileID: 2107727654}
+  tlevelManager: {fileID: 450015838}
+  tPlayer: {fileID: 1425317263}
+  taudioManager: {fileID: 2126652098}
+  tuiVariable: {fileID: 1055808768}
+  t3d: {fileID: 674953856}
 --- !u!114 &450015845
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2203,7 +2211,7 @@ GameObject:
   - component: {fileID: 571692520}
   m_Layer: 5
   m_Name: Canvas
-  m_TagString: UI
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -3486,7 +3494,7 @@ GameObject:
   - component: {fileID: 761611392}
   m_Layer: 0
   m_Name: SpellcardBackground
-  m_TagString: SpellcardBackground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -3911,7 +3919,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1972311191}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4055,7 +4063,7 @@ GameObject:
   - component: {fileID: 1055808768}
   m_Layer: 5
   m_Name: Variable
-  m_TagString: UIVariable
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -4283,7 +4291,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0.019607844}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -4294,7 +4302,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 6.1171803
+  orthographic size: 4.9875
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -5025,7 +5033,7 @@ GameObject:
   - component: {fileID: 1425317267}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5114,7 +5122,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e825a9a5ef5034449716ff5790aeada, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  invincibility: 99999
+  invincibility: 0
 --- !u!114 &1425317266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5806,7 +5814,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1972311191}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -6847,7 +6855,7 @@ RectTransform:
   - {fileID: 1376933798}
   - {fileID: 509081909}
   m_Father: {fileID: 1972311191}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -8151,9 +8159,9 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 1002647053}
   - {fileID: 1534904338}
   - {fileID: 1676302909}
-  - {fileID: 1002647053}
   m_Father: {fileID: 571692524}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -8972,7 +8980,7 @@ GameObject:
   - component: {fileID: 2107727654}
   m_Layer: 5
   m_Name: BossUI
-  m_TagString: BossUI
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -9107,10 +9115,10 @@ GameObject:
   - component: {fileID: 2126652099}
   m_Layer: 0
   m_Name: AudioManager
-  m_TagString: AudioManager
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &2126652098
 Transform:
@@ -9159,8 +9167,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  bgm: {fileID: 0}
-  sfx: {fileID: 0}
 --- !u!1 &2131405883
 GameObject:
   m_ObjectHideFlags: 0

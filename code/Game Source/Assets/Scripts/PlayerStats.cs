@@ -43,7 +43,7 @@ public class PlayerStats : MonoBehaviour {
     }
 
     void Start() {
-        UIVariable = GameObject.FindWithTag("UIVariable");
+        UIVariable = GlobalHelper.uiVariable.gameObject;
         //Setting the startposition
         startPosition = transform.position;
         //Initialising the bomb piece textures

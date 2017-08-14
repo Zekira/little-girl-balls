@@ -10,8 +10,8 @@ public class AudioManager : MonoBehaviour {
     //Set in inspector
     public Transform thisTransform, bgmTransform, sfxTransform;
     public AudioClip[] music = new AudioClip[17]; //0 = main menu; 2n-1, 2n = stage n music, stage n boss music for stages 1 through 7, 15+16 = credits+ending music;
-    public AudioSource bgm;
-    public AudioSource sfx;
+    private AudioSource bgm;
+    //private AudioSource sfx;
 
     public static bool enabledManager = false;
 
@@ -23,7 +23,7 @@ public class AudioManager : MonoBehaviour {
             return;
         }
         bgm = bgmTransform.GetComponent<AudioSource>();
-        sfx = sfxTransform.GetComponent<AudioSource>();
+        //sfx = sfxTransform.GetComponent<AudioSource>();
         //TODO: Initialise the sfx's multiple audio sources here, one for each in the SFX enum
     }
 

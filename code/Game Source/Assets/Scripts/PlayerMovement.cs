@@ -31,7 +31,7 @@ public class PlayerMovement : MonoBehaviour {
         moveRightSprites = SpriteAnimator.GetSprites(Resources.Load("Graphics/Sprites/Rachel_Right") as Texture2D); //TODO: Not just have this as a flipped left.
         stationairySprites = SpriteAnimator.GetSprites(Resources.Load("Graphics/Sprites/Rachel_Stationairy") as Texture2D);
 
-        dialogueManager = GameObject.FindWithTag("LevelManager").GetComponent<DialogueManager>();
+        dialogueManager = GlobalHelper.levelManager.GetComponent<DialogueManager>();
 
         mainShot.enemyShot = false;
         subShot.enemyShot = false;

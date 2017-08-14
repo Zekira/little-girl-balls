@@ -46,31 +46,32 @@ public class Bullet : MonoBehaviour {
             //Set the internal position
             posx += bulletTemplate.movement.x;
             posy += bulletTemplate.movement.y;
-            //Move it, and move it only every other tick when there is lag
+            //Do stuff every tick or every other tick if there's a bunch of lag
             if (updatePosition) {
+                //Update the position
                 thisTransform.position = new Vector3(posx, posy, posz);
-            }
-            //Do collision checks only sometimes because they are intensive.
-            if (updateCollisions <= 0) {
                 if (posx * posx + posy * posy > 64) { //AKA when it's so far out of the field it's irrelevant
                     Deactivate();
                 }
+                //Deactivating enemy bullets due to bombs
+                if (posy > GlobalHelper.bulletClear.destroyBulletsHeight) { //Destroy it if the clear "animation" is happening and it's above the height.
+                    if ((int)GlobalHelper.bulletClear.bulletClearType <= 1) { //If the clear is due to death/bombs...
+                        if (!bulletTemplate.clearImmune) {
+                            Deactivate();
+                        }
+                        //Here the bullet is immune to this "some" clear.
+                    } else { //It's "all" and all bullets should be cleared
+                        Deactivate();
+                    }
+                }
+            }
+            //Do collision checks only sometimes because they are intensive.
+            if (updateCollisions <= 0) {
                 //This block only checks collision; a harmless bullet can't collide with anything.
                 if (!bulletTemplate.harmless) {
                     //Check whether colliding with the player is lethal, and if so, either be grazed or be lethal.
                     //A bullet is 1 unit long if its scale is 1.
                     if (bulletTemplate.enemyShot) {
-                        //Deactivating enemy bullets due to bombs
-                        if (posy > GlobalHelper.bulletClear.destroyBulletsHeight) { //Destroy it if the clear "animation" is happening and it's above the height.
-                            if ((int)GlobalHelper.bulletClear.bulletClearType <= 1) { //If the clear is due to death/bombs...
-                                if (!bulletTemplate.clearImmune) {
-                                    Deactivate();
-                                }
-                                //Here the bullet is immune to this "some" clear.
-                            } else { //It's "all" and all bullets should be cleared
-                                Deactivate();
-                            }
-                        }
                         CheckPlayerCollision();
                         return; //its updateCollisions shouldn't be set to 1 here, but to whatever heckPlayerCollisions() decides
                     } else { //If the bullet is not harmful to the player, it should check enemies and damage them.
@@ -102,7 +103,9 @@ public class Bullet : MonoBehaviour {
         d = deltax * deltax + deltay * deltay;
         if (!PlayerStats.noMovement && d < 0.5f * bulletTemplate.scale / 2f * bulletTemplate.scale / 2f + PlayerStats.hitboxRadius * PlayerStats.hitboxRadius * 0.33f) {
             GlobalHelper.stats.TakeDamage();
-            Deactivate();
+            if (!bulletTemplate.clearImmune) {
+                Deactivate();
+            }
         } else if (!grazed && d < PlayerStats.grazeRadius * PlayerStats.grazeRadius) {
             PlayerStats.Graze();
             grazed = true;

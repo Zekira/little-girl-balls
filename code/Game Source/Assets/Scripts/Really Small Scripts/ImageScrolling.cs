@@ -29,7 +29,8 @@ public class ImageScrolling : MonoBehaviour {
 
 	void Update () {
         if (!GlobalHelper.paused) {
-            
+            offsetx += direction.x;
+            offsety += direction.y;
             propertyBlock.SetFloat("_AmountX", offsetx);
             propertyBlock.SetFloat("_AmountY", offsety);
             spriteRenderer.SetPropertyBlock(propertyBlock);

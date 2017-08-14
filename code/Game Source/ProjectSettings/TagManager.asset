@@ -6,16 +6,10 @@ TagManager:
   tags:
   - UIParent
   - UIBombs
-  - UIVariable
-  - UI
   - UILives
-  - BossUI
   - Dialogue
-  - LevelManager
-  - SpellcardBackground
   - MenuBase
   - Enemy
-  - AudioManager
   layers:
   - Default
   - TransparentFX

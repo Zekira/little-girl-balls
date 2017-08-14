@@ -579,6 +579,9 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                 case TimelineCommand.Command.ABS:
                     SetNumber(currentCommand.args[0], Mathf.Abs(ParseValue(currentCommand.args[1])));
                     continue;
+                case TimelineCommand.Command.LOG:
+                    Debug.Log(currentCommand.args[0] + ":" + ParseValue(currentCommand.args[1]));
+                    continue;
                 default:
                     continue;
             }

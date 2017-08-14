@@ -29,9 +29,12 @@ public class GlobalHelper : MonoBehaviour {
     public static short extraAttempts = 0;
     public static short extraFinishes = 0;
 
+    //Things set via the inspector
+    public Transform tspellcardBackground, tcanvas, tbossUI, tlevelManager, tPlayer, taudioManager, tuiVariable,t3d;
+
     //These things only make sense in a level, so they're defined, but initialised in Awake()
-    public static Transform spellcardBackground, secondCounter, msecondCounter,canvas;
-    public static GameObject bossUI, player, levelManager;
+    public static Transform spellcardBackground,canvas,secondCounter,msecondCounter, uiVariable;
+    public static GameObject bossUI, player, levelManager, parent3d;
     public static List<GameObject> backupBullets, backupItems;
     public static List<Sprite> itemSprites, bulletSprites, snakeSprites;
     public static List<Sprite[]> enemySprites;
@@ -48,15 +51,17 @@ public class GlobalHelper : MonoBehaviour {
     void Awake() {
         thisHelper = this;
         SaveLoad.LoadPlayerData(character);
-        spellcardBackground = GameObject.FindWithTag("SpellcardBackground").transform;
-        canvas = GameObject.FindWithTag("UI").transform;
-        bossUI = GameObject.FindWithTag("BossUI");
+        spellcardBackground = tspellcardBackground;
+        canvas = tcanvas;
+        bossUI = tbossUI.gameObject;
         secondCounter = bossUI.transform.Find("TimerSeconds");
         msecondCounter = bossUI.transform.Find("TimerMilliseconds");
-        player = GameObject.FindGameObjectWithTag("Player");
-        levelManager = GameObject.FindWithTag("LevelManager");
+        player = tPlayer.gameObject;
+        levelManager = tlevelManager.gameObject;
+        uiVariable = tuiVariable;
+        parent3d = t3d.gameObject;
 
-        audioManager = GameObject.FindWithTag("AudioManager").GetComponent<AudioManager>();
+        audioManager = taudioManager.GetComponent<AudioManager>();
         stats = player.GetComponent<PlayerStats>();
         bulletClear = levelManager.GetComponent<BulletClear>();
         characterPortraits = levelManager.GetComponent<CharacterPortraits>();
@@ -73,7 +78,7 @@ public class GlobalHelper : MonoBehaviour {
 
         activeBosses = 0;
 
-        GameObject.FindWithTag("UIVariable").transform.Find("Difficulty").GetComponent<RawImage>().texture = (Texture2D)Resources.Load("Graphics/Difficulty/" + (int)difficulty);
+        uiVariable.Find("Difficulty").GetComponent<RawImage>().texture = (Texture2D)Resources.Load("Graphics/Difficulty/" + (int)difficulty);
 
         dialogue = false;
         autoCollectItems = false;
