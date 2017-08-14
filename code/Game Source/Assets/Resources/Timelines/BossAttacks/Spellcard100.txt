@@ -1,0 +1,213 @@
+//Test card;
+attackduration(7200);
+setparenthealth(3000);
+movetowardspoint(0, 3, 20);
+wait(60);
+
+bulletproperty(bullet, id, 7);
+bulletproperty(bullet, innercolor, 1, 1, 1, 1);
+bulletproperty(bullet, movement, 0, 0);
+bulletproperty(bullet, clearimmune, 1);
+
+bulletproperty(snake, innercolor, 1, 1, 1, 1);
+bulletproperty(snake, outercolor, 0.2, 0.5, 0.5, 0.8);
+bulletproperty(snake, snakelength, 20);
+bulletproperty(snake, scale, 0.3);
+
+starttimeline(Timelines/Supplementary/WingsFiller_3);
+
+repeat(10);
+repeat(10);
+bulletproperty(bullet, outercolor, 0, 0.8, 0.8, 1);
+bulletproperty(bullet, scale, 0.5);
+bulletproperty(bullet, advancedpath, Timelines/Supplementary/DelayedScatter_3);
+bulletproperty(bullet, position, 0.4, 0);
+repeat(12);
+createbullet(bullet);
+endrepeat;
+bulletproperty(bullet, position, -0.4, 0);
+repeat(12);
+createbullet(bullet);
+endrepeat;
+wait(5);
+bulletproperty(bullet, position, 0.75, 0.1);
+repeat(12);
+createbullet(bullet);
+endrepeat;
+bulletproperty(bullet, position, -0.75, 0.1);
+repeat(12);
+createbullet(bullet);
+endrepeat;
+wait(5);
+bulletproperty(bullet, position, 1.05, 0.25);
+repeat(12);
+createbullet(bullet);
+endrepeat;
+bulletproperty(bullet, position, -1.05, 0.25);
+repeat(12);
+createbullet(bullet);
+endrepeat;
+wait(5);
+bulletproperty(bullet, position, 1.3, 0.5);
+repeat(12);
+createbullet(bullet);
+endrepeat;
+bulletproperty(bullet, position, -1.3, 0.5);
+repeat(12);
+createbullet(bullet);
+endrepeat;
+wait(5);
+bulletproperty(bullet, position, 1.5, 0.8);
+repeat(12);
+createbullet(bullet);
+endrepeat;
+bulletproperty(bullet, position, -1.5, 0.8);
+repeat(12);
+createbullet(bullet);
+endrepeat;
+wait(5);
+bulletproperty(bullet, position, 1.7, 1.15);
+repeat(12);
+createbullet(bullet);
+endrepeat;
+bulletproperty(bullet, position, -1.7, 1.15);
+repeat(12);
+createbullet(bullet);
+endrepeat;
+wait(58);
+
+bulletproperty(bullet, advancedpath, Timelines/Supplementary/DelayedScatter2_3);
+bulletproperty(bullet, outercolor, 0.2, 0.6, 0.6, 1);
+bulletproperty(snake, position, -1.7, 1.15);
+bulletproperty(snake, movementpolar, 3.14, 0.08);
+bulletproperty(snake, rotation, 3.14);
+createbullet(snake);
+bulletproperty(snake, position, 1.7, 1.15);
+createbullet(snake);
+
+wait(2);
+
+bulletproperty(bullet, scale, 0.33);
+bulletproperty(bullet, position, 2.1, 1.2);
+repeat(8);
+createbullet(bullet);
+endrepeat;
+bulletproperty(bullet, position, -2.1, 1.2);
+repeat(8);
+createbullet(bullet);
+endrepeat;
+
+bulletproperty(bullet, advancedpath, Timelines/Supplementary/DelayedScatter2_3);
+bulletproperty(snake, position, -2.1, 1.2);
+bulletproperty(snake, movementpolar, 3, 0.08);
+bulletproperty(snake, rotation, 3);
+createbullet(snake);
+bulletproperty(snake, position, 2.1, 1.2);
+bulletproperty(snake, movementpolar, 3.28, 0.08);
+bulletproperty(snake, rotation, 3.28);
+createbullet(snake);
+
+wait(2);
+bulletproperty(bullet, position, 2.475, 1.15);
+repeat(8);
+createbullet(bullet);
+endrepeat;
+bulletproperty(bullet, position, -2.475, 1.15);
+repeat(8);
+createbullet(bullet);
+endrepeat;
+
+bulletproperty(bullet, advancedpath, Timelines/Supplementary/DelayedScatter2_3);
+bulletproperty(snake, position, -2.475, 1.15);
+bulletproperty(snake, movementpolar, 2.86, 0.08);
+bulletproperty(snake, rotation, 2.86);
+createbullet(snake);
+bulletproperty(snake, position, 2.475, 1.15);
+bulletproperty(snake, movementpolar, 3.42, 0.08);
+bulletproperty(snake, rotation, 3.42);
+createbullet(snake);
+
+wait(2);
+bulletproperty(bullet, position, 2.85, 1.05);
+repeat(8);
+createbullet(bullet);
+endrepeat;
+bulletproperty(bullet, position, -2.85, 1.05);
+repeat(8);
+createbullet(bullet);
+endrepeat;
+
+bulletproperty(bullet, advancedpath, Timelines/Supplementary/DelayedScatter2_3);
+bulletproperty(snake, position, -2.85, 1.05);
+bulletproperty(snake, movementpolar, 2.72, 0.08);
+bulletproperty(snake, rotation, 2.72);
+createbullet(snake);
+bulletproperty(snake, position, 2.85, 1.05);
+bulletproperty(snake, movementpolar, 3.56, 0.08);
+bulletproperty(snake, rotation, 3.56);
+createbullet(snake);
+
+wait(2);
+bulletproperty(bullet, position, 3.2, 0.9);
+repeat(8);
+createbullet(bullet);
+endrepeat;
+bulletproperty(bullet, position, -3.2, 0.9);
+repeat(8);
+createbullet(bullet);
+endrepeat;
+
+bulletproperty(bullet, advancedpath, Timelines/Supplementary/DelayedScatter2_3);
+bulletproperty(snake, position, -3.2, 0.9);
+bulletproperty(snake, movementpolar, 2.62, 0.08);
+bulletproperty(snake, rotation, 2.62);
+createbullet(snake);
+bulletproperty(snake, position, 3.2, 0.9);
+bulletproperty(snake, movementpolar, 3.66, 0.08);
+bulletproperty(snake, rotation, 3.66);
+createbullet(snake);
+
+wait(2);
+bulletproperty(bullet, position, 3.55, 0.75);
+repeat(8);
+createbullet(bullet);
+endrepeat;
+bulletproperty(bullet, position, -3.55, 0.75);
+repeat(8);
+createbullet(bullet);
+endrepeat;
+
+bulletproperty(bullet, advancedpath, Timelines/Supplementary/DelayedScatter2_3);
+bulletproperty(snake, position, -3.55, 0.75);
+bulletproperty(snake, movementpolar, 2.52, 0.08);
+bulletproperty(snake, rotation, 2.52);
+createbullet(snake);
+bulletproperty(snake, position, 3.55, 0.75);
+bulletproperty(snake, movementpolar, 3.76, 0.08);
+bulletproperty(snake, rotation, 3.76);
+createbullet(snake);
+
+wait(2);
+bulletproperty(bullet, position, 3.9, 0.6);
+repeat(8);
+createbullet(bullet);
+endrepeat;
+bulletproperty(bullet, position, -3.9, 0.6);
+repeat(8);
+createbullet(bullet);
+endrepeat;
+
+bulletproperty(bullet, advancedpath, Timelines/Supplementary/DelayedScatter2_3);
+bulletproperty(snake, position, -3.9, 0.6);
+bulletproperty(snake, movementpolar, 2.42, 0.08);
+bulletproperty(snake, rotation, 2.42);
+createbullet(snake);
+bulletproperty(snake, position, 3.9, 0.6);
+bulletproperty(snake, movementpolar, 3.86, 0.08);
+bulletproperty(snake, rotation, 3.86);
+createbullet(snake);
+
+wait(265);
+
+endrepeat;
+endrepeat;

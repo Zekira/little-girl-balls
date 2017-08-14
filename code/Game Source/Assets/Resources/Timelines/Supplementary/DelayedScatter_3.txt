@@ -1,0 +1,16 @@
+random(waittime,200,300);
+wait(waittime);
+random(movey,-0.04,-0.06);
+random(movex,-0.004,0.004);
+repeat(10);
+repeat(10);
+repeat(10);
+repeat(10);
+repeat(10);
+	moveparent(movex,movey);
+	wait(1);
+endrepeat;
+endrepeat;
+endrepeat;
+endrepeat;
+endrepeat;

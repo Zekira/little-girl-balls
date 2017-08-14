@@ -58,3 +58,4 @@ SPELLCARD2=Light Sign "The Sun Is A Deadly Laser"
 SPELLCARD6=Light Sign "Refracting Circle"
 SPELLCARD10=Blinding Light "Begone, Evil!"
 SPELLCARD99=Test Card
+SPELLCARD100=Disembodiment of Teal Wings
