@@ -499,7 +499,6 @@ GameObject:
   m_Component:
   - component: {fileID: 150798447}
   - component: {fileID: 150798451}
-  - component: {fileID: 150798450}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -520,13 +519,6 @@ Transform:
   m_Father: {fileID: 674953856}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!124 &150798450
-Behaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 150798446}
-  m_Enabled: 1
 --- !u!20 &150798451
 Camera:
   m_ObjectHideFlags: 0
@@ -544,7 +536,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
+  far clip plane: 150
   field of view: 92
   orthographic: 0
   orthographic size: 5
@@ -1707,7 +1699,6 @@ MonoBehaviour:
   tbossUI: {fileID: 2107727654}
   tlevelManager: {fileID: 450015838}
   tPlayer: {fileID: 1425317263}
-  taudioManager: {fileID: 2126652098}
   tuiVariable: {fileID: 1055808768}
   t3d: {fileID: 674953856}
 --- !u!114 &450015845
@@ -7843,7 +7834,7 @@ TerrainCollider:
   m_Material: {fileID: 0}
   m_Enabled: 1
   m_TerrainData: {fileID: 15600000, guid: 089a09858193d4841ac3365134149299, type: 2}
-  m_EnableTreeColliders: 1
+  m_EnableTreeColliders: 0
 --- !u!218 &1922293729
 Terrain:
   m_ObjectHideFlags: 0
@@ -7859,8 +7850,8 @@ Terrain:
   m_TreeMaximumFullLODCount: 50
   m_DetailObjectDistance: 80
   m_DetailObjectDensity: 1
-  m_HeightmapPixelError: 28
-  m_SplatMapDistance: 1000
+  m_HeightmapPixelError: 100
+  m_SplatMapDistance: 150
   m_HeightmapMaximumLOD: 0
   m_CastShadows: 1
   m_DrawHeightmap: 1

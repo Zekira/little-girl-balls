@@ -54,6 +54,12 @@ CHAR3=Rachel C
 CHAR4=<Whatever> A
 CHAR5=<Whatever> B
 CHAR6=<Whatever> C
+DESCRIPTION_CHAR1=<size=40>Rachel [whateveritwas]</size><size=20><color=#228899ff>NEWLINE[whatever her title is]</color>NEWLINENEWLINENEWLINE</size>Main Shot: [name]<size=32><color=#228899ff>NEWLINE[shotdescrption]</color>NEWLINE</size>NEWLINESpellcard: [name]<size=32><color=#228899ff>NEWLINE[bombdesciption]</color></size>
+DESCRIPTION_CHAR2=2
+DESCRIPTION_CHAR3=3
+DESCRIPTION_CHAR4=4
+DESCRIPTION_CHAR5=5
+DESCRIPTION_CHAR6=6
 SPELLCARD2=Light Sign "The Sun Is A Deadly Laser"
 SPELLCARD6=Light Sign "Refracting Circle"
 SPELLCARD10=Blinding Light "Begone, Evil!"

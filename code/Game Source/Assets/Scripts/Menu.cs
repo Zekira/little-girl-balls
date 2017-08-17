@@ -224,6 +224,11 @@ public class Menu : MonoBehaviour {
         GetComponent<Outline>().effectColor = Color.black;
         if (connectedTransform != null) {
             connectedTransform.GetComponent<Outline>().effectColor = Color.black;
+            switch(connectedTransform.name) { //When a connected transform needs more than just a color change
+                case "Description":
+                    connectedTransform.GetComponent<Text>().text = "";
+                    break;
+            }
         }
         yield return null;
     }
@@ -242,6 +247,14 @@ public class Menu : MonoBehaviour {
             GetComponent<Outline>().effectColor = Color.white;
             if (connectedTransform != null) {
                 connectedTransform.GetComponent<Outline>().effectColor = Color.white;
+                switch(connectedTransform.name) { //things needed to be done when just selecting, e.g. displaying information
+                    case "Description":
+                        connectedTransform.GetComponent<Text>().text = StringFetcher.GetString("DESCRIPTION_" + selectedObject.name.ToUpperInvariant());
+                        break;
+                    default:
+
+                        break;
+                }
             }
             yield return null;
         } else {

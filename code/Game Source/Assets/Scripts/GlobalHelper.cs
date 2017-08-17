@@ -30,7 +30,7 @@ public class GlobalHelper : MonoBehaviour {
     public static short extraFinishes = 0;
 
     //Things set via the inspector
-    public Transform tspellcardBackground, tcanvas, tbossUI, tlevelManager, tPlayer, taudioManager, tuiVariable,t3d;
+    public Transform tspellcardBackground, tcanvas, tbossUI, tlevelManager, tPlayer, tuiVariable,t3d;
 
     //These things only make sense in a level, so they're defined, but initialised in Awake()
     public static Transform spellcardBackground,canvas,secondCounter,msecondCounter, uiVariable;
@@ -41,7 +41,7 @@ public class GlobalHelper : MonoBehaviour {
     public static PlayerStats stats;
     public static BulletClear bulletClear;
     public static CharacterPortraits characterPortraits;
-    public static AudioManager audioManager;
+    public static AudioManager audioManager; //Set through the audiomanager class itself
     public static bool dialogue, autoCollectItems;
     public static int activeBosses;
     public static GlobalHelper thisHelper;
@@ -61,7 +61,6 @@ public class GlobalHelper : MonoBehaviour {
         uiVariable = tuiVariable;
         parent3d = t3d.gameObject;
 
-        audioManager = taudioManager.GetComponent<AudioManager>();
         stats = player.GetComponent<PlayerStats>();
         bulletClear = levelManager.GetComponent<BulletClear>();
         characterPortraits = levelManager.GetComponent<CharacterPortraits>();

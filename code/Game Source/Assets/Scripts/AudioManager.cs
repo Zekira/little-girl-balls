@@ -15,14 +15,16 @@ public class AudioManager : MonoBehaviour {
 
     public static bool enabledManager = false;
 
-    private void Awake() {
+    private void OnEnable() {
         if (!enabledManager) { //TODO: Put a copy of the finalised gameobject this is attached to into the main menu as well.
             DontDestroyOnLoad(gameObject);
+            GlobalHelper.audioManager = this;
+            bgm = bgmTransform.GetComponent<AudioSource>();
+            enabledManager = true;
         } else {
             Destroy(gameObject);
             return;
         }
-        bgm = bgmTransform.GetComponent<AudioSource>();
         //sfx = sfxTransform.GetComponent<AudioSource>();
         //TODO: Initialise the sfx's multiple audio sources here, one for each in the SFX enum
     }
