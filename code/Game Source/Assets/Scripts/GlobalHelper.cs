@@ -17,13 +17,16 @@ public class GlobalHelper : MonoBehaviour {
 
     public static bool paused = false;
 
+    /// <summary>
+    /// Warning: "level" is one-indexed. 1 through 6 are stage levels, 7th is extra.
+    /// </summary>
     public static int level = 1;
     public enum Difficulty { EASY, NORMAL, HARD, LUNATIC, EXTRA };
     public static Difficulty difficulty = Difficulty.LUNATIC;
     public enum Character { RACHEL_A, RACHEL_B, RACHEL_C };
     public static Character character = Character.RACHEL_A;
     public static byte musicHeard = 0; //See SaveLoad.cs for more info
-    public static byte bestUnlockedStage = 0;
+    public static byte[] bestUnlockedStage = new byte[] { 0, 0, 0, 0 };
     public static short mainAttempts = 0;
     public static short mainFinishes = 0;
     public static short extraAttempts = 0;
@@ -76,6 +79,8 @@ public class GlobalHelper : MonoBehaviour {
         BulletMaterialisation.materialiseSprite = Sprite.Create(bulletMaterialiseTexture, new Rect(0, 0, bulletMaterialiseTexture.width, bulletMaterialiseTexture.height), Vector2.one * 0.5f);
 
         activeBosses = 0;
+
+        bestUnlockedStage[(int)difficulty] = (byte)Mathf.Max(level, bestUnlockedStage[(int)difficulty]);
 
         uiVariable.Find("Difficulty").GetComponent<RawImage>().texture = (Texture2D)Resources.Load("Graphics/Difficulty/" + (int)difficulty);
 

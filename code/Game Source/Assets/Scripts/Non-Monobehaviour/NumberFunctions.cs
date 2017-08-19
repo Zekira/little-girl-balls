@@ -93,4 +93,12 @@ public static class NumberFunctions {
         }
         return returnString;
     }
+
+    //public static byte SetBit(byte number, int index, bool what) {
+
+    //}
+
+    //public static bool GetBit(byte number, int index) {
+
+    //}
 }

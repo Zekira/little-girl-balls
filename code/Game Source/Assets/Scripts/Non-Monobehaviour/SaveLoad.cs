@@ -119,7 +119,7 @@ public static class SaveLoad {
      * Bullets seen (ulong) = 8 bytes
      * Music heard (byte: 1 = stage 1 track, 2 = stage 1 track + boss, 3 is up and including to stage 2 track, etc. 12 = up to and including stage 6 boss, 13 = ex stage, 14 = ex boss, 15 = credits, 16 = ending) = 1 byte
      * For each player: (Totalling 77 bytes per player = 462)
-     *      Highest unlocked stage (byte: 1 through 7) (Manages stage practice unlocks / extra stage unlock) = 1 byte
+     *      Highest unlocked stage (byte: 1 through 7) (Manages stage practice unlocks / extra stage unlock) = 1 byte for each difficulty
      *      Main game attempt count (short x4) = 4*2 bytes
      *      Main game clear count
      *      Extra attempt count
@@ -130,12 +130,12 @@ public static class SaveLoad {
      * //Total history
      * 
      */
-    private const int playerDataPlayerSize = 77; //the size of the data in bytes a single player block uses
+    private const int playerDataPlayerSize = 89; //the size of the data in bytes a single player block uses
     public static void SavePlayerData(GlobalHelper.Character character) {
         (new FileInfo(basePath)).Directory.Create(); //Create the basedirectory if it doesn't exist
         using (BinaryWriter writer = new BinaryWriter(File.Open(playerDataPath, FileMode.OpenOrCreate))) {
             long length = new FileInfo(playerDataPath).Length;
-            while (length < 475) { //Fill up with zero's if it's not full. The file should be 6*playerDataPlayerSize + global stuff size bytes
+            while (length < 13 + (6*playerDataPlayerSize)) { //Fill up with zero's if it's not full. The file should be 6*playerDataPlayerSize + global stuff size bytes
                 writer.Seek((int)length, SeekOrigin.Begin);
                 writer.Write((byte)0);
                 length++;
@@ -148,7 +148,10 @@ public static class SaveLoad {
 
             writer.Seek((int)character * playerDataPlayerSize, SeekOrigin.Current);
             //Per player stuff
-            writer.Write(GlobalHelper.bestUnlockedStage);
+            writer.Write(GlobalHelper.bestUnlockedStage[0]);
+            writer.Write(GlobalHelper.bestUnlockedStage[1]);
+            writer.Write(GlobalHelper.bestUnlockedStage[2]);
+            writer.Write(GlobalHelper.bestUnlockedStage[3]);
             writer.Write(GlobalHelper.mainAttempts);
             writer.Write(GlobalHelper.mainFinishes);
             writer.Write(GlobalHelper.extraAttempts);
@@ -170,7 +173,7 @@ public static class SaveLoad {
             GlobalHelper.previousFiredBullets = 0;
             GlobalHelper.musicHeard = 0;
 
-            GlobalHelper.bestUnlockedStage = 0;
+            GlobalHelper.bestUnlockedStage = new byte[] { 0, 0, 0, 0 };
             GlobalHelper.mainAttempts = 0;
             GlobalHelper.mainFinishes = 0;
             GlobalHelper.extraAttempts = 0;
@@ -191,7 +194,10 @@ public static class SaveLoad {
 
             reader.BaseStream.Seek(playerDataPlayerSize * (int)character, SeekOrigin.Current); //stackoverflow says it's usually save. But when things bug, look here first.
 
-            GlobalHelper.bestUnlockedStage = reader.ReadByte();
+            GlobalHelper.bestUnlockedStage[0] = reader.ReadByte(); //One for each difficulty
+            GlobalHelper.bestUnlockedStage[1] = reader.ReadByte();
+            GlobalHelper.bestUnlockedStage[2] = reader.ReadByte();
+            GlobalHelper.bestUnlockedStage[3] = reader.ReadByte();
             GlobalHelper.mainAttempts = reader.ReadInt16();
             GlobalHelper.mainFinishes = reader.ReadInt16();
             GlobalHelper.extraAttempts = reader.ReadInt16();

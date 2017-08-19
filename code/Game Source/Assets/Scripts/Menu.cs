@@ -29,6 +29,38 @@ public class Menu : MonoBehaviour {
     }
 
     void OnEnable() {
+        switch(gameObject.name) {
+            case "PlayStage1":
+                SaveLoad.LoadPlayerData(GlobalHelper.character);
+                selectable = (GlobalHelper.bestUnlockedStage[(int)GlobalHelper.difficulty] >= 1); //TODO: Make bestUnlockedStage difficulty-dependant
+                GetComponent<Text>().text = PlayerStats.stageHighScore[0] + "   " + StringFetcher.GetString("PLAYSTAGE1");
+                break;
+            case "PlayStage2":
+                SaveLoad.LoadPlayerData(GlobalHelper.character);
+                selectable = (GlobalHelper.bestUnlockedStage[(int)GlobalHelper.difficulty] >= 2);
+                GetComponent<Text>().text = PlayerStats.stageHighScore[1] + "   " + StringFetcher.GetString("PLAYSTAGE2");
+                break;
+            case "PlayStage3":
+                SaveLoad.LoadPlayerData(GlobalHelper.character);
+                selectable = (GlobalHelper.bestUnlockedStage[(int)GlobalHelper.difficulty] >= 3);
+                GetComponent<Text>().text = PlayerStats.stageHighScore[2] + "   " + StringFetcher.GetString("PLAYSTAGE3");
+                break;
+            case "PlayStage4":
+                SaveLoad.LoadPlayerData(GlobalHelper.character);
+                selectable = (GlobalHelper.bestUnlockedStage[(int)GlobalHelper.difficulty] >= 4);
+                GetComponent<Text>().text = PlayerStats.stageHighScore[3] + "   " + StringFetcher.GetString("PLAYSTAGE4");
+                break;
+            case "PlayStage5":
+                SaveLoad.LoadPlayerData(GlobalHelper.character);
+                selectable = (GlobalHelper.bestUnlockedStage[(int)GlobalHelper.difficulty] >= 5);
+                GetComponent<Text>().text = PlayerStats.stageHighScore[4] + "   " + StringFetcher.GetString("PLAYSTAGE5");
+                break;
+            case "PlayStage6":
+                SaveLoad.LoadPlayerData(GlobalHelper.character);
+                selectable = (GlobalHelper.bestUnlockedStage[(int)GlobalHelper.difficulty] >= 6);
+                GetComponent<Text>().text = PlayerStats.stageHighScore[5] + "   " + StringFetcher.GetString("PLAYSTAGE6");
+                break;
+        }
         if (!selectable) {
             GetComponent<Text>().color = inactiveColor;
         } else {
@@ -95,6 +127,7 @@ public class Menu : MonoBehaviour {
                 switch (gameObject.name) {
                     //Mostly main menu items
                     case "Play":
+                    case "Practice":
                         ToMenu("Difficulty", true);
                         break;
                     case "Options":
@@ -171,14 +204,33 @@ public class Menu : MonoBehaviour {
                         GlobalHelper.difficulty = GlobalHelper.Difficulty.LUNATIC;
                         ToMenu("Characters", false);
                         break;
+                    //Level select items
+                    case "PlayStage1":
+                        SceneSwitcher.LoadLevel(1, GlobalHelper.difficulty);
+                        break;
+                    case "PlayStage2":
+                        SceneSwitcher.LoadLevel(2, GlobalHelper.difficulty);
+                        break;
+                    case "PlayStage3":
+                        SceneSwitcher.LoadLevel(3, GlobalHelper.difficulty);
+                        break;
+                    case "PlayStage4":
+                        SceneSwitcher.LoadLevel(4, GlobalHelper.difficulty);
+                        break;
+                    case "PlayStage5":
+                        SceneSwitcher.LoadLevel(5, GlobalHelper.difficulty);
+                        break;
+                    case "PlayStage6":
+                        SceneSwitcher.LoadLevel(6, GlobalHelper.difficulty);
+                        break;
                     //Character items TODOs
                     case "Char1":
                         GlobalHelper.character = GlobalHelper.Character.RACHEL_A;
-                        SceneSwitcher.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty);
+                        AfterPlayerSelect();
                         break;
                     case "Char2":
                         GlobalHelper.character = GlobalHelper.Character.RACHEL_B;
-                        SceneSwitcher.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty);
+                        AfterPlayerSelect();
                         break;
                     case "Char3":
 
@@ -338,5 +390,13 @@ public class Menu : MonoBehaviour {
             yield return null;
         }
         keyConfigCooldown = 2;
+    }
+
+    private void AfterPlayerSelect() {
+        if (previousSelectedMenuItems[previousSelectedMenuItems.Count - 2].name == "Play") {
+            SceneSwitcher.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty);
+        } else if (previousSelectedMenuItems[previousSelectedMenuItems.Count - 2].name == "Practice") {
+            ToMenu("StageSelect", true);
+        }
     }
 }
