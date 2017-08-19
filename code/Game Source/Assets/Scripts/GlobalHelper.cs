@@ -23,7 +23,7 @@ public class GlobalHelper : MonoBehaviour {
     public static int level = 1;
     public enum Difficulty { EASY, NORMAL, HARD, LUNATIC, EXTRA };
     public static Difficulty difficulty = Difficulty.LUNATIC;
-    public enum Character { RACHEL_A, RACHEL_B, RACHEL_C };
+    public enum Character { RACHEL_A, RACHEL_B, RACHEL_C, WHATEVER_A, WHATEVER_B, WHATEVER_C };
     public static Character character = Character.RACHEL_A;
     public static byte musicHeard = 0; //See SaveLoad.cs for more info
     public static byte[] bestUnlockedStage = new byte[] { 0, 0, 0, 0 };
@@ -80,7 +80,9 @@ public class GlobalHelper : MonoBehaviour {
 
         activeBosses = 0;
 
-        bestUnlockedStage[(int)difficulty] = (byte)Mathf.Max(level, bestUnlockedStage[(int)difficulty]);
+        if (difficulty != Difficulty.EXTRA) {
+            bestUnlockedStage[(int)difficulty] = (byte)Mathf.Max(level, bestUnlockedStage[(int)difficulty]);
+        }
 
         uiVariable.Find("Difficulty").GetComponent<RawImage>().texture = (Texture2D)Resources.Load("Graphics/Difficulty/" + (int)difficulty);
 

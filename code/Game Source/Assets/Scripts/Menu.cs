@@ -4,6 +4,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Menu : MonoBehaviour {
+    /* How to handle this horrible class:
+     * Adding something to do when a menu is loaded? In OnEnable()'s last switch
+     * Adding something to do when it is selected? In CoSelect()'s switch
+     * Adding something to do when it is deselected? In CoDeselect()'s switch
+     * Adding something to do when it is pressed? In Update()'s last switch
+     * connectedTransform does different things every time and is inconsistent
+     */
 
     public static Transform selectedObject;
     public static int cooldown = 0;
@@ -29,10 +36,41 @@ public class Menu : MonoBehaviour {
     }
 
     void OnEnable() {
+        if (transform.parent.name == "ExtraCharacters") {
+            switch (gameObject.name) {
+                case "Char1":
+                    SaveLoad.LoadPlayerData(GlobalHelper.Character.RACHEL_A);
+                    selectable = Mathf.Max(GlobalHelper.bestUnlockedStage[1], GlobalHelper.bestUnlockedStage[2], GlobalHelper.bestUnlockedStage[3]) == 7;
+                    break;
+                case "Char2":
+                    SaveLoad.LoadPlayerData(GlobalHelper.Character.RACHEL_B);
+                    selectable = Mathf.Max(GlobalHelper.bestUnlockedStage[1], GlobalHelper.bestUnlockedStage[2], GlobalHelper.bestUnlockedStage[3]) == 7;
+                    break;
+                case "Char3":
+                    SaveLoad.LoadPlayerData(GlobalHelper.Character.RACHEL_C);
+                    selectable = Mathf.Max(GlobalHelper.bestUnlockedStage[1], GlobalHelper.bestUnlockedStage[2], GlobalHelper.bestUnlockedStage[3]) == 7;
+                    break;
+                case "Char4":
+                    SaveLoad.LoadPlayerData(GlobalHelper.Character.WHATEVER_A);
+                    selectable = Mathf.Max(GlobalHelper.bestUnlockedStage[1], GlobalHelper.bestUnlockedStage[2], GlobalHelper.bestUnlockedStage[3]) == 7;
+                    break;
+                case "Char5":
+                    SaveLoad.LoadPlayerData(GlobalHelper.Character.WHATEVER_B);
+                    selectable = Mathf.Max(GlobalHelper.bestUnlockedStage[1], GlobalHelper.bestUnlockedStage[2], GlobalHelper.bestUnlockedStage[3]) == 7;
+                    break;
+                case "Char6":
+                    SaveLoad.LoadPlayerData(GlobalHelper.Character.WHATEVER_C);
+                    selectable = Mathf.Max(GlobalHelper.bestUnlockedStage[1], GlobalHelper.bestUnlockedStage[2], GlobalHelper.bestUnlockedStage[3]) == 7;
+                    break;
+            }
+        }
         switch(gameObject.name) {
+            case "Extra":
+                selectable = SaveLoad.HasUnlockedExtra();
+                break;
             case "PlayStage1":
                 SaveLoad.LoadPlayerData(GlobalHelper.character);
-                selectable = (GlobalHelper.bestUnlockedStage[(int)GlobalHelper.difficulty] >= 1); //TODO: Make bestUnlockedStage difficulty-dependant
+                selectable = (GlobalHelper.bestUnlockedStage[(int)GlobalHelper.difficulty] >= 1);
                 GetComponent<Text>().text = PlayerStats.stageHighScore[0] + "   " + StringFetcher.GetString("PLAYSTAGE1");
                 break;
             case "PlayStage2":
@@ -129,6 +167,9 @@ public class Menu : MonoBehaviour {
                     case "Play":
                     case "Practice":
                         ToMenu("Difficulty", true);
+                        break;
+                    case "Extra":
+                        ToMenu("ExtraCharacters", true);
                         break;
                     case "Options":
                         ToMenu("Settings", true);
@@ -393,7 +434,9 @@ public class Menu : MonoBehaviour {
     }
 
     private void AfterPlayerSelect() {
-        if (previousSelectedMenuItems[previousSelectedMenuItems.Count - 2].name == "Play") {
+        if (previousSelectedMenuItems[previousSelectedMenuItems.Count - 1].name == "Extra") {
+            SceneSwitcher.LoadLevel(7, GlobalHelper.Difficulty.EXTRA);
+        } else if (previousSelectedMenuItems[previousSelectedMenuItems.Count - 2].name == "Play") {
             SceneSwitcher.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty);
         } else if (previousSelectedMenuItems[previousSelectedMenuItems.Count - 2].name == "Practice") {
             ToMenu("StageSelect", true);

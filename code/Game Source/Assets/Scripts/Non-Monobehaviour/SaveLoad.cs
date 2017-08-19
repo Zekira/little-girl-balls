@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 
-public static class SaveLoad {
+public static class SaveLoad
+{
     private static string basePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) +
         Path.DirectorySeparatorChar + "TouaoiiProject" + Path.DirectorySeparatorChar + "DisembodimentOfTheTealAngel" + Path.DirectorySeparatorChar;
     private static string spellcardHistoryPath = basePath + "SpellcardHistories.dat";
@@ -131,11 +132,12 @@ public static class SaveLoad {
      * 
      */
     private const int playerDataPlayerSize = 89; //the size of the data in bytes a single player block uses
+    private const int playerDataGlobalSize = 13;
     public static void SavePlayerData(GlobalHelper.Character character) {
         (new FileInfo(basePath)).Directory.Create(); //Create the basedirectory if it doesn't exist
         using (BinaryWriter writer = new BinaryWriter(File.Open(playerDataPath, FileMode.OpenOrCreate))) {
             long length = new FileInfo(playerDataPath).Length;
-            while (length < 13 + (6*playerDataPlayerSize)) { //Fill up with zero's if it's not full. The file should be 6*playerDataPlayerSize + global stuff size bytes
+            while (length < playerDataGlobalSize + (6 * playerDataPlayerSize)) { //Fill up with zero's if it's not full. The file should be 6*playerDataPlayerSize + global stuff size bytes
                 writer.Seek((int)length, SeekOrigin.Begin);
                 writer.Write((byte)0);
                 length++;
@@ -207,7 +209,33 @@ public static class SaveLoad {
                 PlayerStats.stageHighScore[i] = reader.ReadUInt64();
             }
             PlayerStats.timePlayed = reader.ReadUInt32();
-
         }
+    }
+
+    /// <summary>
+    /// Returns whether extra is unlocked, which is when any player's bestUnlockedStage[1/2/3] == 7
+    /// </summary>
+    public static bool HasUnlockedExtra() {
+        (new FileInfo(basePath)).Directory.Create(); //Create the basedirectory if it doesn't exist
+        if (!File.Exists(playerDataPath)) {
+            return false;
+        }
+        using (BinaryReader reader = new BinaryReader(File.OpenRead(playerDataPath))) {
+            for (int i = 0; i < 6; i++) {
+                reader.BaseStream.Seek(playerDataGlobalSize /*After the global data*/
+                                       + 1 /*Ignore the first byte of this player's data because it's easy best*/
+                                       + playerDataPlayerSize * i /*Offset determined by player number*/, SeekOrigin.Begin);
+                if (reader.ReadByte() == 7) { //If best normal for this char = 7
+                    return true;
+                }
+                if (reader.ReadByte() == 7) { //If best hard for this char = 7
+                    return true;
+                }
+                if (reader.ReadByte() == 7) { //If best lunatic for this char = 7
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
