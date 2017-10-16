@@ -58,19 +58,19 @@ public static class ThingCreator {
         createdObject.GetComponent<TimelineInterprenter>().enabled = false;
         //Sets the position
         if (!bulletTemplate.positionIsRelative) {
-            bullet.posx = bulletTemplate.position.x;
-            bullet.posy = bulletTemplate.position.y;
+            bullet.pos.x = bulletTemplate.position.x;
+            bullet.pos.y = bulletTemplate.position.y;
         } else {
-            bullet.posx = bulletPosition.x + bulletTemplate.position.x;
-            bullet.posy = bulletPosition.y + bulletTemplate.position.y;
+            bullet.pos.x = bulletPosition.x + bulletTemplate.position.x;
+            bullet.pos.y = bulletPosition.y + bulletTemplate.position.y;
         }
-        bullet.posz = GlobalHelper.totalFiredBullets * 1e-6f;
+        bullet.pos.z = GlobalHelper.totalFiredBullets * 1e-6f;
         if (!bulletTemplate.enemyShot) {
-            bullet.posz += 5f; //Player shot bullets should not cover actual harmful bullets.
+            bullet.pos.z += 5f; //Player shot bullets should not cover actual harmful bullets.
         }
         //Set the actual position
         bulletTransform = createdObject.transform;
-        bulletTransform.position = new Vector3(bullet.posx, bullet.posy, bullet.posz);
+        bulletTransform.position = bullet.pos;
 
         bulletTransform.localScale = bulletTemplate.scale * Vector3.one;
         bulletTransform.eulerAngles = new Vector3(0f, 0f, -bulletTemplate.rotation * Mathf.Rad2Deg);

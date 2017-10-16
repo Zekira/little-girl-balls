@@ -22,16 +22,24 @@ public class Snake {
                 bulletj = bullets[j].GetComponent<Bullet>();
                 bulleti.relatedSnake = this;
                 bulletj.relatedSnake = this;
+                //Set the sprites
+                if (i < 3) {
+                    if (bulleti.relatedSnakeIndex != i-1)  //Prevent an already set head-sprite to being set to exactly the same again.
+                        bulleti.SetSprite(GlobalHelper.snakeSprites[i]);
+                    
+                    if (bulletj.relatedSnakeIndex != j-1)
+                        bulletj.SetSprite(GlobalHelper.snakeSprites[6 - i]);
+                } else {
+                    if (bulleti.relatedSnakeIndex < 2 || bulleti.relatedSnakeIndex > bullets.Length - 3) {
+                        bulleti.SetSprite(GlobalHelper.snakeSprites[3]);
+                    }
+                    if (bulletj.relatedSnakeIndex < 2 || bulletj.relatedSnakeIndex > bullets.Length - 3) {
+                        bulletj.SetSprite(GlobalHelper.snakeSprites[3]);
+                    }
+                }
+                //Set the new indices (over here because the old ones are needed for setting the sprites above)
                 bulleti.relatedSnakeIndex = i;
                 bulletj.relatedSnakeIndex = j;
-                //Set the sprites TODO: Doing it like this is inefficient; no need to keep setting the middle sprites to the same thing over and over. Also the end is buggy
-                if (i < 3) {
-                    bulletj.SetSprite(GlobalHelper.snakeSprites[6 - i]);
-                    bulleti.SetSprite(GlobalHelper.snakeSprites[i]);
-                } else {
-                    bulleti.SetSprite(GlobalHelper.snakeSprites[3]);
-                    bulletj.SetSprite(GlobalHelper.snakeSprites[3]);
-                }
             }
         }
         this.bullets = bullets;

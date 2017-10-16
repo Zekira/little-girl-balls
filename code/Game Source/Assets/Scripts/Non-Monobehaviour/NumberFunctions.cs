@@ -94,11 +94,29 @@ public static class NumberFunctions {
         return returnString;
     }
 
-    //public static byte SetBit(byte number, int index, bool what) {
+    /// <summary>
+    /// Sets a bit in a byte to What. Index counts from lsb to msb.
+    /// </summary>
+    public static byte SetBit(byte b, int index, bool what) {
+        if (index < 0 || index >= 8) {
+            Debug.LogError("Can't modify a byte with index " + index + "; Not [0,8>");
+            return b;
+        }
+        if (what) {
+            return (byte)(b | (1 << index));
+        } else {
+            return (byte)(b & ~(1 << index));
+        }
+    }
 
-    //}
-
-    //public static bool GetBit(byte number, int index) {
-
-    //}
+    /// <summary>
+    /// Gets a bit in a byte. Index counts from lsb to msb.
+    /// </summary>
+    public static bool GetBit(byte b, int index) {
+        if (index < 0 || index >= 8) {
+            Debug.LogError("Can't read a byte with index " + index + "; Not [0,8>");
+            return false;
+        }
+        return ((b >> index) & 1) == 1;
+    }
 }

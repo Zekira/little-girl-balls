@@ -461,8 +461,8 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                         num2 = ParseValue(currentCommand.args[1]);
                         pos.x = num1 * bullet.bulletTemplate.scriptRotationMatrix.x + num2 * bullet.bulletTemplate.scriptRotationMatrix.y;
                         pos.y = num1 * bullet.bulletTemplate.scriptRotationMatrix.z + num2 * bullet.bulletTemplate.scriptRotationMatrix.w;
-                        bullet.posx += pos.x;
-                        bullet.posy += pos.y;
+                        bullet.pos.x += pos.x;
+                        bullet.pos.y += pos.y;
                     } else {
                         transform.position += new Vector3(ParseValue(currentCommand.args[0]), ParseValue(currentCommand.args[1]), 0f);
                     }
@@ -476,8 +476,8 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                         Bullet bullet = parentBullet;
                         pos.x = num1 * bullet.bulletTemplate.scriptRotationMatrix.x + num2 * bullet.bulletTemplate.scriptRotationMatrix.y;
                         pos.y = num1 * bullet.bulletTemplate.scriptRotationMatrix.z + num2 * bullet.bulletTemplate.scriptRotationMatrix.w;
-                        bullet.posx += pos.x;
-                        bullet.posy += pos.y;
+                        bullet.pos.x += pos.x;
+                        bullet.pos.y += pos.y;
                     } else {
                         transform.position += new Vector3(num1, num2, 0f);
                     }

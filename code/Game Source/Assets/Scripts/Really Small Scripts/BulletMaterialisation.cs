@@ -10,8 +10,8 @@ public class BulletMaterialisation : MonoBehaviour {
     private BulletTemplate template;
     public static Sprite materialiseSprite;
     public Sprite actualSprite;
-    private static Color color;
     private int timer = 9;
+    private Color color;
 
     private Bullet bullet;
     private Transform thisTransform;
@@ -26,6 +26,7 @@ public class BulletMaterialisation : MonoBehaviour {
 	void Update () {
         if (!GlobalHelper.paused) {
             if (timer == 9) { //Initialising the process of spawning.
+                color = spriteRenderer.color;
                 thisTransform.position += new Vector3(0f, 0f, -5f);
                 template = bullet.bulletTemplate;
                 actualSprite = spriteRenderer.sprite;
@@ -60,10 +61,11 @@ public class BulletMaterialisation : MonoBehaviour {
                 }
                 this.enabled = false;
             } else { //Times 1 through 8
-                color = spriteRenderer.color;
-                color = new Color(color.r, color.b, color.g, ((9f - timer) / 13f));
-                spriteRenderer.color = color;
-                thisTransform.localScale = (0.5f + template.scale * timer / 5f) * Vector3.one;
+                if ((timer & 1) == 1) {
+                    color.a = ((9f - timer) / 13f);
+                    spriteRenderer.color = color;
+                    thisTransform.localScale = (0.5f + template.scale * timer / 5f) * Vector3.one;
+                }
                 timer--;
             }
         }
