@@ -27,6 +27,14 @@ public class ReplayManager : MonoBehaviour {
                 (byte)(PlayerStats.power / 5),
                 PlayerStats.value,
                 PlayerStats.graze, GlobalHelper.level - 1);
+            //Check any input down from before the level was started, and thus isn't registered by the Input.GetKeyDown part in Update().
+            for (int i = 0; i < 8; i++) {
+                if (Input.GetKey(KeyData.GetKeyCode(i))) {
+                    keytimers[i] = 0;
+                    currentReplay.AddInputData(new InputData(-1, -1, KeyData.keys[0]), GlobalHelper.level - 1); //placeholder for when the data should actually be recorded
+                    keyindices[i] = currentReplay.inputData[GlobalHelper.level - 1].Count - 1;
+                }
+            }
         } else {
             inputToCheck = currentReplay.inputData[GlobalHelper.level-1];
         }
@@ -64,7 +72,7 @@ public class ReplayManager : MonoBehaviour {
         }
 
         //When in a replay, check for all "inputs". This time, they're not from keyboards, but from the replay.
-        if (isReplay) {
+        if (isReplay && !GlobalHelper.paused) {
             //Check for new input
             while ((currentInputDataIndex < inputToCheck.Count) &&
                 (inputToCheck[currentInputDataIndex].startingTick <= timer)) { //If it's new, it needs to be executed THIS tick.
