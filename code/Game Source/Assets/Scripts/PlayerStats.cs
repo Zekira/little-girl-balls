@@ -12,11 +12,13 @@ public class PlayerStats : MonoBehaviour {
     public static ulong score = 0;
     [Range(0,6)]
     public static byte lives = 3;
-    [Range(0,2)]
+    public const byte piecesToLife = 3;
+    [Range(0,piecesToLife)]
     public static byte lifepieces = 0;
     [Range(0,6)]
     public static byte bombs = 2;
-    [Range(0,3)]
+    public const byte piecesToBomb = 4;
+    [Range(0,piecesToBomb)]
     public static byte bombpieces = 0;
     [Range(0,400)]
     public static int power = 0;
@@ -48,12 +50,12 @@ public class PlayerStats : MonoBehaviour {
         startPosition = transform.position;
         //Initialising the bomb piece textures
         Texture2D texture;
-        for (int i = 0; i <= 4; i++) {
+        for (int i = 0; i <= piecesToBomb; i++) {
             texture = (Texture2D)Resources.Load("Graphics/Pieces/Bomb" + i);
             bombSprites[i] = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
         }
         //..and the life piece textures
-        for (int i = 0; i <= 3; i++) {
+        for (int i = 0; i <= piecesToLife; i++) {
             texture = (Texture2D)Resources.Load("Graphics/Pieces/Life" + i);
             lifeSprites[i] = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
         }
@@ -125,7 +127,7 @@ public class PlayerStats : MonoBehaviour {
             part = 0;
         }
         bombs = total > 6 ? (byte) 6 : total;
-        bombpieces = part > 3 ? (byte) 3 : part;
+        bombpieces = part > (piecesToBomb-1) ? (byte) (piecesToBomb-1) : part;
         for (int i = 0; i < 6; i++) { //Beware the off-by-1-errors left there forever. (Could either make the code more readable, or make a joke. Obvious which one is better.)
             if (i < total) {
                 GameObject.FindWithTag("UIBombs").transform.Find("Bomb" + i).GetComponent<Image>().sprite = bombSprites[4];
@@ -135,7 +137,7 @@ public class PlayerStats : MonoBehaviour {
                 GameObject.FindWithTag("UIBombs").transform.Find("Bomb" + i).GetComponent<Image>().sprite = bombSprites[0];
             }
         }
-        UIVariable.transform.Find("Spellpieces").GetComponent<Text>().text = part + "/4";
+        UIVariable.transform.Find("Spellpieces").GetComponent<Text>().text = part + "/" + piecesToBomb;
     }
 
     /// <summary>
@@ -149,7 +151,7 @@ public class PlayerStats : MonoBehaviour {
             part = 0;
         }
         lives = total > 6 ? (byte)6 : total;
-        lifepieces = part > 2 ? (byte)2 : part;
+        lifepieces = part > (piecesToLife-1) ? (byte)(piecesToLife-1) : part;
         for (int i = 0; i < 6; i++) { 
             if (i < total) {
                 GameObject.FindWithTag("UILives").transform.Find("Life" + i).GetComponent<Image>().sprite = lifeSprites[3];
@@ -159,7 +161,7 @@ public class PlayerStats : MonoBehaviour {
                 GameObject.FindWithTag("UILives").transform.Find("Life" + i).GetComponent<Image>().sprite = lifeSprites[0];
             }
         }
-        UIVariable.transform.Find("Lifepieces").GetComponent<Text>().text = part + "/3";
+        UIVariable.transform.Find("Lifepieces").GetComponent<Text>().text = part + "/" + piecesToLife;
     }
 
     /// <summary>

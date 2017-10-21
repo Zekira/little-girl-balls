@@ -50,7 +50,7 @@ public class BulletMaterialisation : MonoBehaviour {
                 thisTransform.position -= new Vector3(0f, 0f, -5f);
                 bullet.enabled = true;
                 bullet.SetSpriteDirectly(actualSprite);
-                thisTransform.localScale = template.scale * Vector3.one;
+                thisTransform.localScale = template.scale * new Vector3(1,1,1);
                 spriteRenderer.color = Vector4.one;
                 //If this is an advanced bullet, enable it here.
                 if (template.advancedAttackPath != "") {
@@ -64,7 +64,7 @@ public class BulletMaterialisation : MonoBehaviour {
                 if ((timer & 1) == 1) {
                     color.a = ((9f - timer) / 13f);
                     spriteRenderer.color = color;
-                    thisTransform.localScale = (0.5f + template.scale * timer / 5f) * Vector3.one;
+                    thisTransform.localScale = (0.5f + template.scale * timer / 5f) * new Vector3(1,1,1);
                 }
                 timer--;
             }

@@ -9,6 +9,7 @@ public static class SaveLoad
     private static string spellcardHistoryPath = basePath + "SpellcardHistories.dat";
     private static string configPath = basePath + "Config.dat";
     private static string playerDataPath = basePath + "PlayerData.dat";
+    private static string replayBasePath = basePath + "Replays" + Path.DirectorySeparatorChar; //Expecting to put things like "replay1.touaoiireplay" after thie replayBasePath
 
     /// <summary>
     /// Saves spellcard histories. 'histories' should be a multiple of four long because the safe format goes as following:
@@ -16,7 +17,9 @@ public static class SaveLoad
     /// </summary>
     public static void SaveSpellcardHistories(List<short> histories) {
         (new FileInfo(basePath)).Directory.Create(); //Create the basedirectory if it doesn't exist
-
+        if (ReplayManager.isReplay) {
+            return; //Should NOT be saving ANYTHING during replays!
+        }
         if ((histories.Count & 3) != 0) {
             Debug.LogError("Tried to save faulty spellcard history data!");
             return;
@@ -72,6 +75,9 @@ public static class SaveLoad
      */
     public static void SaveConfig() {
         (new FileInfo(basePath)).Directory.Create(); //Create the basedirectory if it doesn't exist
+        if (ReplayManager.isReplay) {
+            return; //Should NOT be saving ANYTHING during replays!
+        }
         using (BinaryWriter writer = new BinaryWriter(File.Open(configPath, FileMode.Create))) {
             writer.Write((short)Config.keyPause);
             writer.Write((short)Config.keyFocus);
@@ -135,6 +141,9 @@ public static class SaveLoad
     private const int playerDataGlobalSize = 13;
     public static void SavePlayerData(GlobalHelper.Character character) {
         (new FileInfo(basePath)).Directory.Create(); //Create the basedirectory if it doesn't exist
+        if (ReplayManager.isReplay) {
+            return; //Should NOT be saving ANYTHING during replays!
+        }
         using (BinaryWriter writer = new BinaryWriter(File.Open(playerDataPath, FileMode.OpenOrCreate))) {
             long length = new FileInfo(playerDataPath).Length;
             while (length < playerDataGlobalSize + (6 * playerDataPlayerSize)) { //Fill up with zero's if it's not full. The file should be 6*playerDataPlayerSize + global stuff size bytes
@@ -237,5 +246,148 @@ public static class SaveLoad
             }
         }
         return false;
+    }
+
+    /* File format:
+     * Replay format (byte) = 1 byte (So different replay types won't clash if I ever were to make more)
+     * Replay name (char[32]) = 64 bytes (32 chars and chars are 16-bit)
+     * Playertype, difficulty = 1 byte (6 different players and 5 different difficulties = 30 possible things.)
+     * Level 1 starting point in this file (int) = 4 bytes (-1 = undefined)
+     * Level 2 starting point in this file (int) = 4 bytes (-1 = undefined)
+     * ...
+     * Level 7 starting point in this file (int) = 4 bytes (-1 = undefined)
+     * 
+       Leveldata:
+     * Levelid (byte) = 1 byte
+     * Seed (int) = 4 bytes (There aren't the same results if you skip levels)
+     * Playerstartpos x (float) = 4 bytes
+     * Playerstartpos y (float) = 4 bytes
+     * Playerstart lifepieces (byte) = 1 byte
+     * Playerstart bombpieces (byte) = 1 byte
+     * Playerstart power (byte) = 1 byte (there are 81 different possible values so it fits within a byte)
+     * Playerstart value (int) = 4 bytes
+     * Playerstart graze (int) = 4 bytes
+         Inputs in timestamp order:
+     * Timestamp (short) = 2 bytes
+     * Key(s) (byte) = 1 byte
+     * Duration (short) = 2 bytes
+     */
+    //Where the binarywriter should be when it should write "Level 1 starting point in this file (int)".
+    private const int LevelStartStartIndex = 1/*format*/ + 64/*32 chars*/ + 1/*player/difficulty*/;
+    public static void SaveReplay(ReplayData replayData, int index) {
+        (new FileInfo(replayBasePath)).Directory.Create(); //Create the basedirectory if it doesn't exist
+        if (ReplayManager.isReplay) {
+            return; //Should NOT be saving ANYTHING during replays!
+        }
+        using (BinaryWriter writer = new BinaryWriter(File.Open(replayBasePath + "replay" + index + ".touaoiirpy", FileMode.Create))) {
+            writer.Write((byte)0); //Replay format
+            for (int i = 0; i < 32; i++) { //Name
+                writer.Write((short)replayData.replayName[i]);
+            }
+            writer.Write(replayData.playerAndDifficulty);
+            writer.Seek(28, SeekOrigin.Current); //Skip the 7 ints describing where everything is because we don't know that yet.
+            int currentLevelLocation = (int)writer.BaseStream.Position; //This starts at LevelStartStartIndex.
+            /* What should happen here:
+             * It skips the 28 bytes where the locations of level data should be going
+             * If leveldata is empty the n'th 4 bytes of those 28 should be "-1"(int).
+             * If not, it should be the binarywriter location of where the level data starts (int).*/
+            for (int level = 0; level < 7; level++) { //Put in data for all levels.
+                if (replayData.inputData[level] == null ||
+                    replayData.inputData[level].Count == 0) {
+                    //If there's no movement data for this level it obviously shouldn't be in the replay.
+                    //So don't do anything with it.
+                    currentLevelLocation = (int)writer.BaseStream.Position;
+                    writer.Seek(LevelStartStartIndex + level*4 /*each level takes up 4 bytes*/, SeekOrigin.Begin);
+                    writer.Write(-1);
+                    //Go back to where we were.
+                    writer.Seek(currentLevelLocation, SeekOrigin.Begin);
+                } else {
+                    //There is movement data for this level so it's important.
+                    currentLevelLocation = (int)writer.BaseStream.Position;
+                    writer.Seek(LevelStartStartIndex + level * 4, SeekOrigin.Begin);
+                    //This thing is important, so its position is not -1.
+                    writer.Write(currentLevelLocation);
+                    //Go back to where we were.
+                    writer.Seek(currentLevelLocation, SeekOrigin.Begin);
+                    writer.Write((byte)level); //level id
+                    writer.Write(replayData.seed[level]); //seed
+                    writer.Write(replayData.startpos[level].x); //player start x
+                    writer.Write(replayData.startpos[level].y); //player start y
+                    writer.Write(replayData.lives[level]); //lives
+                    writer.Write(replayData.bombs[level]); //bombs
+                    writer.Write(replayData.power[level]); //power
+                    writer.Write(replayData.value[level]); //value
+                    writer.Write(replayData.graze[level]); //graze
+                    List<InputData> data = replayData.inputData[level];
+                    for(int i = 0; i < data.Count; i++) {
+                        //All input data (in order because the list is in order)
+                        writer.Write(data[i].startingTick);
+                        //for(int j = 0; j < 8; j++) { //the eight different keys
+                        //    writer.Write(data[i].keys[j]);
+                        //}
+                        //Writing a SINGLE byte because writing 8 bools uses up 8 bytes of space. And that's just wasteful.
+                        writer.Write(NumberFunctions.BoolsToByte(data[i].keys));
+                        writer.Write(data[i].duration);
+                    }
+                }
+                //End of the for loop. No need to mess with the writer because the beginning of either branch inside the for loop does that already.
+            }
+        }
+    }
+
+    /// <summary>
+    /// Load the replay by name Replays/replay[index].touaoiirpy.
+    /// </summary>
+    public static void LoadReplay(int index) {
+        (new FileInfo(replayBasePath)).Directory.Create(); //Create the basedirectory if it doesn't exist
+        if (!File.Exists(replayBasePath + "replay" + index + ".touaoiirpy")) {
+            //TODO: Error handling
+            Debug.LogError("That replay file doesn't exist; asked index: " + index);
+            return;
+        }
+
+        using (BinaryReader reader = new BinaryReader(File.OpenRead(replayBasePath + "replay" + index + ".touaoiirpy"))) {
+            //reader.BaseStream.Seek(location, SeekOrigin.<>);
+            byte replayFormat = reader.ReadByte();
+            if (replayFormat == 0) {
+                char[] name = new char[32];
+                for (int i = 0; i < 32; i++) {
+                    name[i] = (char)reader.ReadInt16();
+                }
+                Debug.Log(new string(name));
+                byte playerAndDifficulty = reader.ReadByte();
+                Debug.Log("Character: " + (GlobalHelper.Character)(playerAndDifficulty % 6));
+                Debug.Log("Difficulty: " + (GlobalHelper.Difficulty)(playerAndDifficulty / 6));
+                int[] levelStarts = new int[7];
+                for (int i = 0; i < 7; i++) {
+                    levelStarts[i] = reader.ReadInt32();
+                    Debug.Log("Stage " + i + " byte index: " + levelStarts[i]);
+                }
+                for (int i = 0; i < 7; i++) {
+                    if (levelStarts[i] == -1) {
+                        Debug.Log("Level " + i + " isn't a level.");
+                        continue; //Not actually a level.
+                    }
+                    Debug.Log("<b>Level " + i + " IS a level.</b>");
+                    reader.BaseStream.Seek(levelStarts[i], SeekOrigin.Begin);
+                    byte levelId = reader.ReadByte();
+                    Debug.Log("Numeric Level ID: " + levelId);
+                    int seed = reader.ReadInt32();
+                    Debug.Log("Level seed: " + seed);
+                    float pposx = reader.ReadSingle();
+                    float pposy = reader.ReadSingle();
+                    Debug.Log("Player start: " + pposx + "x, " + pposy + "y.");
+                    byte plives = reader.ReadByte();
+                    byte pbombs = reader.ReadByte();
+                    byte ppower = reader.ReadByte();
+                    uint pvalue = reader.ReadUInt32();
+                    int pgraze = reader.ReadInt32();
+                    Debug.Log("Player start stats: L: " + plives + " B: " + pbombs + " P: " + ppower + " V: " + pvalue + " G: " + pgraze);
+
+                }
+            } else {
+                Debug.LogError("Unsupported replay format " + replayFormat);
+            }
+        }
     }
 }

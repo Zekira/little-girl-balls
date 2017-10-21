@@ -99,7 +99,7 @@ public static class NumberFunctions {
     /// </summary>
     public static byte SetBit(byte b, int index, bool what) {
         if (index < 0 || index >= 8) {
-            Debug.LogError("Can't modify a byte with index " + index + "; Not [0,8>");
+            Debug.LogError("Can't modify a byte with index " + index + "; Not [0,8)");
             return b;
         }
         if (what) {
@@ -114,9 +114,20 @@ public static class NumberFunctions {
     /// </summary>
     public static bool GetBit(byte b, int index) {
         if (index < 0 || index >= 8) {
-            Debug.LogError("Can't read a byte with index " + index + "; Not [0,8>");
+            Debug.LogError("Can't read a byte with index " + index + "; Not [0,8)");
             return false;
         }
         return ((b >> index) & 1) == 1;
+    }
+
+    /// <summary>
+    /// Turn (up to) 8 different bits into a byte.
+    /// </summary>
+    public static byte BoolsToByte(bool[] bools) {
+        byte returnByte = 0;
+        for (int i = 0; i < 8; i++) {
+            returnByte = SetBit(returnByte, i, bools[i]);
+        }
+        return returnByte;
     }
 }

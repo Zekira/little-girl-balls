@@ -165,8 +165,9 @@ public class Bullet : MonoBehaviour {
     /// Sets the sprite of a bullet to be something, or if it's materialising, what the bullet should be. To be used when the bullet already exists
     /// </summary>
     public void SetSprite(Sprite sprite) {
-        materialisation.actualSprite = sprite;
-        if (!materialisation.enabled) {
+        if (materialisation.enabled) {
+            materialisation.actualSprite = sprite;
+        } else {
             SetSpriteDirectly(sprite);
         }
     }
