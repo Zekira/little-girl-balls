@@ -10,17 +10,12 @@ public class PlayerStats : MonoBehaviour {
     public static ulong highscore = 0;
     public static ulong[] stageHighScore = { 0, 0, 0, 0, 0, 0, 0 }; //TODO: do stuff with this
     public static ulong score = 0;
-    [Range(0,6)]
     public static byte lives = 3;
     public const byte piecesToLife = 3;
-    [Range(0,piecesToLife)]
     public static byte lifepieces = 0;
-    [Range(0,6)]
     public static byte bombs = 2;
     public const byte piecesToBomb = 4;
-    [Range(0,piecesToBomb)]
     public static byte bombpieces = 0;
-    [Range(0,400)]
     public static int power = 0;
     public static uint value = 10000;
     public static int graze = 0;

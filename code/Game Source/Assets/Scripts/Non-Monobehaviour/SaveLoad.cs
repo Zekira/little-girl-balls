@@ -268,9 +268,9 @@ public static class SaveLoad
      * Playerstart value (int) = 4 bytes
      * Playerstart graze (int) = 4 bytes
          Inputs in timestamp order:
-     * Timestamp (short) = 2 bytes
+     * Timestamp (int) = 4 bytes
      * Key(s) (byte) = 1 byte
-     * Duration (short) = 2 bytes
+     * Duration (int) = 4 bytes
      */
     //Where the binarywriter should be when it should write "Level 1 starting point in this file (int)".
     private const int LevelStartStartIndex = 1/*format*/ + 64/*32 chars*/ + 1/*player/difficulty*/;
@@ -338,14 +338,15 @@ public static class SaveLoad
     /// <summary>
     /// Load the replay by name Replays/replay[index].touaoiirpy.
     /// </summary>
-    public static void LoadReplay(int index) {
+    public static ReplayData LoadReplay(int index) {
         (new FileInfo(replayBasePath)).Directory.Create(); //Create the basedirectory if it doesn't exist
         if (!File.Exists(replayBasePath + "replay" + index + ".touaoiirpy")) {
             //TODO: Error handling
             Debug.LogError("That replay file doesn't exist; asked index: " + index);
-            return;
+            return new ReplayData();
         }
 
+        ReplayData loadedReplay = new ReplayData();
         using (BinaryReader reader = new BinaryReader(File.OpenRead(replayBasePath + "replay" + index + ".touaoiirpy"))) {
             //reader.BaseStream.Seek(location, SeekOrigin.<>);
             byte replayFormat = reader.ReadByte();
@@ -355,12 +356,14 @@ public static class SaveLoad
                     name[i] = (char)reader.ReadInt16();
                 }
                 Debug.Log(new string(name));
+                loadedReplay.replayName = name;
                 byte playerAndDifficulty = reader.ReadByte();
                 Debug.Log("Character: " + (GlobalHelper.Character)(playerAndDifficulty % 6));
                 Debug.Log("Difficulty: " + (GlobalHelper.Difficulty)(playerAndDifficulty / 6));
+                loadedReplay.playerAndDifficulty = playerAndDifficulty;
                 int[] levelStarts = new int[7];
                 for (int i = 0; i < 7; i++) {
-                    levelStarts[i] = reader.ReadInt32();
+                    levelStarts[i] = reader.ReadInt32(); //variable to know where to jump to for each level
                     Debug.Log("Stage " + i + " byte index: " + levelStarts[i]);
                 }
                 for (int i = 0; i < 7; i++) {
@@ -374,20 +377,50 @@ public static class SaveLoad
                     Debug.Log("Numeric Level ID: " + levelId);
                     int seed = reader.ReadInt32();
                     Debug.Log("Level seed: " + seed);
+                    loadedReplay.seed[i] = seed;
                     float pposx = reader.ReadSingle();
                     float pposy = reader.ReadSingle();
                     Debug.Log("Player start: " + pposx + "x, " + pposy + "y.");
+                    loadedReplay.startpos[i] = new Vector2(pposx, pposy);
                     byte plives = reader.ReadByte();
+                    loadedReplay.lives[i] = plives;
                     byte pbombs = reader.ReadByte();
+                    loadedReplay.bombs[i] = pbombs;
                     byte ppower = reader.ReadByte();
+                    loadedReplay.power[i] = ppower;
                     uint pvalue = reader.ReadUInt32();
+                    loadedReplay.value[i] = pvalue;
                     int pgraze = reader.ReadInt32();
+                    loadedReplay.graze[i] = pgraze;
                     Debug.Log("Player start stats: L: " + plives + " B: " + pbombs + " P: " + ppower + " V: " + pvalue + " G: " + pgraze);
-
+                    /* What should happen here:
+                     * Keep looping so long as:
+                     * 1) if there is a level after here with higher position, that position is reached
+                     * 2) if there is not a level with higher position, until the end of the file
+                     */
+                    int[] nextLevelPositions = new int[7-i-1]; //If we're at level 2 (i=1), there are 5 more to check (i=2 through i=6)
+                    for (int j = i+1; j < 7; j++) {
+                        nextLevelPositions[j-i-1] = levelStarts[j]; //Need to scale the j=[i+1,6] to [0,something] because arrays don't start at i+1.
+                    }
+                    int readerGoal;
+                    if (Mathf.Max(nextLevelPositions) != -1) { //The situation where all other levels aren't just -1.
+                        readerGoal = Mathf.Max(nextLevelPositions);
+                    } else {
+                        readerGoal = (int)new FileInfo(replayBasePath + "replay" + index + ".touaoiirpy").Length;
+                    }
+                    while (reader.BaseStream.Position < readerGoal) {
+                        int keyStartTick = reader.ReadInt32();
+                        byte keyId = reader.ReadByte();
+                        int keyDuration = reader.ReadInt32();
+                        Debug.Log("Key at time " + keyStartTick + " with duration " + keyDuration + " with id " + keyId);
+                        loadedReplay.inputData[i].Add(new InputData(keyStartTick, keyDuration, NumberFunctions.ByteToBools(keyId)));
+                    }
                 }
             } else {
                 Debug.LogError("Unsupported replay format " + replayFormat);
             }
+
+            return loadedReplay;
         }
     }
 }

@@ -130,4 +130,12 @@ public static class NumberFunctions {
         }
         return returnByte;
     }
+
+    public static bool[] ByteToBools(byte b) {
+        bool[] returnBool = new bool[8];
+        for (int i = 0; i < 8; i++) {
+            returnBool[i] = GetBit(b, i);
+        }
+        return returnBool;
+    }
 }

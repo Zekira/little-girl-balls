@@ -72,7 +72,7 @@ public class PlayerMovement : MonoBehaviour {
 	void Update () {
         //Check restart
         if (Input.GetKeyDown(Config.keyRestart)) {
-            SceneSwitcher.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty);
+            SceneSwitcher.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty, ReplayManager.isReplay);
         }
         //Check if pause
         if (Input.GetKeyDown(Config.keyPause)) {
@@ -86,58 +86,22 @@ public class PlayerMovement : MonoBehaviour {
                 GlobalHelper.autoCollectItems = false;
             }
 
-            //Check for going focused/unfocused
-            if (Input.GetKeyDown(Config.keyFocus)) {
-                focused = true;
-                thisTransform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
-                thisTransform.GetChild(0).localScale = new Vector3(PlayerStats.hitboxRadius, PlayerStats.hitboxRadius, 1f);
-            } else if (Input.GetKeyUp(Config.keyFocus)) {
-                focused = false;
-                thisTransform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
-            }
+            //Things that should ONLY happen when not in replays: All game input handling.
+            if (!ReplayManager.isReplay) {
 
-            //Things that shouldn't happen when in deathanimation: movement, shot, and bombs
-            if (!PlayerStats.noMovement) {
-                if (Input.GetKeyDown(Config.keyBomb) && !GlobalHelper.dialogue && PlayerStats.bombs > 0) { //todo: graphics
-                    //Set the spellcard bonus to failure. Does basically nothing if there's no spell active except eat like .01ms
-                    GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
-                    GlobalHelper.stats.invincibility = 300;
-                    PlayerStats.SetBombs((byte)(PlayerStats.bombs - 1), PlayerStats.bombpieces);
-                    GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(0.3f, BulletClear.BulletClearType.BOMB,300);
-                }
-                //Check what movement should happen
-                moveLeft = Input.GetKey(Config.keyLeft) ? 1 : 0;
-                moveRight = Input.GetKey(Config.keyRight) ? 1 : 0;
-                moveUp = Input.GetKey(Config.keyUp) ? 1 : 0;
-                moveDown = Input.GetKey(Config.keyDown) ? 1 : 0;
+                //Check for going focused/unfocused
+                CheckFocus(Input.GetKeyDown(Config.keyFocus), Input.GetKeyUp(Config.keyFocus));
 
-                moveDirection = new Vector2(moveRight - moveLeft, moveUp - moveDown);
+                //Things that shouldn't happen when in deathanimation: movement, shot, and bombs
+                if (!PlayerStats.noMovement) {
+                    //Bombs
+                    CheckBomb(Input.GetKeyDown(Config.keyBomb));
 
-                //Set relevant sprites
-                animator.SetSprites(stationairySprites);
-                if (moveDirection.x < 0) {
-                    animator.SetSprites(moveLeftSprites);
-                } else if (moveDirection.x > 0) {
-                    animator.SetSprites(moveRightSprites);
-                }
+                    //Movement
+                    CheckMove(Input.GetKey(Config.keyLeft), Input.GetKey(Config.keyRight), Input.GetKey(Config.keyUp), Input.GetKey(Config.keyDown));
 
-                //Apply focused speed
-                totalSpeedMultiplier = focused ? focusedSpeed : unfocusedSpeed;
-                //Apply correct speed when going diagonally
-                totalSpeedMultiplier *= (moveLeft + moveRight) * (moveUp + moveDown) > 0 ? oneOverSqrtOfTwo : 1f;
-                //Change position; Domains: x: [-4,4], y: [-4.65,4.65]
-                thisTransform.position = new Vector3(
-                    Mathf.Clamp(PlayerPosGetter.playerPos.x + totalSpeedMultiplier * moveDirection.x, -4f, 4f),
-                    Mathf.Clamp(PlayerPosGetter.playerPos.y + totalSpeedMultiplier * moveDirection.y, -4.65f, 4.65f),
-                    PlayerPosGetter.playerPos.z);
-
-                //Check whether the player is shooting or advancing dialogue.
-                if (Input.GetKey(Config.keyShoot) && !GlobalHelper.dialogue && shotCooldown <= 0) {
-                    Shoot();
-                } else if (GlobalHelper.dialogue && Input.GetKey(Config.keySkip)) {
-                    dialogueManager.AdvanceDialogue();
-                } else if (GlobalHelper.dialogue && Input.GetKeyDown(Config.keyShoot)) {
-                    dialogueManager.AdvanceDialogue();
+                    //Check whether the player is shooting or advancing dialogue.
+                    CheckShootOrSkip(Input.GetKey(Config.keyShoot), Input.GetKey(Config.keySkip), Input.GetKeyDown(Config.keyShoot));
                 }
             }
             if (shotCooldown > 0) {
@@ -148,6 +112,75 @@ public class PlayerMovement : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.Slash)) {
                 Debug.Log(GlobalHelper.currentBullets + "/" + GlobalHelper.backupBullets.Count + "/" + GlobalHelper.totalFiredBullets);
             }
+        }
+    }
+
+    /// <summary>
+    /// Move the player in one of the eight directions depending on the four inputs.
+    /// </summary>
+    public void CheckMove(bool left, bool right, bool up, bool down) {
+        //Check what movement should happen
+        moveLeft = left ? 1 : 0;
+        moveRight = right ? 1 : 0;
+        moveUp = up ? 1 : 0;
+        moveDown = down ? 1 : 0;
+
+        moveDirection = new Vector2(moveRight - moveLeft, moveUp - moveDown);
+
+        //Set relevant sprites
+        animator.SetSprites(stationairySprites);
+        if (moveDirection.x < 0) {
+            animator.SetSprites(moveLeftSprites);
+        } else if (moveDirection.x > 0) {
+            animator.SetSprites(moveRightSprites);
+        }
+
+        //Apply focused speed
+        totalSpeedMultiplier = focused ? focusedSpeed : unfocusedSpeed;
+        //Apply correct speed when going diagonally
+        totalSpeedMultiplier *= (moveLeft + moveRight) * (moveUp + moveDown) > 0 ? oneOverSqrtOfTwo : 1f;
+        //Change position; Domains: x: [-4,4], y: [-4.65,4.65]
+        thisTransform.position = new Vector3(
+            Mathf.Clamp(PlayerPosGetter.playerPos.x + totalSpeedMultiplier * moveDirection.x, -4f, 4f),
+            Mathf.Clamp(PlayerPosGetter.playerPos.y + totalSpeedMultiplier * moveDirection.y, -4.65f, 4.65f),
+            PlayerPosGetter.playerPos.z);
+    }
+
+    /// <summary>
+    /// When the player presses the bomb button. This checks whether the bomb is valid, and if so, goes off.
+    /// </summary>
+    public void CheckBomb(bool bomb) {
+        if (bomb && !GlobalHelper.dialogue && PlayerStats.bombs > 0) { //todo: graphics
+            //Set the spellcard bonus to failure. Does basically nothing if there's no spell active except eat like .01ms
+            GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
+
+            GlobalHelper.stats.invincibility = 300;
+            PlayerStats.SetBombs((byte)(PlayerStats.bombs - 1), PlayerStats.bombpieces);
+            GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(0.3f, BulletClear.BulletClearType.BOMB, 300);
+        }
+    }
+
+    /// <summary>
+    /// Checks 
+    /// </summary>
+    public void CheckShootOrSkip(bool shoot, bool skip, bool shootdown) {
+        if (shoot && !GlobalHelper.dialogue && shotCooldown <= 0) {
+            Shoot();
+        } else if (skip && GlobalHelper.dialogue) {
+            dialogueManager.AdvanceDialogue();
+        } else if (shootdown && GlobalHelper.dialogue) {
+            dialogueManager.AdvanceDialogue();
+        }
+    }
+
+    public void CheckFocus(bool down, bool up) {
+        if (down) {
+            focused = true;
+            thisTransform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
+            thisTransform.GetChild(0).localScale = new Vector3(PlayerStats.hitboxRadius, PlayerStats.hitboxRadius, 1f);
+        } else if (up) {
+            focused = false;
+            thisTransform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
         }
     }
 

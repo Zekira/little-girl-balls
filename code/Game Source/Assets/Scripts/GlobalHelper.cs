@@ -31,6 +31,7 @@ public class GlobalHelper : MonoBehaviour {
     public static short mainFinishes = 0;
     public static short extraAttempts = 0;
     public static short extraFinishes = 0;
+    public static int randomSeed;
 
     //Things set via the inspector
     public Transform tspellcardBackground, tcanvas, tbossUI, tlevelManager, tPlayer, tuiVariable,t3d;
@@ -52,6 +53,8 @@ public class GlobalHelper : MonoBehaviour {
    //Things that make finding objects in other classes easier, but only make sense when in a level: the only time GlobalHelper is a script attached to an object.
     //Also sets up things needed for the level and such as this only runs when loading the level.
     void Awake() {
+        randomSeed = random.Next();
+        random = new System.Random(randomSeed);
         thisHelper = this;
         SaveLoad.LoadPlayerData(character);
         spellcardBackground = tspellcardBackground;
