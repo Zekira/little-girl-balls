@@ -20,7 +20,7 @@ public class GlobalHelper : MonoBehaviour {
     /// <summary>
     /// Warning: "level" is one-indexed. 1 through 6 are stage levels, 7th is extra.
     /// </summary>
-    public static int level = 1;
+    public static int level = 0;
     public enum Difficulty { EASY, NORMAL, HARD, LUNATIC, EXTRA };
     public static Difficulty difficulty = Difficulty.LUNATIC;
     public enum Character { RACHEL_A, RACHEL_B, RACHEL_C, WHATEVER_A, WHATEVER_B, WHATEVER_C };
@@ -34,7 +34,7 @@ public class GlobalHelper : MonoBehaviour {
     public static int randomSeed;
 
     //Things set via the inspector
-    public Transform tspellcardBackground, tcanvas, tbossUI, tlevelManager, tPlayer, tuiVariable,t3d;
+    public Transform tspellcardBackground, tcanvas, tbossUI, tlevelManager, tuiVariable,t3d;
 
     //These things only make sense in a level, so they're defined, but initialised in Awake()
     public static Transform spellcardBackground,canvas,secondCounter,msecondCounter, uiVariable;
@@ -57,7 +57,7 @@ public class GlobalHelper : MonoBehaviour {
             randomSeed = random.Next();
             random = new System.Random(randomSeed);
         } else {
-            random = new System.Random(ReplayManager.currentReplay.seed[level-1]);
+            random = new System.Random(ReplayManager.currentReplay.seed[level]);
         }
         thisHelper = this;
         SaveLoad.LoadPlayerData(character);
@@ -66,7 +66,7 @@ public class GlobalHelper : MonoBehaviour {
         bossUI = tbossUI.gameObject;
         secondCounter = bossUI.transform.Find("TimerSeconds");
         msecondCounter = bossUI.transform.Find("TimerMilliseconds");
-        player = tPlayer.gameObject;
+        player = GameObject.FindWithTag("Player");
         levelManager = tlevelManager.gameObject;
         uiVariable = tuiVariable;
         parent3d = t3d.gameObject;
@@ -88,7 +88,7 @@ public class GlobalHelper : MonoBehaviour {
         activeBosses = 0;
 
         if (difficulty != Difficulty.EXTRA) {
-            bestUnlockedStage[(int)difficulty] = (byte)Mathf.Max(level, bestUnlockedStage[(int)difficulty]);
+            bestUnlockedStage[(int)difficulty] = (byte)Mathf.Max(level-1, bestUnlockedStage[(int)difficulty]);
         }
 
         uiVariable.Find("Difficulty").GetComponent<RawImage>().texture = (Texture2D)Resources.Load("Graphics/Difficulty/" + (int)difficulty);

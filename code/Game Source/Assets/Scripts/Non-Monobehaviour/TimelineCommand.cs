@@ -8,10 +8,12 @@ public class TimelineCommand {
     public static Dictionary<int, List<TimelineCommand>> commandLists = new Dictionary<int, List<TimelineCommand>>();
     //private static Dictionary<int, int> commandListsIds = new Dictionary<int, int>();
 
-    public enum Command { STARTTIMELINE, DIALOGUE, STARTMUSIC, BOSSNAME, REPEAT, ENDREPEAT, IF, ELSE, ENDIF, WAIT, BOSSWAIT, BULLETPROPERTY, ENEMYPROPERTY, LASERPROPERTY, CREATEBULLET, CREATEENEMY, CREATELASER,
-                        MOVEPARENT, MOVEPARENTPOLAR, DESTROYPARENT, SETPARENTHEALTH, ANGLETOPLAYER, ANGLETOPOINT, GETPOSITION, GETPLAYERPOSITION, RANDOM, MOVETOWARDSPOINT,
-                        SET, ADD, SUB, MUL, DIV, MOD, POW, SIN, ASIN, COS, ACOS, TAN, ATAN, ABS,
-                        ATTACKDURATION, LOG };
+    //todo: the rotatable things from scriptrotation optional "absolute" to ignore rotation
+    public enum Command { STARTTIMELINE, LOADLEVEL, DIALOGUE, STARTMUSIC, BOSSNAME, REPEAT, ENDREPEAT, IF, ELSE, ENDIF, WAIT, BOSSWAIT,
+                          BULLETPROPERTY, ENEMYPROPERTY, LASERPROPERTY, CREATEBULLET, CREATEENEMY, CREATELASER,
+                          MOVEPARENT, MOVEPARENTPOLAR, DESTROYPARENT, SETPARENTHEALTH, ANGLETOPLAYER, ANGLETOPOINT, GETPOSITION, GETPLAYERPOSITION, RANDOM, MOVETOWARDSPOINT,
+                          SET, ADD, SUB, MUL, DIV, MOD, POW, SIN, ASIN, COS, ACOS, TAN, ATAN, ABS,
+                          ATTACKDURATION, LOG };
     public enum EnemyProperty { SCALE, ATTACKPATH, ID, MAXHEALTH, BOSS, BOSSPORTRAIT, DROPVALUE, DROPPOWER, DROPSCORE, STARTPOS, BASESCORE };
     public enum BulletProperty { MOVEMENT, MOVEMENTPOLAR, ENEMYSHOT, SCALE, ID, INNERCOLOR, OUTERCOLOR, ROTATION, POSITION, RELATIVEPOS, CLEARIMMUNE, SCRIPTROTATION, ADVANCEDPATH, HARMLESS, SNAKELENGTH };
     public enum LaserProperty { WARNDURATION, SHOTDURATION, OUTERCOLOR, INNERCOLOR, WIDTH, MOVEMENT, POSITION, RELATIVEPOS, ROTATION, ROTATIONSPEED };
@@ -108,6 +110,7 @@ public class TimelineCommand {
                             foundError = true;
                         }
                         break;
+                    case "loadlevel":
                     case "repeat":
                     case "wait":
                     case "createbullet":

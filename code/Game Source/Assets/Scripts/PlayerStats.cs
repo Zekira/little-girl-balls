@@ -4,8 +4,11 @@ using UnityEngine.UI;
 /// <summary>
 /// A class made to keep track of different scores. In hindsight, this should've either been static and not monobehaviour, or a monobehaviour to some kind of master object.
 /// </summary>
-public class PlayerStats : MonoBehaviour {
+public class PlayerStats : MonoBehaviour
+{
 
+    //Bool that decides whether or not to do the stuff in start.
+    public static bool newPlayer = true;
     //Things that go on the right
     public static ulong highscore = 0;
     public static ulong[] stageHighScore = { 0, 0, 0, 0, 0, 0, 0 }; //TODO: do stuff with this
@@ -24,13 +27,14 @@ public class PlayerStats : MonoBehaviour {
     //Other stuff
     public int invincibility = 0;
     public static bool noMovement = false;
-    public static Vector3 startPosition;
+    public static int firstStage;
+    public static Vector3 respawnPosition;
     public static float hitboxRadius = 0.15f;
     public static float grazeRadius = 1f;
     public static uint totalTimePlayed = 0;
     public static uint timePlayed = 0;
 
-    public static Sprite[] bombSprites = { null, null, null, null, null}; //Both set in the inspector
+    public static Sprite[] bombSprites = { null, null, null, null, null }; //Both set in the inspector
     public static Sprite[] lifeSprites = { null, null, null, null };
 
     private static GameObject UIVariable;
@@ -40,9 +44,7 @@ public class PlayerStats : MonoBehaviour {
     }
 
     void Start() {
-        UIVariable = GlobalHelper.uiVariable.gameObject;
-        //Setting the startposition
-        startPosition = transform.position;
+        UIVariable = GlobalHelper.uiVariable.gameObject; //This needs to update no matter what.
         //Initialising the bomb piece textures
         Texture2D texture;
         for (int i = 0; i <= piecesToBomb; i++) {
@@ -55,11 +57,43 @@ public class PlayerStats : MonoBehaviour {
             lifeSprites[i] = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
         }
         //Set the scores to their values
-        SetLives(7, 0);
-        SetBombs(2, 0);
-        SetHighscore(highscore);
-        SetScore(0);
-        SetPower(0, false);
+        if (!ReplayManager.isReplay && newPlayer) {
+            SetLives(3, 0);
+            SetBombs(2, 0);
+            SetHighscore(highscore);
+            SetScore(0);
+            SetPower(0, false);
+            SetGraze(0);
+            SetValue(10000);
+            firstStage = GlobalHelper.level;
+        } else if (!ReplayManager.isReplay && !newPlayer) {
+            //This is reached when the player already exists because we come from an existing stage.
+            //Update the newly loaded UI to be correct still.
+            SetLives(lives, lifepieces);
+            SetBombs(bombs, bombpieces);
+            SetHighscore(highscore);
+            SetScore(score);
+            SetPower(power, false);
+            SetGraze(graze);
+            SetValue(value);
+        } else { //it's a replay.
+            SetLives((byte)(ReplayManager.currentReplay.lives[GlobalHelper.level] / piecesToLife),
+                (byte)(ReplayManager.currentReplay.lives[GlobalHelper.level] % piecesToLife));
+            SetBombs((byte)(ReplayManager.currentReplay.bombs[GlobalHelper.level] / piecesToBomb),
+                (byte)(ReplayManager.currentReplay.bombs[GlobalHelper.level] % piecesToBomb));
+            SetPower(ReplayManager.currentReplay.power[GlobalHelper.level] * 5);
+            SetGraze(ReplayManager.currentReplay.graze[GlobalHelper.level]);
+            SetValue(ReplayManager.currentReplay.value[GlobalHelper.level]);
+        }
+        //No need to update the replay's value for this level here, that's done by replaymanager.
+        if (newPlayer == false) {
+            //We don't want to have another player ruining everything. So kill this instance.
+            DestroyImmediate(this.gameObject); //Destroy immediate because this thing shouldn't have ANY impact on ANYTHING WHATSOEVER. And it's only called once so the overhead isn't the largest.
+            return;
+        }
+        //Setting the startposition
+        respawnPosition = transform.position;
+        newPlayer = false;
     }
 
     void Update() {
@@ -121,8 +155,8 @@ public class PlayerStats : MonoBehaviour {
         if (bombs == 6) { //You can't have bombpieces when you're already full.
             part = 0;
         }
-        bombs = total > 6 ? (byte) 6 : total;
-        bombpieces = part > (piecesToBomb-1) ? (byte) (piecesToBomb-1) : part;
+        bombs = total > 6 ? (byte)6 : total;
+        bombpieces = part > (piecesToBomb - 1) ? (byte)(piecesToBomb - 1) : part;
         for (int i = 0; i < 6; i++) { //Beware the off-by-1-errors left there forever. (Could either make the code more readable, or make a joke. Obvious which one is better.)
             if (i < total) {
                 GameObject.FindWithTag("UIBombs").transform.Find("Bomb" + i).GetComponent<Image>().sprite = bombSprites[4];
@@ -146,8 +180,8 @@ public class PlayerStats : MonoBehaviour {
             part = 0;
         }
         lives = total > 6 ? (byte)6 : total;
-        lifepieces = part > (piecesToLife-1) ? (byte)(piecesToLife-1) : part;
-        for (int i = 0; i < 6; i++) { 
+        lifepieces = part > (piecesToLife - 1) ? (byte)(piecesToLife - 1) : part;
+        for (int i = 0; i < 6; i++) {
             if (i < total) {
                 GameObject.FindWithTag("UILives").transform.Find("Life" + i).GetComponent<Image>().sprite = lifeSprites[3];
             } else if (i == total && part != 0) {
@@ -241,5 +275,10 @@ public class PlayerStats : MonoBehaviour {
     public static void SetHighscore(ulong amount) {
         highscore = amount;
         UIVariable.transform.Find("HighScore").GetComponent<Text>().text = NumberFunctions.Commafy(highscore);
+    }
+
+    public static void SetValue(uint amount) {
+        value = (amount / 10) * 10; //End in a nice round number. Can't have scores ending in not-0, right?
+        UIVariable.transform.Find("Value").GetComponent<Text>().text = NumberFunctions.Commafy(value);
     }
 }

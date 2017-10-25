@@ -58,7 +58,7 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
     void Start() {
         GlobalHelper.Tick += TickTimeline;
         if (levelTimeline) {
-            patternPath = "Timelines/Stages/Stage" + GlobalHelper.level + "_" + ((int)GlobalHelper.difficulty);
+            patternPath = "Timelines/Stages/Stage" + (GlobalHelper.level + 1 /*The level files are 1-indexed, everything else 0-indexed*/) + "_" + ((int)GlobalHelper.difficulty);
         }
         parentEnemy = transform.GetComponent<Enemy>();
         if (patternPath == "") {
@@ -117,6 +117,9 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                     TimelineInterprenter newpattern = transform.gameObject.AddComponent<TimelineInterprenter>();
                     newpattern.patternPath = currentCommand.args[0];
                     continue;
+                case TimelineCommand.Command.LOADLEVEL:
+                    SceneSwitcher.ContinueToLevel(Mathf.RoundToInt(ParseValue(currentCommand.args[0])));
+                    break;
                 case TimelineCommand.Command.DIALOGUE:
                     GlobalHelper.levelManager.GetComponent<DialogueManager>().StartDialogue(currentCommand.args[0]);
                     cooldown = 1;

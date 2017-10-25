@@ -65,6 +65,8 @@ endrepeat;
 
 wait(70);
 
+loadlevel(1);
+
 enemyproperty(fairy2, startpos, 0, 5);
 createenemy(fairy2);
 
@@ -221,3 +223,5 @@ createenemy(boss);
 bosswait;
 wait(120);
 dialogue(Text/Dialogue/Stage1_End);
+
+loadlevel(1);

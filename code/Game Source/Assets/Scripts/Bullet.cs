@@ -3,7 +3,6 @@ using System.Collections;
 /// <summary>
 /// A class representing the physical instance of a BulletTemplate attached to a GameObject.
 /// </summary>
-/// //TODO: Make collisions' wait between checks longer if further from the player.
 public class Bullet : MonoBehaviour {
 
     public BulletTemplate bulletTemplate;

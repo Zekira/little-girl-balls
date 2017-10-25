@@ -247,22 +247,22 @@ public class Menu : MonoBehaviour {
                         break;
                     //Level select items
                     case "PlayStage1":
-                        SceneSwitcher.LoadLevel(1, GlobalHelper.difficulty, false);
+                        SceneSwitcher.LoadLevel(0, GlobalHelper.difficulty, false);
                         break;
                     case "PlayStage2":
-                        SceneSwitcher.LoadLevel(2, GlobalHelper.difficulty, false);
+                        SceneSwitcher.LoadLevel(1, GlobalHelper.difficulty, false);
                         break;
                     case "PlayStage3":
-                        SceneSwitcher.LoadLevel(3, GlobalHelper.difficulty, false);
+                        SceneSwitcher.LoadLevel(2, GlobalHelper.difficulty, false);
                         break;
                     case "PlayStage4":
-                        SceneSwitcher.LoadLevel(4, GlobalHelper.difficulty, false);
+                        SceneSwitcher.LoadLevel(3, GlobalHelper.difficulty, false);
                         break;
                     case "PlayStage5":
-                        SceneSwitcher.LoadLevel(5, GlobalHelper.difficulty, false);
+                        SceneSwitcher.LoadLevel(4, GlobalHelper.difficulty, false);
                         break;
                     case "PlayStage6":
-                        SceneSwitcher.LoadLevel(6, GlobalHelper.difficulty, false);
+                        SceneSwitcher.LoadLevel(5, GlobalHelper.difficulty, false);
                         break;
                     //Character items TODOs
                     case "Char1":
@@ -435,7 +435,7 @@ public class Menu : MonoBehaviour {
 
     private void AfterPlayerSelect() {
         if (previousSelectedMenuItems[previousSelectedMenuItems.Count - 1].name == "Extra") {
-            SceneSwitcher.LoadLevel(7, GlobalHelper.Difficulty.EXTRA, false);
+            SceneSwitcher.LoadLevel(6, GlobalHelper.Difficulty.EXTRA, false);
         } else if (previousSelectedMenuItems[previousSelectedMenuItems.Count - 2].name == "Play") {
             SceneSwitcher.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty, false);
         } else if (previousSelectedMenuItems[previousSelectedMenuItems.Count - 2].name == "Practice") {

@@ -72,7 +72,7 @@ public class PlayerMovement : MonoBehaviour {
 	void Update () {
         //Check restart
         if (Input.GetKeyDown(Config.keyRestart)) {
-            SceneSwitcher.LoadLevel(GlobalHelper.level, GlobalHelper.difficulty, ReplayManager.isReplay);
+            SceneSwitcher.LoadLevel(PlayerStats.firstStage, GlobalHelper.difficulty, ReplayManager.isReplay);
         }
         //Check if pause
         if (Input.GetKeyDown(Config.keyPause)) {
@@ -111,6 +111,7 @@ public class PlayerMovement : MonoBehaviour {
             //Debug stuff
             if (Input.GetKeyDown(KeyCode.Slash)) {
                 Debug.Log(GlobalHelper.currentBullets + "/" + GlobalHelper.backupBullets.Count + "/" + GlobalHelper.totalFiredBullets);
+                Debug.Log(PlayerStats.score);
             }
         }
     }

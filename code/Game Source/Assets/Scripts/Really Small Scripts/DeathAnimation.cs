@@ -15,7 +15,7 @@ public class DeathAnimation : MonoBehaviour {
                 scale = 0;
                 time = 0;
                 PlayerStats.noMovement = false;
-                transform.parent.position = PlayerStats.startPosition;
+                transform.parent.position = PlayerStats.respawnPosition;
                 gameObject.SetActive(false);
             }
             time++;

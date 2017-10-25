@@ -83,6 +83,8 @@ General functions:
   starttimeline(<path>);
 path: The place the timeline is located within within the Resources folder in unity. TODO: From outside unity.
 Attaches another Timeline to this object that starts getting executed immediatly.
+  loadlevel(<[0,6]>)
+Load a level. 0-5 are the regular levels designated by 1_x t/m 6_x, and 6 is extra level 7_x (but why would you call that one). I know, quality consistency.
   dialogue(<path>);
 path: The place the dialogue is located within within the Resources folder in unity. TODO: From outside unity.
 Starts the dialogue. Timelines normally don't run while dialogue is active.

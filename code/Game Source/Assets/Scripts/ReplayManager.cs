@@ -5,9 +5,10 @@ using UnityEngine;
 public class ReplayManager : MonoBehaviour {
 
     public static bool isReplay = false; //False during normal gameplay, true during replays.
-    private static int timer = 0;
-    private int[] keytimers = { 0, 0, 0, 0, 0, 0, 0, 0 };
-    private int[] keyindices = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    private static int[] timer = { 0, 0, 0, 0, 0, 0, 0 }; //One timer for each level.
+    private static int[] keylevels = { -1, -1, -1, -1, -1, -1, -1, -1 }; //-1 stands for "no data" and is used to check if there is data from a key that's down.
+    private static int[] keytimers = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    private static int[] keyindices = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
     public static ReplayData currentReplay = new ReplayData();
 
@@ -17,45 +18,44 @@ public class ReplayManager : MonoBehaviour {
     private PlayerMovement playerMovement;
     private bool[] all, prevAllKeys = new bool[] { false, false, false, false, false, false, false, false };
 
-    private void Awake() {
-        playerMovement = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
-        timer = 0;
+    public void Awake() {
+        playerMovement = GlobalHelper.player.GetComponent<PlayerMovement>();
+        timer[GlobalHelper.level] = 0;
         if (!isReplay) {
             currentReplay.SetPlayerStats(
                 (byte)(PlayerStats.lifepieces + PlayerStats.lives * PlayerStats.piecesToLife),
                 (byte)(PlayerStats.bombpieces + PlayerStats.bombs * PlayerStats.piecesToBomb),
                 (byte)(PlayerStats.power / 5),
                 PlayerStats.value,
-                PlayerStats.graze, GlobalHelper.level - 1);
+                PlayerStats.graze, GlobalHelper.level);
             //Check any input down from before the level was started, and thus isn't registered by the Input.GetKeyDown part in Update().
             for (int i = 0; i < 8; i++) {
-                if (Input.GetKey(KeyData.GetKeyCode(i))) {
-                    keytimers[i] = 0;
-                    currentReplay.AddInputData(new InputData(-1, -1, KeyData.keys[0]), GlobalHelper.level - 1); //placeholder for when the data should actually be recorded
-                    keyindices[i] = currentReplay.inputData[GlobalHelper.level - 1].Count - 1;
-                }
+                InterruptKeyDown(i);
             }
         } else {
-            inputToCheck = currentReplay.inputData[GlobalHelper.level-1];
+            //Playerstats are get in PlayerStat's start
+            inputToCheck = currentReplay.inputData[GlobalHelper.level];
         }
     }
 
     private void Update() {
         if (!GlobalHelper.paused) {
-            timer++; //This way unpressing/pressing keys won't result in unknown behaviour, just zero-length stuff.
+            timer[GlobalHelper.level]++; //This way unpressing/pressing keys won't result in unknown behaviour, just zero-length stuff.
         }
         if (!isReplay) {
             for (int i = 0; i < 8; i++) {
                 if (Input.GetKeyDown(KeyData.GetKeyCode(i))) {
+                    keylevels[i] = GlobalHelper.level;
                     keytimers[i] = 0;
-                    currentReplay.AddInputData(new InputData(-1, -1, KeyData.keys[0]), GlobalHelper.level - 1); //placeholder for when the data should actually be recorded
-                    keyindices[i] = currentReplay.inputData[GlobalHelper.level - 1].Count - 1;
+                    currentReplay.AddInputData(new InputData(-1, -1, KeyData.keys[0]), keylevels[i]); //placeholder for when the data should actually be recorded
+                    keyindices[i] = currentReplay.inputData[GlobalHelper.level].Count - 1;
                 }
                 if (!GlobalHelper.paused && Input.GetKey(KeyData.GetKeyCode(i))) { //Same comment as on the timer++; inside the non-pause check.
                     keytimers[i]++; //This triggers in the SAME tick as above! be wary. This causes everything (except menu stuff) to have at least length 1.
                 }
                 if (Input.GetKeyUp(KeyData.GetKeyCode(i))) {
-                    currentReplay.inputData[GlobalHelper.level - 1][keyindices[i]] = new InputData(timer - keytimers[i], keytimers[i], KeyData.keys[i]);
+                    currentReplay.inputData[keylevels[i]][keyindices[i]] = new InputData(timer[GlobalHelper.level] - keytimers[i], keytimers[i], KeyData.keys[i]);
+                    keylevels[i] = -1;
                     //There can be zero-length shit in here but that doesn't really matter.
                 }
             }
@@ -63,7 +63,10 @@ public class ReplayManager : MonoBehaviour {
                 currentReplay.SetPlayerAndDifficulty(GlobalHelper.character, GlobalHelper.difficulty);
                 currentReplay.SetReplayName("This is honestly a 32 char name!");
                 currentReplay.SetSeed(GlobalHelper.randomSeed, 0);
-                currentReplay.SetStartPos(PlayerStats.startPosition, GlobalHelper.level - 1);
+                currentReplay.SetStartPos(PlayerStats.respawnPosition, GlobalHelper.level);
+                for (int i = 0; i < 8; i++) {
+                    InterruptKeyDown(i);
+                }
                 SaveLoad.SaveReplay(currentReplay, 0);
             }
         }
@@ -75,7 +78,7 @@ public class ReplayManager : MonoBehaviour {
         if (isReplay && !GlobalHelper.paused) {
             //Check for new input
             while ((currentInputDataIndex < inputToCheck.Count) &&
-                (inputToCheck[currentInputDataIndex].startingTick <= timer)) { //If it's new, it needs to be executed THIS tick.
+                (inputToCheck[currentInputDataIndex].startingTick <= timer[GlobalHelper.level])) { //If it's new, it needs to be executed THIS tick.
                 currentInput.Add(inputToCheck[currentInputDataIndex]);
                 currentInputDataIndex++;
             }
@@ -83,7 +86,7 @@ public class ReplayManager : MonoBehaviour {
             //Throw away old input
             List<int> indicesToRemove = new List<int>();
             for (int i = currentInput.Count-1; i >= 0; i--) { //Top down because the order of removal matters: removing 1,2,3 gives a different result from 3,2,1, the latter I want.
-                if (timer >= currentInput[i].startingTick + currentInput[i].duration) { // >= because length 0 should be killed, but length 1 should have 1 tick of time. Inductively length n will have n ticks.
+                if (timer[GlobalHelper.level] >= currentInput[i].startingTick + currentInput[i].duration) { // >= because length 0 should be killed, but length 1 should have 1 tick of time. Inductively length n will have n ticks.
                     indicesToRemove.Add(i);
                 }
             }
@@ -114,6 +117,24 @@ public class ReplayManager : MonoBehaviour {
     /// </summary>
     public static void LoadReplayIntoGame(ReplayData replay, int level) {
         currentReplay = replay;
-        SceneSwitcher.LoadLevel(level+1, (GlobalHelper.Difficulty)(replay.playerAndDifficulty / 6), true);
+        SceneSwitcher.LoadLevel(level, (GlobalHelper.Difficulty)(replay.playerAndDifficulty / 6), true);
+    }
+
+    /// <summary>
+    /// If a key is pressed, act as if it were to go up and down again in a single tick. Useful for splitting replays somewhere, e.g. between levels or at the start/end of the game.
+    /// </summary>
+    public static void InterruptKeyDown(int keyId) {
+        //Check for old input, and if it is there, apply it.
+        if (keylevels[keyId] != -1) {
+            currentReplay.inputData[keylevels[keyId]][keyindices[keyId]] = new InputData(timer[GlobalHelper.level] - keytimers[keyId], keytimers[keyId], KeyData.keys[keyId]);
+            keylevels[keyId] = -1;
+        }
+        //Check if there's still new input, and put it in the to-check list.
+        if (Input.GetKey(KeyData.GetKeyCode(keyId))) {
+            keylevels[keyId] = GlobalHelper.level;
+            keytimers[keyId] = 0;
+            currentReplay.AddInputData(new InputData(-1, -1, KeyData.keys[0]), keylevels[keyId]); //placeholder for when the data should actually be recorded
+            keyindices[keyId] = currentReplay.inputData[GlobalHelper.level].Count - 1;
+        }
     }
 }
