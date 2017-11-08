@@ -92,12 +92,20 @@ public class TimelineCommand {
                         }
                         break;
                     case "starttimeline":
-                    case "dialogue":
                         if (args.Count != 1) {
                             Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 1.");
                             foundError = true;
                         } else if (Resources.Load(args[0]) == null) {
                             Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): file \"<i>" + args[0] + "</i>\" does not exist.");
+                            foundError = true;
+                        }
+                        break;
+                    case "dialogue":
+                        if (args.Count != 1) {
+                            Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 1.");
+                            foundError = true;
+                        } else if (Resources.Load(args[0] + "_" + GlobalHelper.GetCharacterType(GlobalHelper.character)) == null) {
+                            Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): file \"<i>" + args[0] + "_" + GlobalHelper.GetCharacterType(GlobalHelper.character) + "</i>\" does not exist.");
                             foundError = true;
                         }
                         break;

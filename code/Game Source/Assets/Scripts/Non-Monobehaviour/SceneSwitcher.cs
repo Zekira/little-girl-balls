@@ -8,6 +8,13 @@ public class SceneSwitcher  {
     /// (Re)sets the scene to the level scene with level "level". This makes it a NEW GAME. So only use it for starting a playthrough, it resets scores and everything.
     /// </summary>
     public static void LoadLevel(int level, GlobalHelper.Difficulty difficulty, bool replay) {
+        //Kill all old players; this is a new game so they aren't needed
+        if (!replay) { //Restart recording the replay in this new game
+            ReplayManager.currentReplay = new ReplayData();
+        }
+        foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player")) {
+            GameObject.Destroy(player);
+        }
         PlayerStats.newPlayer = true;
         LoadLevelWithoutExtras(level, difficulty, replay);
     }

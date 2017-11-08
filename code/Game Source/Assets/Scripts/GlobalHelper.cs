@@ -17,9 +17,6 @@ public class GlobalHelper : MonoBehaviour {
 
     public static bool paused = false;
 
-    /// <summary>
-    /// Warning: "level" is one-indexed. 1 through 6 are stage levels, 7th is extra.
-    /// </summary>
     public static int level = 0;
     public enum Difficulty { EASY, NORMAL, HARD, LUNATIC, EXTRA };
     public static Difficulty difficulty = Difficulty.LUNATIC;
@@ -97,6 +94,10 @@ public class GlobalHelper : MonoBehaviour {
         autoCollectItems = false;
         paused = false;
     
+    }
+
+    public static int GetCharacterType(Character character) {
+        return (int)character <= 2 ? 0 : 1; //Returns 0 when playing as rachel, 1 when playing as <whatever>
     }
 
     //Event to tick all timelineinterprenters

@@ -121,7 +121,7 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                     SceneSwitcher.ContinueToLevel(Mathf.RoundToInt(ParseValue(currentCommand.args[0])));
                     break;
                 case TimelineCommand.Command.DIALOGUE:
-                    GlobalHelper.levelManager.GetComponent<DialogueManager>().StartDialogue(currentCommand.args[0]);
+                    GlobalHelper.levelManager.GetComponent<DialogueManager>().StartDialogue(currentCommand.args[0] + "_" + GlobalHelper.GetCharacterType(GlobalHelper.character));
                     cooldown = 1;
                     return; //The next loop should not happen immediatly, but after the dialogue has been processed. That's checked within Update().
                 case TimelineCommand.Command.STARTMUSIC:

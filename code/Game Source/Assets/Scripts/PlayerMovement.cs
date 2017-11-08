@@ -5,14 +5,14 @@ using System.Collections;
 /// </summary>
 public class PlayerMovement : MonoBehaviour {
 
-    public float unfocusedSpeed = 0.1f;
-    public float focusedSpeed = 0.04f;
-    public bool focused = false;
+    public static float unfocusedSpeed = 0.1f;
+    public static float focusedSpeed = 0.04f;
+    public static bool focused = false;
     private const float oneOverSqrtOfTwo = 0.707106781f;
     private Vector2 moveDirection;
     private int moveLeft, moveRight, moveUp, moveDown;
     private float totalSpeedMultiplier;
-    private int shotCooldown = 2;
+    private static int shotCooldown = 2;
     private DialogueManager dialogueManager;
     private BulletTemplate mainShot = BulletTemplate.basic;
     private BulletTemplate subShot = BulletTemplate.basic;
@@ -22,6 +22,9 @@ public class PlayerMovement : MonoBehaviour {
     public Sprite[] moveLeftSprites, moveRightSprites,stationairySprites;    
 
     void Awake() {
+        if (!PlayerStats.newPlayer) { //No need to do anything because this is a duplicate player that will get deleted.
+            return;
+        }
         focused = false;
         thisTransform = transform;
         SaveLoad.LoadApplyConfig(); //Just in case
@@ -111,7 +114,7 @@ public class PlayerMovement : MonoBehaviour {
             //Debug stuff
             if (Input.GetKeyDown(KeyCode.Slash)) {
                 Debug.Log(GlobalHelper.currentBullets + "/" + GlobalHelper.backupBullets.Count + "/" + GlobalHelper.totalFiredBullets);
-                Debug.Log(PlayerStats.score);
+                Debug.Log(shotCooldown + " shot: " + Input.GetKey(Config.keyShoot) + " dialogue:" + GlobalHelper.dialogue);
             }
         }
     }

@@ -54,7 +54,7 @@ public class ReplayManager : MonoBehaviour {
                     keytimers[i]++; //This triggers in the SAME tick as above! be wary. This causes everything (except menu stuff) to have at least length 1.
                 }
                 if (Input.GetKeyUp(KeyData.GetKeyCode(i))) {
-                    currentReplay.inputData[keylevels[i]][keyindices[i]] = new InputData(timer[GlobalHelper.level] - keytimers[i], keytimers[i], KeyData.keys[i]);
+                    currentReplay.inputData[keylevels[i]][keyindices[i]] = new InputData(timer[keylevels[i]] - keytimers[i], keytimers[i], KeyData.keys[i]);
                     keylevels[i] = -1;
                     //There can be zero-length shit in here but that doesn't really matter.
                 }
@@ -97,7 +97,7 @@ public class ReplayManager : MonoBehaviour {
             //Combine all keypresses into a single bool array to work with
             bool[] allKeys = new bool[] { false, false, false, false, false, false, false, false };
             foreach(InputData i in currentInput) {
-                allKeys = KeyData.Combine(i.keys, allKeys);
+                allKeys = KeyData.Combine(i.keys, allKeys); //This leaves a -1,-1,1 in the replay data but that doesn't matter as it's simply ignored, and needed for further replays.
             }
 
             //Actually do stuff with the input
@@ -126,11 +126,13 @@ public class ReplayManager : MonoBehaviour {
     public static void InterruptKeyDown(int keyId) {
         //Check for old input, and if it is there, apply it.
         if (keylevels[keyId] != -1) {
-            currentReplay.inputData[keylevels[keyId]][keyindices[keyId]] = new InputData(timer[GlobalHelper.level] - keytimers[keyId], keytimers[keyId], KeyData.keys[keyId]);
+            Debug.Log("A: " + System.DateTime.Now + ": " + keyId + " " + keylevels[keyId] + " " + keyindices[keyId] + " " + keytimers[keyId]);
+            currentReplay.inputData[keylevels[keyId]][keyindices[keyId]] = new InputData(timer[keylevels[keyId]] - keytimers[keyId], keytimers[keyId], KeyData.keys[keyId]);
             keylevels[keyId] = -1;
         }
         //Check if there's still new input, and put it in the to-check list.
         if (Input.GetKey(KeyData.GetKeyCode(keyId))) {
+            Debug.Log("B: " + System.DateTime.Now + ": " + keyId + " " + keylevels[keyId] + " " + keyindices[keyId] + " " + keytimers[keyId]);
             keylevels[keyId] = GlobalHelper.level;
             keytimers[keyId] = 0;
             currentReplay.AddInputData(new InputData(-1, -1, KeyData.keys[0]), keylevels[keyId]); //placeholder for when the data should actually be recorded
