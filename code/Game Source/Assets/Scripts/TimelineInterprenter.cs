@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are still, maybe something else
     public string patternPath = "";
     public bool levelTimeline = false; //Set via inspector
-    public int commandsId;
+    private int commandsId;
     private Dictionary<int, float> numberVars = new Dictionary<int, float>();
     private Dictionary<int, BulletTemplate> bulletTemplateVars = new Dictionary<int, BulletTemplate>();
     private Dictionary<int, EnemyTemplate> enemyTemplateVars = new Dictionary<int, EnemyTemplate>();

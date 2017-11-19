@@ -35,9 +35,11 @@ public class SceneSwitcher  {
         /* Data needed to be kept:
          * Everything from PlayerStats. Update the startpos.
          */
-        GameObject.DontDestroyOnLoad(GlobalHelper.player); //Keep the old player where he was
         ReplayManager.currentReplay.startpos[level] = PlayerPosGetter.playerPos;
-        LoadLevelWithoutExtras(level, GlobalHelper.difficulty, ReplayManager.isReplay);
+        //LoadLevelWithoutExtras(level, GlobalHelper.difficulty, ReplayManager.isReplay); //NOT using this as loading a scene RESETS ALL INPUT until it's being pressed again (so it usually even needs a release!). So I can't use that because in bullet hells input is usually held throughout stage changes.
+        GlobalHelper.level = level;
+        //Start the level by changing and resetting LevelManager's timelineinterprenter
+        GlobalHelper.levelManager.GetComponent<TimelineInterprenter>().Reset("Timelines/Stages/Stage" + (GlobalHelper.level + 1 /*The level files are 1-indexed, everything else 0-indexed*/) + "_" + ((int)GlobalHelper.difficulty));
     }
 
     public static void LoadMenu() {
