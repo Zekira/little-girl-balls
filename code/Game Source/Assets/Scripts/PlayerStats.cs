@@ -7,8 +7,6 @@ using UnityEngine.UI;
 public class PlayerStats : MonoBehaviour
 {
 
-    //Bool that decides whether or not to do the stuff in start.
-    public static bool newPlayer = true;
     //Things that go on the right
     public static ulong highscore = 0;
     public static ulong[] stageHighScore = { 0, 0, 0, 0, 0, 0, 0 }; //TODO: do stuff with this
@@ -57,7 +55,7 @@ public class PlayerStats : MonoBehaviour
             lifeSprites[i] = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
         }
         //Set the scores to their values
-        if (!ReplayManager.isReplay && newPlayer) {
+        if (!ReplayManager.isReplay) {
             SetLives(3, 0);
             SetBombs(2, 0);
             SetHighscore(highscore);
@@ -66,16 +64,6 @@ public class PlayerStats : MonoBehaviour
             SetGraze(0);
             SetValue(10000);
             firstStage = GlobalHelper.level;
-        } else if (!ReplayManager.isReplay && !newPlayer) {
-            //This is reached when the player already exists because we come from an existing stage.
-            //Update the newly loaded UI to be correct still.
-            SetLives(lives, lifepieces);
-            SetBombs(bombs, bombpieces);
-            SetHighscore(highscore);
-            SetScore(score);
-            SetPower(power, false);
-            SetGraze(graze);
-            SetValue(value);
         } else { //it's a replay.
             SetLives((byte)(ReplayManager.currentReplay.lives[GlobalHelper.level] / piecesToLife),
                 (byte)(ReplayManager.currentReplay.lives[GlobalHelper.level] % piecesToLife));
@@ -85,15 +73,8 @@ public class PlayerStats : MonoBehaviour
             SetGraze(ReplayManager.currentReplay.graze[GlobalHelper.level]);
             SetValue(ReplayManager.currentReplay.value[GlobalHelper.level]);
         }
-        //No need to update the replay's value for this level here, that's done by replaymanager.
-        if (newPlayer == false) {
-            //We don't want to have another player ruining everything. So kill this instance.
-            DestroyImmediate(this.gameObject); //Destroy immediate because this thing shouldn't have ANY impact on ANYTHING WHATSOEVER. And it's only called once so the overhead isn't the largest.
-            return;
-        }
         //Setting the startposition
         respawnPosition = transform.position;
-        newPlayer = false;
     }
 
     void Update() {

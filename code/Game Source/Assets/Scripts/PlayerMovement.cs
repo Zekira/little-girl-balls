@@ -22,9 +22,6 @@ public class PlayerMovement : MonoBehaviour {
     public Sprite[] moveLeftSprites, moveRightSprites,stationairySprites;    
 
     void Awake() {
-        if (!PlayerStats.newPlayer) { //No need to do anything because this is a duplicate player that will get deleted.
-            return;
-        }
         focused = false;
         thisTransform = transform;
         SaveLoad.LoadApplyConfig(); //Just in case

@@ -11,14 +11,20 @@ public class ReplayManager : MonoBehaviour {
     private static int[] keyindices = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
     public static ReplayData currentReplay = new ReplayData();
+    public static ReplayManager replayManager;
 
     private int currentInputDataIndex = 0; //For replays to keep track of how far along we are.
     private List<InputData> inputToCheck = new List<InputData>();
     private List<InputData> currentInput = new List<InputData>(); //During replays to keep track of what's currently happening.
     private PlayerMovement playerMovement;
-    private bool[] all, prevAllKeys = new bool[] { false, false, false, false, false, false, false, false };
+    private bool[] prevAllKeys = new bool[] { false, false, false, false, false, false, false, false };
 
     public void Awake() {
+        timer = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
+        keylevels = new int[] { -1, -1, -1, -1, -1 , -1, -1, -1 };
+        keytimers = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
+        keyindices = new int[] {  0, 0, 0, 0, 0, 0, 0, 0 };
+        replayManager = this;
         playerMovement = GlobalHelper.player.GetComponent<PlayerMovement>();
         timer[GlobalHelper.level] = 0;
         if (!isReplay) {
@@ -29,9 +35,7 @@ public class ReplayManager : MonoBehaviour {
                 PlayerStats.value,
                 PlayerStats.graze, GlobalHelper.level);
             //Check any input down from before the level was started, and thus isn't registered by the Input.GetKeyDown part in Update().
-            for (int i = 0; i < 8; i++) {
-                InterruptKeyDown(i);
-            }
+            InterruptAllKeys();
         } else {
             //Playerstats are get in PlayerStat's start
             inputToCheck = currentReplay.inputData[GlobalHelper.level];
@@ -64,9 +68,7 @@ public class ReplayManager : MonoBehaviour {
                 currentReplay.SetReplayName("This is honestly a 32 char name!");
                 currentReplay.SetSeed(GlobalHelper.randomSeed, 0);
                 currentReplay.SetStartPos(PlayerStats.respawnPosition, GlobalHelper.level);
-                for (int i = 0; i < 8; i++) {
-                    InterruptKeyDown(i);
-                }
+                InterruptAllKeys();
                 SaveLoad.SaveReplay(currentReplay, 0);
             }
         }
@@ -109,6 +111,23 @@ public class ReplayManager : MonoBehaviour {
             }
 
             prevAllKeys = allKeys;
+        }
+    }
+
+    public void MakeReplayNewstageCompatible() {
+        if (isReplay) {
+            inputToCheck = currentReplay.inputData[GlobalHelper.level];
+            currentInputDataIndex = 0;
+        } else {
+            InterruptAllKeys();
+        }
+        
+    }
+
+    //Splits all keys if pressed.
+    private static void InterruptAllKeys() {
+        for (int i = 0; i < 8; i++) {
+            InterruptKeyDown(i);
         }
     }
 

@@ -304,7 +304,7 @@ public class TimelineCommand {
                 //commandListsIds.Add(hash, commandLists.Count - 1);
                 return hash;
             }
-#endif
+#endif //UNITY_EDITOR
             foreach (string instruction in instructions) { //Turn the file into a list of commands
                                                            //If the first thing is a comment, skip it.
                 if (instruction.Length == 0 || instruction[0] == '/' || instruction[0] == '#') {
