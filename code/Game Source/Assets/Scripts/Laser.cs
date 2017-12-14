@@ -47,7 +47,6 @@ public class Laser : MonoBehaviour {
                     grazeCooldown = 4;
                 }
             } else if (timer > template.warnDuration + template.shotDuration) {
-                //GetComponent<Bullet>().Deactivate();
                 Destroy(this.gameObject);
             }
 

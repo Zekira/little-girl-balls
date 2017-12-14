@@ -121,7 +121,6 @@ public class Menu : MonoBehaviour {
             if (Input.GetKeyDown(Config.keyBomb)) {
                 GoBack(true);
             }
-            //transform.position += new Vector3(Random.Range(-1.75f, 1.75f), Random.Range(-1.75f, 1.75f), 0f); //test debug to see if selected
             if (Input.GetKey(Config.keyUp) && cooldown <= 0) {
                 Deselect();
                 prevObject.GetComponent<Menu>().Select(false);

@@ -10,7 +10,7 @@ public class BulletListFiller : MonoBehaviour {
             ThingCreator.CreateEmptyBullet();
             ThingCreator.CreateEmptyBullet();
         } else {
-            Debug.Log("Spawned 3k bullets. bye");
+            Debug.Log("[Info] Spawned 3k bullets");
             Destroy(this);
         }
 	}

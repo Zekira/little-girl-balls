@@ -110,8 +110,8 @@ public class PlayerMovement : MonoBehaviour {
 
             //Debug stuff
             if (Input.GetKeyDown(KeyCode.Slash)) {
-                Debug.Log(GlobalHelper.currentBullets + "/" + GlobalHelper.backupBullets.Count + "/" + GlobalHelper.totalFiredBullets);
-                Debug.Log(shotCooldown + " shot: " + Input.GetKey(Config.keyShoot) + " dialogue:" + GlobalHelper.dialogue);
+                Debug.Log("[Info] " + GlobalHelper.currentBullets + "/" + GlobalHelper.backupBullets.Count + "/" + GlobalHelper.totalFiredBullets);
+                Debug.Log("[Info] " + shotCooldown + " shot: " + Input.GetKey(Config.keyShoot) + " dialogue:" + GlobalHelper.dialogue);
             }
         }
     }

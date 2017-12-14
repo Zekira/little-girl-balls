@@ -30,9 +30,6 @@ public class BulletClear : MonoBehaviour {
     /// Clears the bullets from top to bottom, lowering "speed" units per tick, ending after "time" ticks, no matter whether it reached the end or not.
     /// Put as a function in this class because Unity stops any coroutine when its caller is destroyed.
     /// </summary>
-    /// <param name="speed"></param>
-    /// <param name="type"></param>
-    /// <param name="time"></param>
     public void Clear(float speed, BulletClearType type, int time) {
         StartCoroutine(CoClear(speed, type, time));
     }

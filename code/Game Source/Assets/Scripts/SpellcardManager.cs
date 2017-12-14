@@ -118,7 +118,6 @@ public class SpellcardManager : MonoBehaviour {
     /// <summary>
     /// Moves the name, bonus, and history from bottom left to top right. Topright = (33,320), bottomleft = (-640,-340)
     /// </summary>
-    /// <returns></returns>
     private IEnumerator MoveSpellUI() {
         RectTransform uiTransform = spellcardUI.GetComponent<RectTransform>();
         float progress = 0f;

@@ -83,7 +83,6 @@ public class Enemy : MonoBehaviour {
     /// <summary>
     /// Starts what should happen when this enemy takes damage: reducing the health, and if it's a boss, updating the healthbar.
     /// </summary>
-    /// <param name="amount">The amount of damage dealt.</param>
     public void TakeDamage(int amount) {
         if (template.isBoss) {
             if (!timeoutAttack) {
@@ -97,7 +96,6 @@ public class Enemy : MonoBehaviour {
     /// <summary>
     /// Drops items, goes to the next attack / dies, optionally updates the UI (mainly if it's a boss), clears bullets.
     /// </summary>
-    /// <param name="byDamage">Whether it happened by being damaged.</param>
     private void NextPhase(bool byDamage, int delay) {
         timeoutAttack = false;
         if (byDamage) {
@@ -160,7 +158,6 @@ public class Enemy : MonoBehaviour {
     /// <summary>
     /// Stops all current TimelineInterprenters, effectively killing all attacks, and starts a new one.
     /// </summary>
-    /// <param name="index">The index of the template.attackPath to use.</param>
     private IEnumerator DelayedStartNewAttack(int index, int delay) {
         midDelay = true;
         foreach (TimelineInterprenter i in GetComponents<TimelineInterprenter>()) {
@@ -220,7 +217,6 @@ public class Enemy : MonoBehaviour {
     /// <summary>
     /// Updates the healthbar and sets the health to "to".
     /// </summary>
-    /// <param name="to">What to set the health to.</param>
     public void UpdateHealthbar(int to) {
         health = Mathf.Min(template.maxHealth, to);
         UpdateHealthbar();
@@ -239,7 +235,6 @@ public class Enemy : MonoBehaviour {
     /// <summary>
     /// Set how many stars should be displayed below the boss name.
     /// </summary>
-    /// <param name="num">The number of stars</param>
     private void SetUIStarCount(int num) {
         num = num < 0 ? 0 : num;
         Transform uiAttacks = GlobalHelper.bossUI.transform.Find("Attacks");

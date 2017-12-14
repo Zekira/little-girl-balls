@@ -8,7 +8,6 @@ public class Snake {
     public static Bullet bulleti, bulletj;
 
     public Snake(Transform[] bullets) {
-        //bullets = GlobalHelper.RemoveInactive(bullets); this is a bandaid that does not fix the underlying problem which i havent even found yet
         if (bullets.Length == 1) {
             bullets[0].GetComponent<Bullet>().relatedSnake = this;
             bullets[0].GetComponent<Bullet>().relatedSnakeIndex = 0;
@@ -77,7 +76,7 @@ public class Snake {
         for (int i = 0; i < bullets.Length; i++) {
             if (i < index) {
                 if (!bullets[i].gameObject.activeSelf) {
-                    Debug.Log(bullets[i].GetComponent<Bullet>().relatedSnakeIndex + " relindex:" + index);
+                    Debug.LogError("[Error] Something went wrong, info: " + bullets[i].GetComponent<Bullet>().relatedSnakeIndex + " relindex:" + index);
                 }
                 bullets1[i] = bullets[i];
             } else if (i > index) {

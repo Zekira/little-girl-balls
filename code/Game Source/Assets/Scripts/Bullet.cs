@@ -42,7 +42,6 @@ public class Bullet : MonoBehaviour {
         grazed = false;
         deactivated = false;
         updateCollisions = 0;
-        /*posx = 0; posy = 0; posz = 0; Set by GlobalHelper.Createbullet()*/ /*deltax = 0; deltay = 0; done every tick without saving data, doesn't need to be reset*/
     }
 
 	void Update () {

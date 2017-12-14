@@ -113,7 +113,7 @@ public class PlayerStats : MonoBehaviour
             transform.Find("DeathAnimation").gameObject.SetActive(true);
             invincibility = 210;
             if (lives == 0) { //Getting hit with zero lives in stock is a bad idea.
-                Debug.Log("<b>Game over lul git good skrub</b>");
+                Debug.Log("[Info] <b>Game over lul git good skrub</b>");
             } else {
                 SetLives(--lives, lifepieces);
                 SetBombs(2, bombpieces);
@@ -130,8 +130,6 @@ public class PlayerStats : MonoBehaviour
     /// <summary>
     /// Sets the bomb count and updates the UI.
     /// </summary>
-    /// <param name="total">Amount of full bombs</param>
-    /// <param name="part">Amount of parts in the next bomb</param>
     public static void SetBombs(byte total, byte part) {
         if (bombs == 6) { //You can't have bombpieces when you're already full.
             part = 0;
@@ -154,8 +152,6 @@ public class PlayerStats : MonoBehaviour
     /// Sets the life count and updates the UI.
     /// Everything works the same as SetBombs();
     /// </summary>
-    /// <param name="total">Amount of full lives</param>
-    /// <param name="part">Amount of parts in the next life</param>
     public static void SetLives(byte total, byte part) {
         if (lives == 6) {
             part = 0;

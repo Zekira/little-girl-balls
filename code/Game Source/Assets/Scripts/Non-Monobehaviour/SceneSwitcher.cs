@@ -12,9 +12,6 @@ public class SceneSwitcher  {
         if (!replay) { //Restart recording the replay in this new game
             ReplayManager.currentReplay = new ReplayData();
         }
-        //foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player")) {
-        //    GameObject.Destroy(player);
-        //}
         LoadLevelWithoutExtras(level, difficulty, replay);
     }
 
@@ -35,7 +32,6 @@ public class SceneSwitcher  {
          * Everything from PlayerStats. Update the startpos.
          */
         ReplayManager.currentReplay.startpos[level] = PlayerPosGetter.playerPos;
-        //LoadLevelWithoutExtras(level, GlobalHelper.difficulty, ReplayManager.isReplay); //NOT using this as loading a scene RESETS ALL INPUT until it's being pressed again (so it usually even needs a release!). So I can't use that because in bullet hells input is usually held throughout stage changes.
         GlobalHelper.level = level;
         //Make the replay think we're in stage 2 and split input so it's registered at the start of the stage
         ReplayManager.replayManager.MakeReplayNewstageCompatible();

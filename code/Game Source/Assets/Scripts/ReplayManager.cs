@@ -145,13 +145,11 @@ public class ReplayManager : MonoBehaviour {
     public static void InterruptKeyDown(int keyId) {
         //Check for old input, and if it is there, apply it.
         if (keylevels[keyId] != -1) {
-            Debug.Log("A: " + System.DateTime.Now + ": " + keyId + " " + keylevels[keyId] + " " + keyindices[keyId] + " " + keytimers[keyId]);
             currentReplay.inputData[keylevels[keyId]][keyindices[keyId]] = new InputData(timer[keylevels[keyId]] - keytimers[keyId], keytimers[keyId], KeyData.keys[keyId]);
             keylevels[keyId] = -1;
         }
         //Check if there's still new input, and put it in the to-check list.
         if (Input.GetKey(KeyData.GetKeyCode(keyId))) {
-            Debug.Log("B: " + System.DateTime.Now + ": " + keyId + " " + keylevels[keyId] + " " + keyindices[keyId] + " " + keytimers[keyId]);
             keylevels[keyId] = GlobalHelper.level;
             keytimers[keyId] = 0;
             currentReplay.AddInputData(new InputData(-1, -1, KeyData.keys[0]), keylevels[keyId]); //placeholder for when the data should actually be recorded

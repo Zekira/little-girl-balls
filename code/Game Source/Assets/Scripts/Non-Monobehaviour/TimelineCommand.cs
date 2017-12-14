@@ -7,9 +7,7 @@ public class TimelineCommand
 {
 
     public static Dictionary<int, List<TimelineCommand>> commandLists = new Dictionary<int, List<TimelineCommand>>();
-    //private static Dictionary<int, int> commandListsIds = new Dictionary<int, int>();
-
-    //todo: the rotatable things from scriptrotation optional "absolute" to ignore rotation
+    
     public enum Command
     {
         STARTTIMELINE, LOADLEVEL, DIALOGUE, STARTMUSIC, BOSSNAME, REPEAT, ENDREPEAT, IF, ELSE, ENDIF, WAIT, BOSSWAIT,
@@ -32,8 +30,6 @@ public class TimelineCommand
 
     //The string represents what would be found in the text, while its index determines what it's replaced with
     private static List<string> numberVars, bulletTemplateVars, enemyTemplateVars, laserTemplateVars;
-
-    //private static Regex whitespaceRegex = new Regex(@"\s+");
 
     public TimelineCommand(Command cmd, List<string> arguments) {
         command = cmd;
@@ -67,7 +63,6 @@ public class TimelineCommand
     }
 
     public static int GetCommands(string path) {
-        //int returnInt;
         int hash = path.GetHashCode(); //Paths must be unique so this's usually unique
 
         if (!commandLists.ContainsKey(hash)) { //If it's already a list of commands recognised, no need to parse it again. Otherwise, parse is needed.
@@ -96,34 +91,34 @@ public class TimelineCommand
                     case "destroyparent":
                     case "bosswait":
                         if (args.Count != 0) {
-                            Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected none.");
+                            Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected none.");
                             foundError = true;
                         }
                         break;
                     case "starttimeline":
                         if (args.Count != 1) {
-                            Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 1.");
+                            Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 1.");
                             foundError = true;
                         } else if (Resources.Load(args[0]) == null) {
-                            Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): file \"<i>" + args[0] + "</i>\" does not exist.");
+                            Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): file \"<i>" + args[0] + "</i>\" does not exist.");
                             foundError = true;
                         }
                         break;
                     case "dialogue":
                         if (args.Count != 1) {
-                            Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 1.");
+                            Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 1.");
                             foundError = true;
                         } else if (Resources.Load(args[0] + "_" + GlobalHelper.GetCharacterType(GlobalHelper.character)) == null) {
-                            Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): file \"<i>" + args[0] + "_" + GlobalHelper.GetCharacterType(GlobalHelper.character) + "</i>\" does not exist.");
+                            Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): file \"<i>" + args[0] + "_" + GlobalHelper.GetCharacterType(GlobalHelper.character) + "</i>\" does not exist.");
                             foundError = true;
                         }
                         break;
                     case "startmusic":
                         if (args.Count != 1) {
-                            Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 1.");
+                            Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 1.");
                             foundError = true;
                         } else if (!Enum.IsDefined(typeof(AudioManager.BGM), args[0].ToUpperInvariant())) {
-                            Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): \"<i>" + args[0] + "</i>\" is not a valid music track.");
+                            Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): \"<i>" + args[0] + "</i>\" is not a valid music track.");
                             foundError = true;
                         }
                         break;
@@ -138,7 +133,7 @@ public class TimelineCommand
                     case "attackduration":
                     case "bossname":
                         if (args.Count != 1) {
-                            Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 1.");
+                            Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 1.");
                             foundError = true;
                         }
                         break;
@@ -156,7 +151,7 @@ public class TimelineCommand
                     case "abs":
                     case "log":
                         if (args.Count != 2) {
-                            Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 2.");
+                            Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 2.");
                             foundError = true;
                         }
                         break;
@@ -171,13 +166,13 @@ public class TimelineCommand
                     case "mod":
                     case "pow":
                         if (args.Count != 3) {
-                            Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 3.");
+                            Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 3.");
                             foundError = true;
                         }
                         break;
                     case "bulletproperty":
                         if (args.Count < 3) {
-                            Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): No property values specified");
+                            Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): No property values specified");
                             foundError = true;
                             break;
                         }
@@ -192,7 +187,7 @@ public class TimelineCommand
                             case "harmless":
                             case "snakelength":
                                 if (args.Count != 3) {
-                                    Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 1.");
+                                    Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 1.");
                                     foundError = true;
                                 }
                                 break;
@@ -200,32 +195,32 @@ public class TimelineCommand
                             case "movement":
                             case "movementpolar":
                                 if (args.Count != 4) {
-                                    Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 2.");
+                                    Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 2.");
                                     foundError = true;
                                 }
                                 break;
                             case "outercolor":
                             case "innercolor":
                                 if (args.Count != 6) {
-                                    Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 4.");
+                                    Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 4.");
                                     foundError = true;
                                 }
                                 break;
                             case "advancedpath":
                                 if (Resources.Load(args[2]) == null) {
-                                    Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): file \"<i>" + args[2] + "</i>\" does not exist.");
+                                    Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): file \"<i>" + args[2] + "</i>\" does not exist.");
                                     foundError = true;
                                 }
                                 break;
                             default:
-                                Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): Unknown Bullet Property \"<i>" + args[1] + "</i>\"");
+                                Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): Unknown Bullet Property \"<i>" + args[1] + "</i>\"");
                                 foundError = true;
                                 break;
                         }
                         break;
                     case "enemyproperty":
                         if (args.Count < 3) {
-                            Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): No property values specified");
+                            Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): No property values specified");
                             foundError = true;
                             break;
                         }
@@ -240,33 +235,33 @@ public class TimelineCommand
                             case "dropscore":
                             case "basescore":
                                 if (args.Count != 3) {
-                                    Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 1.");
+                                    Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 1.");
                                     foundError = true;
                                 }
                                 break;
                             case "startpos":
                                 if (args.Count != 4) {
-                                    Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 2.");
+                                    Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 2.");
                                     foundError = true;
                                 }
                                 break;
                             case "attackpath": //Any number of values >0 is allowed, so no checking that
                                 for (int i = 2; i < args.Count; i++) {
                                     if (Resources.Load(args[i]) == null) {
-                                        Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): file \"<i>" + args[i] + "</i>\" does not exist.");
+                                        Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): file \"<i>" + args[i] + "</i>\" does not exist.");
                                         foundError = true;
                                     }
                                 }
                                 break;
                             default:
-                                Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): Unknown Enemy Property \"<i>" + args[1] + "</i>\"");
+                                Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): Unknown Enemy Property \"<i>" + args[1] + "</i>\"");
                                 foundError = true;
                                 break;
                         }
                         break;
                     case "laserproperty":
                         if (args.Count < 3) {
-                            Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): No property values specified");
+                            Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): No property values specified");
                             foundError = true;
                             break;
                         }
@@ -278,39 +273,38 @@ public class TimelineCommand
                             case "rotation":
                             case "rotationspeed":
                                 if (args.Count != 3) {
-                                    Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 1.");
+                                    Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 1.");
                                     foundError = true;
                                 }
                                 break;
                             case "position":
                             case "movement":
                                 if (args.Count != 4) {
-                                    Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 2.");
+                                    Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 2.");
                                     foundError = true;
                                 }
                                 break;
                             case "outercolor":
                             case "innercolor":
                                 if (args.Count != 6) {
-                                    Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 4.");
+                                    Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 4.");
                                     foundError = true;
                                 }
                                 break;
                             default:
-                                Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): Unknown Laser Property \"<i>" + args[1] + "</i>\"");
+                                Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): Unknown Laser Property \"<i>" + args[1] + "</i>\"");
                                 foundError = true;
                                 break;
                         }
                         break;
                     default:
-                        Debug.LogError("Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): Unknown function \"<i>" + function + "</i>\"");
+                        Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): Unknown function \"<i>" + function + "</i>\"");
                         foundError = true;
                         break;
                 }
             }
             if (foundError) {
                 commandLists.Add(hash, new List<TimelineCommand>());
-                //commandListsIds.Add(hash, commandLists.Count - 1);
                 return hash;
             }
 #endif //UNITY_EDITOR
@@ -342,29 +336,24 @@ public class TimelineCommand
                         (function == "enemyproperty" && args[1] == "attackpath" && i >= 2) ||
                         (function == "enemyproperty" && args[1] == "bossportrait" && i == 2) ||
                         (function == "laserproperty" && i == 1)) {
-                        //Debug.Log("None: " + i + " " + instruction);
                         continue;
                     }
                     //Sort out the enemyTemplate, bulletTemplate, laserTemplate id's
                     if ((function == "bulletproperty" && i == 0) ||
                         (function == "createbullet")) {
                         args[i] = GetBullet(args[i]);
-                        //Debug.Log("Bullet: " + i + " " + instruction);
                         continue;
                     } else if ((function == "enemyproperty" && i == 0) ||
                                (function == "createenemy")) {
                         args[i] = GetEnemy(args[i]);
-                        //Debug.Log("Enemy: " + i + " " + instruction);
                         continue;
                     } else if ((function == "laserproperty" && i == 0) ||
                                (function == "createlaser")) {
                         args[i] = GetLaser(args[i]);
-                        //Debug.Log("Laser: " + i + " " + instruction);
                         continue;
                     }
                     //At this point it's a number variable, so it needs a unique number list identifier
                     args[i] = GetNumber(args[i]);
-                    //Debug.Log("Number: " + i + " (" + args[i] + ") " + instruction);
                 }
                 if (function == "bulletproperty") { //If this command sets a bullet property...
                     function = args[1];
@@ -402,7 +391,6 @@ public class TimelineCommand
             newList[0].enemyVarCount = enemyTemplateVars.Count;
             newList[0].laserVarCount = laserTemplateVars.Count;
             commandLists.Add(hash, newList);
-            //commandListsIds.Add(hash, commandLists.Count - 1);
             return hash;
         } else {
             return hash;

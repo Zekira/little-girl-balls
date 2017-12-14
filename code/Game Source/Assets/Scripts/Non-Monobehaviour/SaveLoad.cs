@@ -21,7 +21,7 @@ public static class SaveLoad
             return; //Should NOT be saving ANYTHING during replays!
         }
         if ((histories.Count & 3) != 0) {
-            Debug.LogError("Tried to save faulty spellcard history data!");
+            Debug.LogError("[Error] Tried to save faulty spellcard history data!");
             return;
         }
         using (BinaryWriter writer = new BinaryWriter(File.Open(spellcardHistoryPath, FileMode.Create))) {
@@ -47,7 +47,7 @@ public static class SaveLoad
             List<short> returnShort = new List<short>();
             long length = new FileInfo(spellcardHistoryPath).Length;
             if ((length & 7) != 0) { //short is two bytes, and there are 4 shorts per entry, so the length (in bytes) needs to be divisable by 8
-                Debug.LogError("Tried to read faulty spellcard history data!");
+                Debug.LogError("[Error] Tried to read faulty spellcard history data!");
                 return new List<short>();
             }
             for (int i = 0; i < length / 2; i++) {
@@ -322,9 +322,6 @@ public static class SaveLoad
                     for(int i = 0; i < data.Count; i++) {
                         //All input data (in order because the list is in order)
                         writer.Write(data[i].startingTick);
-                        //for(int j = 0; j < 8; j++) { //the eight different keys
-                        //    writer.Write(data[i].keys[j]);
-                        //}
                         //Writing a SINGLE byte because writing 8 bools uses up 8 bytes of space. And that's just wasteful.
                         writer.Write(NumberFunctions.BoolsToByte(data[i].keys));
                         writer.Write(data[i].duration);
@@ -341,46 +338,44 @@ public static class SaveLoad
     public static ReplayData LoadReplay(int index) {
         (new FileInfo(replayBasePath)).Directory.Create(); //Create the basedirectory if it doesn't exist
         if (!File.Exists(replayBasePath + "replay" + index + ".touaoiirpy")) {
-            //TODO: Error handling
-            Debug.LogError("That replay file doesn't exist; asked index: " + index);
+            Debug.LogError("[Error] That replay file doesn't exist; asked index: " + index);
             return new ReplayData();
         }
 
         ReplayData loadedReplay = new ReplayData();
         using (BinaryReader reader = new BinaryReader(File.OpenRead(replayBasePath + "replay" + index + ".touaoiirpy"))) {
-            //reader.BaseStream.Seek(location, SeekOrigin.<>);
             byte replayFormat = reader.ReadByte();
             if (replayFormat == 0) {
                 char[] name = new char[32];
                 for (int i = 0; i < 32; i++) {
                     name[i] = (char)reader.ReadInt16();
                 }
-                Debug.Log(new string(name));
+                Debug.Log("[Replay] " + new string(name));
                 loadedReplay.replayName = name;
                 byte playerAndDifficulty = reader.ReadByte();
-                Debug.Log("Character: " + (GlobalHelper.Character)(playerAndDifficulty % 6));
-                Debug.Log("Difficulty: " + (GlobalHelper.Difficulty)(playerAndDifficulty / 6));
+                Debug.Log("[Replay] Character: " + (GlobalHelper.Character)(playerAndDifficulty % 6));
+                Debug.Log("[Replay] Difficulty: " + (GlobalHelper.Difficulty)(playerAndDifficulty / 6));
                 loadedReplay.playerAndDifficulty = playerAndDifficulty;
                 int[] levelStarts = new int[7];
                 for (int i = 0; i < 7; i++) {
                     levelStarts[i] = reader.ReadInt32(); //variable to know where to jump to for each level
-                    Debug.Log("Stage " + i + " byte index: " + levelStarts[i]);
+                    Debug.Log("[Replay] Stage " + i + " byte index: " + levelStarts[i]);
                 }
                 for (int i = 0; i < 7; i++) {
                     if (levelStarts[i] == -1) {
-                        Debug.Log("Level " + i + " isn't a level.");
+                        Debug.Log("[Replay] Level " + i + " isn't a level.");
                         continue; //Not actually a level.
                     }
-                    Debug.Log("<b>Level " + i + " IS a level.</b>");
+                    Debug.Log("[Replay] <b>Level " + i + " IS a level.</b>");
                     reader.BaseStream.Seek(levelStarts[i], SeekOrigin.Begin);
                     byte levelId = reader.ReadByte();
-                    Debug.Log("Numeric Level ID: " + levelId);
+                    Debug.Log("[Replay] Numeric Level ID: " + levelId);
                     int seed = reader.ReadInt32();
-                    Debug.Log("Level seed: " + seed);
+                    Debug.Log("[Replay] Level seed: " + seed);
                     loadedReplay.seed[i] = seed;
                     float pposx = reader.ReadSingle();
                     float pposy = reader.ReadSingle();
-                    Debug.Log("Player start: " + pposx + "x, " + pposy + "y.");
+                    Debug.Log("[Replay] Player start: " + pposx + "x, " + pposy + "y.");
                     loadedReplay.startpos[i] = new Vector2(pposx, pposy);
                     byte plives = reader.ReadByte();
                     loadedReplay.lives[i] = plives;
@@ -392,7 +387,7 @@ public static class SaveLoad
                     loadedReplay.value[i] = pvalue;
                     int pgraze = reader.ReadInt32();
                     loadedReplay.graze[i] = pgraze;
-                    Debug.Log("Player start stats: L: " + plives + " B: " + pbombs + " P: " + ppower + " V: " + pvalue + " G: " + pgraze);
+                    Debug.Log("[Replay] Player start stats: L: " + plives + " B: " + pbombs + " P: " + ppower + " V: " + pvalue + " G: " + pgraze);
                     /* What should happen here:
                      * Keep looping so long as:
                      * 1) if there is a level after here with higher position, that position is reached
@@ -412,12 +407,12 @@ public static class SaveLoad
                         int keyStartTick = reader.ReadInt32();
                         byte keyId = reader.ReadByte();
                         int keyDuration = reader.ReadInt32();
-                        Debug.Log("Key at time " + keyStartTick + " with duration " + keyDuration + " with id " + keyId);
+                        Debug.Log("[Replay] Key at time " + keyStartTick + " with duration " + keyDuration + " with id " + keyId);
                         loadedReplay.inputData[i].Add(new InputData(keyStartTick, keyDuration, NumberFunctions.ByteToBools(keyId)));
                     }
                 }
             } else {
-                Debug.LogError("Unsupported replay format " + replayFormat);
+                Debug.LogError("[Error] Unsupported replay format " + replayFormat);
             }
 
             return loadedReplay;

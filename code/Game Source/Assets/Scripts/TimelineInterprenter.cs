@@ -19,10 +19,6 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
     private BulletTemplate[] bulletTemplateVars;
     private EnemyTemplate[] enemyTemplateVars;
     private LaserTemplate[] laserTemplateVars;
-    //private Dictionary<int, float> numberVars = new Dictionary<int, float>();
-    //private Dictionary<int, BulletTemplate> bulletTemplateVars = new Dictionary<int, BulletTemplate>();
-    //private Dictionary<int, EnemyTemplate> enemyTemplateVars = new Dictionary<int, EnemyTemplate>();
-    //private Dictionary<int, LaserTemplate> laserTemplateVars = new Dictionary<int, LaserTemplate>();
     private static Dictionary<int, float> globalNumberVars = new Dictionary<int, float>();
     private static Dictionary<int, BulletTemplate> globalBulletTemplateVars = new Dictionary<int, BulletTemplate>();
     private static Dictionary<int, EnemyTemplate> globalEnemyTemplateVars = new Dictionary<int, EnemyTemplate>();
@@ -67,9 +63,6 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
 
     public void Reset(string newTimeLine) {
         patternPath = newTimeLine;
-        //numberVars.Clear();
-        //bulletTemplateVars.Clear();
-        //enemyTemplateVars.Clear();
         repeatStepback = new List<int>();
         parentBullet = transform.GetComponent<Bullet>();
         parentEnemy = transform.GetComponent<Enemy>();
@@ -241,7 +234,7 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                             }
                             findEndRepeatLine++;
                         }
-                        currentLine = findEndRepeatLine/* + 1*/; //No +1 because that's already in the for loop this is in.
+                        currentLine = findEndRepeatLine; //No +1 because that's already in the for loop this is in.
                         continue;
                     }
                 case TimelineCommand.Command.ELSE:
@@ -337,7 +330,6 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                         case TimelineCommand.BulletProperty.ROTATION:
                             if (parentBullet != null) { //If the parent is a bullet, change its rotation to be rotated if the script as a whole should be rotated
                                 parentTemplate = parentBullet.bulletTemplate;
-                                //Debug.Log(Mathf.Acos(parentTemplate.scriptRotationMatrix.x));
                                 bulletTemplate.rotation = ParseValue(currentCommand.args[1]) + Mathf.Acos(parentTemplate.scriptRotationMatrix.x);
                             } else {
                                 bulletTemplate.rotation = ParseValue(currentCommand.args[1]);
@@ -450,7 +442,6 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                         case TimelineCommand.LaserProperty.ROTATION:
                             if (parentBullet != null) { //If the parent is a bullet, change its rotation to be rotated if the script as a whole should be rotated
                                 parentTemplate = parentBullet.bulletTemplate;
-                                //Debug.Log(Mathf.Acos(parentTemplate.scriptRotationMatrix.x));
                                 laserTemplate.rotation = ParseValue(currentCommand.args[1]) * -1 /*-1 to fit with angletoplayer()*/ + Mathf.Acos(parentTemplate.scriptRotationMatrix.x);
                             } else {
                                 laserTemplate.rotation = ParseValue(currentCommand.args[1]) * -1;
@@ -621,7 +612,7 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                     SetNumber(currentCommand.args[0], Mathf.Abs(ParseValue(currentCommand.args[1])));
                     continue;
                 case TimelineCommand.Command.LOG:
-                    Debug.Log(currentCommand.args[0] + ":" + ParseValue(currentCommand.args[1]));
+                    Debug.Log("[Timeline Log] " + currentCommand.args[0] + ":" + ParseValue(currentCommand.args[1]));
                     continue;
                 default:
                     continue;
@@ -634,8 +625,6 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
     /// <summary>
     /// Sets the number in the numberVars list to whatever value is.
     /// </summary>
-    /// <param name="name">The name of the var</param>
-    /// <param name="value">The value of the var</param>
     private void SetNumber(string name, float value) {
         if (name[0] == 95) { //Starts with '_', so global
             stringHash = name.GetHashCode();
@@ -646,20 +635,12 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
             }
         } else {
             numberVars[int.Parse(name)] = value;
-            //stringHash = name.GetHashCode();
-            //if (numberVars.ContainsKey(stringHash)) {
-            //    numberVars[stringHash] = value;
-            //} else {
-            //    numberVars.Add(stringHash, value);
-            //}
         }
     }
 
     /// <summary>
     /// Gets the number in the numberVars dictionary by name. If it doesn't exist, it creates it, sets it to zero, and returns zero.
     /// </summary>
-    /// <param name="name">The var name to retrieve</param>
-    /// <returns></returns>
     private float GetNumber(string name) { 
         float returnFloat;
         if (name[0] == 95) { //Starts with '_', so global
@@ -671,19 +652,12 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
             return returnFloat;
         } else {
             return numberVars[int.Parse(name)];
-            //if (!numberVars.TryGetValue(stringHash, out returnFloat)) {
-            //    numberVars.Add(stringHash, 0f);
-            //    return 0f;
-            //}
         }
-        //return returnFloat;
     }
 
     /// <summary>
     /// Gets the BulletTemplate in the numberVars dictionary by name. If it doesn't exist, it creates it, and returns it.
     /// </summary>
-    /// <param name="name">The var name to retrieve</param>
-    /// <returns></returns>
     private BulletTemplate GetBulletTemplate(string name) {
         if (name[0] == 95) { //Starts with '_', so global
             stringHash = name.GetHashCode();
@@ -695,20 +669,12 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
             }
         } else {
             return bulletTemplateVars[int.Parse(name)];
-            //if (!bulletTemplateVars.ContainsKey(stringHash)) {
-            //    bulletTemplateVars.Add(stringHash, BulletTemplate.basic);
-            //    return BulletTemplate.basic;
-            //} else {
-            //    return bulletTemplateVars[stringHash];
-            //}
         }
     }
 
     /// <summary>
     /// Sets the BulletTemplate in the bulletTemplateVars dictionary to whatever value is. If it doesn't exists, it creates it.
     /// </summary>
-    /// <param name="name">The name of the var</param>
-    /// <param name="value">The value of the var</param>
     private void SetBulletTemplate(string name, BulletTemplate value) {
         stringHash = name.GetHashCode();
         if (name[0] == 95) { //Starts with '_', so global
@@ -719,23 +685,13 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
             }
         } else {
             bulletTemplateVars[int.Parse(name)] = value;
-            //if (bulletTemplateVars.ContainsKey(stringHash)) {
-            //    bulletTemplateVars[stringHash] = value;
-            //} else {
-            //    bulletTemplateVars.Add(stringHash, value);
-            //}
         }
     }
 
     /// <summary>
     /// Gets the EnemyTemplate in the numberVars dictionary by name. If it doesn't exist, it creates it, and returns it.
     /// </summary>
-    /// <param name="name">The var name to retrieve</param>
-    /// <returns></returns>
     private EnemyTemplate GetEnemyTemplate(string name) {
-        //if (EnemyTemplate.basic.attackPath.Count > 0 && EnemyTemplate.basic.attackPath[0] != null) {
-        //    Debug.Log(EnemyTemplate.basic.attackPath[0]);
-        //}
         if (name[0] == 95) { //Starts with '_', so global
             stringHash = name.GetHashCode();
             if (!globalEnemyTemplateVars.ContainsKey(stringHash)) {
@@ -746,20 +702,12 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
             }
         } else {
             return enemyTemplateVars[int.Parse(name)];
-            //if (!enemyTemplateVars.ContainsKey(stringHash)) {
-            //    enemyTemplateVars.Add(stringHash, new EnemyTemplate());
-            //    return new EnemyTemplate();
-            //} else {
-            //    return enemyTemplateVars[stringHash];
-            //}
         }
     }
 
     /// <summary>
     /// Sets the EnemyTemplate in the enemyTemplateVars dictionary to whatever value is. If it doesn't exists, it creates it.
     /// </summary>
-    /// <param name="name">The name of the var</param>
-    /// <param name="value">The value of the var</param>
     private void SetEnemyTemplate(string name, EnemyTemplate value) {
         if (name[0] == 95) { //Starts with '_', so global
             stringHash = name.GetHashCode();
@@ -770,11 +718,6 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
             }
         } else {
             enemyTemplateVars[int.Parse(name)] = value;
-            //if (enemyTemplateVars.ContainsKey(stringHash)) {
-            //    enemyTemplateVars[stringHash] = value;
-            //} else {
-            //    enemyTemplateVars.Add(stringHash, value);
-            //}
         }
     }
 
@@ -789,12 +732,6 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
             }
         } else {
             return laserTemplateVars[int.Parse(name)];
-            //if (!laserTemplateVars.ContainsKey(stringHash)) {
-            //    laserTemplateVars.Add(stringHash, LaserTemplate.basic);
-            //    return LaserTemplate.basic;
-            //} else {
-            //    return laserTemplateVars[stringHash];
-            //}
         }
     }
 
@@ -808,18 +745,12 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
             }
         } else {
             laserTemplateVars[int.Parse(name)] = value;
-            //if (laserTemplateVars.ContainsKey(stringHash)) {
-            //    laserTemplateVars[stringHash] = value;
-            //} else {
-            //    laserTemplateVars.Add(stringHash, value);
-            //}
         }
     }
 
     /// <summary>
     /// Returns whatever is between the first open brace and second to last character, seperated by comma's.
     /// </summary>
-    /// <param name="toEvaluate">The string to evaluate.</param>
     /// <returns>Everything that was originally between braces in <function>(args[0],args[1] ... )</returns>
     public static List<string> GetArguments(string toEvaluate) {
         //Assuming only one set of braces
@@ -841,8 +772,6 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
     /// <summary>
     /// Returns whatever is before the first open brace for each entry in the toEvaluate array.
     /// </summary>
-    /// <param name="toEvaluate">The string to find the function of.</param>
-    /// <returns>Returns whatever is before the first open brace.</returns>
     public static string GetFunction(string toEvaluate) { 
         string returnString = toEvaluate.Split('(')[0];
         return returnString;
@@ -851,19 +780,12 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
     /// <summary>
     /// Parses value - whether it's a number or numberVars var name. Numbers start with an "n", while numberVars var names are full numbers
     /// </summary>
-    /// <param name="value">The thing to parse.</param>
-    /// <returns></returns>
     private float ParseValue(string value) {
         if (value[0] != 'n') { //It's a variable
             return GetNumber(value);
         } else { //It's a number
             return NumberFunctions.ParseFloat(value.Substring(1));
         }
-        //if (NumberFunctions.ContainsLetters(value)) {
-        //    return GetNumber(value);
-        //} else {
-        //    return NumberFunctions.ParseFloat(value);
-        //}
     }
 
     /// <summary>
