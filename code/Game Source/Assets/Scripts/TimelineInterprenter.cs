@@ -9,11 +9,20 @@ using UnityEngine.UI;
 public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are still, maybe something else
     public string patternPath = "";
     public bool levelTimeline = false; //Set via inspector
-    private int commandsId;
-    private Dictionary<int, float> numberVars = new Dictionary<int, float>();
-    private Dictionary<int, BulletTemplate> bulletTemplateVars = new Dictionary<int, BulletTemplate>();
-    private Dictionary<int, EnemyTemplate> enemyTemplateVars = new Dictionary<int, EnemyTemplate>();
-    private Dictionary<int, LaserTemplate> laserTemplateVars = new Dictionary<int, LaserTemplate>();
+    private int commandsId; //Which of TimelineCommand's CommandLists to use.
+
+    /* The (not-global) vars-arrays store their respective data. In memory,
+     * strings of numbers represent their array indices, while (for numbers)
+     * strings starting with an "n" represent actual numerical values.
+     */
+    private float[] numberVars;
+    private BulletTemplate[] bulletTemplateVars;
+    private EnemyTemplate[] enemyTemplateVars;
+    private LaserTemplate[] laserTemplateVars;
+    //private Dictionary<int, float> numberVars = new Dictionary<int, float>();
+    //private Dictionary<int, BulletTemplate> bulletTemplateVars = new Dictionary<int, BulletTemplate>();
+    //private Dictionary<int, EnemyTemplate> enemyTemplateVars = new Dictionary<int, EnemyTemplate>();
+    //private Dictionary<int, LaserTemplate> laserTemplateVars = new Dictionary<int, LaserTemplate>();
     private static Dictionary<int, float> globalNumberVars = new Dictionary<int, float>();
     private static Dictionary<int, BulletTemplate> globalBulletTemplateVars = new Dictionary<int, BulletTemplate>();
     private static Dictionary<int, EnemyTemplate> globalEnemyTemplateVars = new Dictionary<int, EnemyTemplate>();
@@ -37,11 +46,30 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
     private static bool ifevaluation;
     private static int enemyCommandsId;
 
+    /// <summary>
+    /// For initialisation of the var arrays, to be used by TimelineCommand when parsing files into memory.
+    /// </summary>
+    public void SetVarArrayLengths(int numlength, int bulletlength, int enemylength, int laserlength) {
+        numberVars = new float[numlength];
+        bulletTemplateVars = new BulletTemplate[bulletlength];
+        for (int i = 0; i < bulletTemplateVars.Length; i++) {
+            bulletTemplateVars[i] = BulletTemplate.basic;
+        }
+        enemyTemplateVars = new EnemyTemplate[enemylength];
+        for (int i = 0; i < enemyTemplateVars.Length; i++) {
+            enemyTemplateVars[i] = new EnemyTemplate();
+        }
+        laserTemplateVars = new LaserTemplate[laserlength];
+        for (int i = 0; i < laserTemplateVars.Length; i++) {
+            laserTemplateVars[i] = LaserTemplate.basic;
+        }
+    }
+
     public void Reset(string newTimeLine) {
         patternPath = newTimeLine;
-        numberVars.Clear();
-        bulletTemplateVars.Clear();
-        enemyTemplateVars.Clear();
+        //numberVars.Clear();
+        //bulletTemplateVars.Clear();
+        //enemyTemplateVars.Clear();
         repeatStepback = new List<int>();
         parentBullet = transform.GetComponent<Bullet>();
         parentEnemy = transform.GetComponent<Enemy>();
@@ -64,7 +92,7 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
         if (patternPath == "") {
             patternPath = parentEnemy.template.attackPath[0];
         }
-        ReadAttack(true);
+        Reset(patternPath);
     }
 
     void Update() {
@@ -96,8 +124,15 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
     /// Set "initialise" to true to reset all values before starting reading.
     /// </summary>
     public void ReadAttack(bool initialise) {
+        if (patternPath == null) {
+            return;
+        }
         if (initialise) {
             commandsId = TimelineCommand.GetCommands(patternPath);
+            SetVarArrayLengths(TimelineCommand.commandLists[commandsId][0].numberVarCount,
+                               TimelineCommand.commandLists[commandsId][0].bulletVarCount,
+                               TimelineCommand.commandLists[commandsId][0].enemyVarCount,
+                               TimelineCommand.commandLists[commandsId][0].laserVarCount);
         }
         ReadAttack();
     }
@@ -108,6 +143,9 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
      /// Any text evaluated should be all-lowercase.
      /// </summary>
     public void ReadAttack() { 
+        if (patternPath == null) {
+            return;
+        }
         for (; currentLine < TimelineCommand.commandLists[commandsId].Count; currentLine++) {
             currentCommand = TimelineCommand.commandLists[commandsId][currentLine];
             //Take the part before the brackets and try to figure out what it says and do something with it.
@@ -375,7 +413,7 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                             enemyTemplate.startpostion = new Vector2(ParseValue(currentCommand.args[1]), ParseValue(currentCommand.args[2]));
                             break;
                         case TimelineCommand.EnemyProperty.BASESCORE:
-                            enemyTemplate.baseScore = (uint)Mathf.RoundToInt(ParseValue(currentCommand.args[0]));
+                            enemyTemplate.baseScore = (uint)Mathf.RoundToInt(ParseValue(currentCommand.args[1]));
                             continue;
                         default:
                             break;
@@ -594,7 +632,7 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
     }
 
     /// <summary>
-    /// Sets the number in the numberVars dictionary to whatever value is. If it doesn't exists, it creates it.
+    /// Sets the number in the numberVars list to whatever value is.
     /// </summary>
     /// <param name="name">The name of the var</param>
     /// <param name="value">The value of the var</param>
@@ -607,12 +645,13 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                 globalNumberVars.Add(stringHash, value);
             }
         } else {
-            stringHash = name.GetHashCode();
-            if (numberVars.ContainsKey(stringHash)) {
-                numberVars[stringHash] = value;
-            } else {
-                numberVars.Add(stringHash, value);
-            }
+            numberVars[int.Parse(name)] = value;
+            //stringHash = name.GetHashCode();
+            //if (numberVars.ContainsKey(stringHash)) {
+            //    numberVars[stringHash] = value;
+            //} else {
+            //    numberVars.Add(stringHash, value);
+            //}
         }
     }
 
@@ -622,20 +661,22 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
     /// <param name="name">The var name to retrieve</param>
     /// <returns></returns>
     private float GetNumber(string name) { 
-        stringHash = name.GetHashCode();
         float returnFloat;
         if (name[0] == 95) { //Starts with '_', so global
+            stringHash = name.GetHashCode();
             if (!globalNumberVars.TryGetValue(stringHash, out returnFloat)) {
                 globalNumberVars.Add(stringHash, 0f);
                 return 0f;
             }
+            return returnFloat;
         } else {
-            if (!numberVars.TryGetValue(stringHash, out returnFloat)) {
-                numberVars.Add(stringHash, 0f);
-                return 0f;
-            }
+            return numberVars[int.Parse(name)];
+            //if (!numberVars.TryGetValue(stringHash, out returnFloat)) {
+            //    numberVars.Add(stringHash, 0f);
+            //    return 0f;
+            //}
         }
-        return returnFloat;
+        //return returnFloat;
     }
 
     /// <summary>
@@ -644,8 +685,8 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
     /// <param name="name">The var name to retrieve</param>
     /// <returns></returns>
     private BulletTemplate GetBulletTemplate(string name) {
-        stringHash = name.GetHashCode();
         if (name[0] == 95) { //Starts with '_', so global
+            stringHash = name.GetHashCode();
             if (!globalBulletTemplateVars.ContainsKey(stringHash)) {
                 globalBulletTemplateVars.Add(stringHash, BulletTemplate.basic);
                 return BulletTemplate.basic;
@@ -653,12 +694,13 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                 return globalBulletTemplateVars[stringHash];
             }
         } else {
-            if (!bulletTemplateVars.ContainsKey(stringHash)) {
-                bulletTemplateVars.Add(stringHash, BulletTemplate.basic);
-                return BulletTemplate.basic;
-            } else {
-                return bulletTemplateVars[stringHash];
-            }
+            return bulletTemplateVars[int.Parse(name)];
+            //if (!bulletTemplateVars.ContainsKey(stringHash)) {
+            //    bulletTemplateVars.Add(stringHash, BulletTemplate.basic);
+            //    return BulletTemplate.basic;
+            //} else {
+            //    return bulletTemplateVars[stringHash];
+            //}
         }
     }
 
@@ -676,11 +718,12 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                 globalBulletTemplateVars.Add(stringHash, value);
             }
         } else {
-            if (bulletTemplateVars.ContainsKey(stringHash)) {
-                bulletTemplateVars[stringHash] = value;
-            } else {
-                bulletTemplateVars.Add(stringHash, value);
-            }
+            bulletTemplateVars[int.Parse(name)] = value;
+            //if (bulletTemplateVars.ContainsKey(stringHash)) {
+            //    bulletTemplateVars[stringHash] = value;
+            //} else {
+            //    bulletTemplateVars.Add(stringHash, value);
+            //}
         }
     }
 
@@ -693,8 +736,8 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
         //if (EnemyTemplate.basic.attackPath.Count > 0 && EnemyTemplate.basic.attackPath[0] != null) {
         //    Debug.Log(EnemyTemplate.basic.attackPath[0]);
         //}
-        stringHash = name.GetHashCode();
         if (name[0] == 95) { //Starts with '_', so global
+            stringHash = name.GetHashCode();
             if (!globalEnemyTemplateVars.ContainsKey(stringHash)) {
                 globalEnemyTemplateVars.Add(stringHash, new EnemyTemplate());
                 return new EnemyTemplate();
@@ -702,12 +745,13 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                 return globalEnemyTemplateVars[stringHash];
             }
         } else {
-            if (!enemyTemplateVars.ContainsKey(stringHash)) {
-                enemyTemplateVars.Add(stringHash, new EnemyTemplate());
-                return new EnemyTemplate();
-            } else {
-                return enemyTemplateVars[stringHash];
-            }
+            return enemyTemplateVars[int.Parse(name)];
+            //if (!enemyTemplateVars.ContainsKey(stringHash)) {
+            //    enemyTemplateVars.Add(stringHash, new EnemyTemplate());
+            //    return new EnemyTemplate();
+            //} else {
+            //    return enemyTemplateVars[stringHash];
+            //}
         }
     }
 
@@ -717,25 +761,26 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
     /// <param name="name">The name of the var</param>
     /// <param name="value">The value of the var</param>
     private void SetEnemyTemplate(string name, EnemyTemplate value) {
-        stringHash = name.GetHashCode();
         if (name[0] == 95) { //Starts with '_', so global
+            stringHash = name.GetHashCode();
             if (globalEnemyTemplateVars.ContainsKey(stringHash)) {
                 globalEnemyTemplateVars[stringHash] = value;
             } else {
                 globalEnemyTemplateVars.Add(stringHash, value);
             }
         } else {
-            if (enemyTemplateVars.ContainsKey(stringHash)) {
-                enemyTemplateVars[stringHash] = value;
-            } else {
-                enemyTemplateVars.Add(stringHash, value);
-            }
+            enemyTemplateVars[int.Parse(name)] = value;
+            //if (enemyTemplateVars.ContainsKey(stringHash)) {
+            //    enemyTemplateVars[stringHash] = value;
+            //} else {
+            //    enemyTemplateVars.Add(stringHash, value);
+            //}
         }
     }
 
     private LaserTemplate GetLaserTemplate(string name) {
-        stringHash = name.GetHashCode();
         if (name[0] == 95) { //Starts with '_', so global
+            stringHash = name.GetHashCode();
             if (!globalLaserTemplateVars.ContainsKey(stringHash)) {
                 globalLaserTemplateVars.Add(stringHash, LaserTemplate.basic);
                 return LaserTemplate.basic;
@@ -743,24 +788,31 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                 return globalLaserTemplateVars[stringHash];
             }
         } else {
-            if (!laserTemplateVars.ContainsKey(stringHash)) {
-                laserTemplateVars.Add(stringHash, LaserTemplate.basic);
-                return LaserTemplate.basic;
-            } else {
-                return laserTemplateVars[stringHash];
-            }
+            return laserTemplateVars[int.Parse(name)];
+            //if (!laserTemplateVars.ContainsKey(stringHash)) {
+            //    laserTemplateVars.Add(stringHash, LaserTemplate.basic);
+            //    return LaserTemplate.basic;
+            //} else {
+            //    return laserTemplateVars[stringHash];
+            //}
         }
     }
 
     private void SetLaserTemplate(string name, LaserTemplate value) {
-        stringHash = name.GetHashCode();
         if (name[0] == 95) { //Starts with '_',so global
-        } else {
-            if (laserTemplateVars.ContainsKey(stringHash)) {
-                laserTemplateVars[stringHash] = value;
+            stringHash = name.GetHashCode();
+            if (globalLaserTemplateVars.ContainsKey(stringHash)) {
+                globalLaserTemplateVars[stringHash] = value;
             } else {
-                laserTemplateVars.Add(stringHash, value);
+                globalLaserTemplateVars.Add(stringHash, value);
             }
+        } else {
+            laserTemplateVars[int.Parse(name)] = value;
+            //if (laserTemplateVars.ContainsKey(stringHash)) {
+            //    laserTemplateVars[stringHash] = value;
+            //} else {
+            //    laserTemplateVars.Add(stringHash, value);
+            //}
         }
     }
 
@@ -797,16 +849,21 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
     }
     
     /// <summary>
-    /// Parses value - whether it's a number or numberVars var name.
+    /// Parses value - whether it's a number or numberVars var name. Numbers start with an "n", while numberVars var names are full numbers
     /// </summary>
     /// <param name="value">The thing to parse.</param>
     /// <returns></returns>
     private float ParseValue(string value) {
-        if (NumberFunctions.ContainsLetters(value)) {
+        if (value[0] != 'n') { //It's a variable
             return GetNumber(value);
-        } else {
-            return NumberFunctions.ParseFloat(value);
+        } else { //It's a number
+            return NumberFunctions.ParseFloat(value.Substring(1));
         }
+        //if (NumberFunctions.ContainsLetters(value)) {
+        //    return GetNumber(value);
+        //} else {
+        //    return NumberFunctions.ParseFloat(value);
+        //}
     }
 
     /// <summary>

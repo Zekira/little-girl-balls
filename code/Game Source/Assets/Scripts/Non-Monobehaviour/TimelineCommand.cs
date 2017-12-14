@@ -3,17 +3,21 @@ using System.Collections.Generic;
 using System;
 using System.Text.RegularExpressions;
 
-public class TimelineCommand {
+public class TimelineCommand
+{
 
     public static Dictionary<int, List<TimelineCommand>> commandLists = new Dictionary<int, List<TimelineCommand>>();
     //private static Dictionary<int, int> commandListsIds = new Dictionary<int, int>();
 
     //todo: the rotatable things from scriptrotation optional "absolute" to ignore rotation
-    public enum Command { STARTTIMELINE, LOADLEVEL, DIALOGUE, STARTMUSIC, BOSSNAME, REPEAT, ENDREPEAT, IF, ELSE, ENDIF, WAIT, BOSSWAIT,
-                          BULLETPROPERTY, ENEMYPROPERTY, LASERPROPERTY, CREATEBULLET, CREATEENEMY, CREATELASER,
-                          MOVEPARENT, MOVEPARENTPOLAR, DESTROYPARENT, SETPARENTHEALTH, ANGLETOPLAYER, ANGLETOPOINT, GETPOSITION, GETPLAYERPOSITION, RANDOM, MOVETOWARDSPOINT,
-                          SET, ADD, SUB, MUL, DIV, MOD, POW, SIN, ASIN, COS, ACOS, TAN, ATAN, ABS,
-                          ATTACKDURATION, LOG };
+    public enum Command
+    {
+        STARTTIMELINE, LOADLEVEL, DIALOGUE, STARTMUSIC, BOSSNAME, REPEAT, ENDREPEAT, IF, ELSE, ENDIF, WAIT, BOSSWAIT,
+        BULLETPROPERTY, ENEMYPROPERTY, LASERPROPERTY, CREATEBULLET, CREATEENEMY, CREATELASER,
+        MOVEPARENT, MOVEPARENTPOLAR, DESTROYPARENT, SETPARENTHEALTH, ANGLETOPLAYER, ANGLETOPOINT, GETPOSITION, GETPLAYERPOSITION, RANDOM, MOVETOWARDSPOINT,
+        SET, ADD, SUB, MUL, DIV, MOD, POW, SIN, ASIN, COS, ACOS, TAN, ATAN, ABS,
+        ATTACKDURATION, LOG
+    };
     public enum EnemyProperty { SCALE, ATTACKPATH, ID, MAXHEALTH, BOSS, BOSSPORTRAIT, DROPVALUE, DROPPOWER, DROPSCORE, STARTPOS, BASESCORE };
     public enum BulletProperty { MOVEMENT, MOVEMENTPOLAR, ENEMYSHOT, SCALE, ID, INNERCOLOR, OUTERCOLOR, ROTATION, POSITION, RELATIVEPOS, CLEARIMMUNE, SCRIPTROTATION, ADVANCEDPATH, HARMLESS, SNAKELENGTH };
     public enum LaserProperty { WARNDURATION, SHOTDURATION, OUTERCOLOR, INNERCOLOR, WIDTH, MOVEMENT, POSITION, RELATIVEPOS, ROTATION, ROTATIONSPEED };
@@ -23,6 +27,11 @@ public class TimelineCommand {
     public BulletProperty bulletProperty = BulletProperty.MOVEMENT;
     public LaserProperty laserProperty = LaserProperty.WARNDURATION;
     public List<string> args;
+    //Stored in the first entry of the commandlist.
+    public int numberVarCount, bulletVarCount, enemyVarCount, laserVarCount;
+
+    //The string represents what would be found in the text, while its index determines what it's replaced with
+    private static List<string> numberVars, bulletTemplateVars, enemyTemplateVars, laserTemplateVars;
 
     //private static Regex whitespaceRegex = new Regex(@"\s+");
 
@@ -305,13 +314,58 @@ public class TimelineCommand {
                 return hash;
             }
 #endif //UNITY_EDITOR
+            numberVars = new List<string>();
+            bulletTemplateVars = new List<string>();
+            enemyTemplateVars = new List<string>();
+            laserTemplateVars = new List<string>();
             foreach (string instruction in instructions) { //Turn the file into a list of commands
-                                                           //If the first thing is a comment, skip it.
+                //If the first thing is a comment, skip it.
                 if (instruction.Length == 0 || instruction[0] == '/' || instruction[0] == '#') {
                     continue;
                 }
                 function = TimelineInterprenter.GetFunction(instruction).ToLowerInvariant();
                 args = TimelineInterprenter.GetArguments(instruction);
+                for (int i = 0; i < args.Count; i++) {
+                    //Global Vars don't have the luxery of a list, they live in dictionaries and don't need all this effort.
+                    if (args[i][0] == '_') {
+                        continue;
+                    }
+                    //All situations in which the name isn't meant to be ANY variable
+                    if ((function == "if" && i == 1) ||
+                        (function == "starttimeline") ||
+                        (function == "dialogue") ||
+                        (function == "bossname") ||
+                        (function == "startmusic") ||
+                        (function == "bulletproperty" && i == 1) ||
+                        (function == "bulletproperty" && args[1] == "advancedpath" && i == 2) ||
+                        (function == "enemyproperty" && i == 1) ||
+                        (function == "enemyproperty" && args[1] == "attackpath" && i >= 2) ||
+                        (function == "enemyproperty" && args[1] == "bossportrait" && i == 2) ||
+                        (function == "laserproperty" && i == 1)) {
+                        //Debug.Log("None: " + i + " " + instruction);
+                        continue;
+                    }
+                    //Sort out the enemyTemplate, bulletTemplate, laserTemplate id's
+                    if ((function == "bulletproperty" && i == 0) ||
+                        (function == "createbullet")) {
+                        args[i] = GetBullet(args[i]);
+                        //Debug.Log("Bullet: " + i + " " + instruction);
+                        continue;
+                    } else if ((function == "enemyproperty" && i == 0) ||
+                               (function == "createenemy")) {
+                        args[i] = GetEnemy(args[i]);
+                        //Debug.Log("Enemy: " + i + " " + instruction);
+                        continue;
+                    } else if ((function == "laserproperty" && i == 0) ||
+                               (function == "createlaser")) {
+                        args[i] = GetLaser(args[i]);
+                        //Debug.Log("Laser: " + i + " " + instruction);
+                        continue;
+                    }
+                    //At this point it's a number variable, so it needs a unique number list identifier
+                    args[i] = GetNumber(args[i]);
+                    //Debug.Log("Number: " + i + " (" + args[i] + ") " + instruction);
+                }
                 if (function == "bulletproperty") { //If this command sets a bullet property...
                     function = args[1];
                     args.RemoveAt(1);
@@ -343,11 +397,60 @@ public class TimelineCommand {
                     continue;
                 }
             }
+            newList[0].numberVarCount = numberVars.Count;
+            newList[0].bulletVarCount = bulletTemplateVars.Count;
+            newList[0].enemyVarCount = enemyTemplateVars.Count;
+            newList[0].laserVarCount = laserTemplateVars.Count;
             commandLists.Add(hash, newList);
             //commandListsIds.Add(hash, commandLists.Count - 1);
             return hash;
         } else {
             return hash;
         }
+    }
+
+    private static string GetNumber(string textName) {
+        float x = 0; //dummy variable
+        if (float.TryParse(textName, out x)) { //It's a number
+            return "n" + textName;
+        } else { //It's a reference
+            for (int i = 0; i < numberVars.Count; i++) {
+                if (numberVars[i] == textName) {
+                    return "" + i; //The correct index is found
+                }
+            }
+            numberVars.Add(textName);
+            return "" + (numberVars.Count-1);
+        }
+    }
+
+    private static string GetBullet(string textName) {
+        for (int i = 0; i < bulletTemplateVars.Count; i++) {
+            if (bulletTemplateVars[i] == textName) {
+                return "" + i;
+            }
+        }
+        bulletTemplateVars.Add(textName);
+        return "" + (bulletTemplateVars.Count-1);
+    }
+
+    private static string GetEnemy(string textName) {
+        for (int i = 0; i < enemyTemplateVars.Count; i++) {
+            if (enemyTemplateVars[i] == textName) {
+                return "" + i;
+            }
+        }
+        enemyTemplateVars.Add(textName);
+        return "" + (enemyTemplateVars.Count-1);
+    }
+
+    private static string GetLaser(string textName) {
+        for (int i = 0; i < laserTemplateVars.Count; i++) {
+            if (laserTemplateVars[i] == textName) {
+                return "" + i;
+            }
+        }
+        laserTemplateVars.Add(textName);
+        return "" + (laserTemplateVars.Count-1);
     }
 }
