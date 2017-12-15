@@ -66,7 +66,10 @@ public class TimelineCommand
         int hash = path.GetHashCode(); //Paths must be unique so this's usually unique
 
         if (!commandLists.ContainsKey(hash)) { //If it's already a list of commands recognised, no need to parse it again. Otherwise, parse is needed.
-            string file = (MonoBehaviour.Instantiate((TextAsset)Resources.Load(path))).text;
+            string file = SaveLoad.TryReadTextFile(path);
+            if (file == null) {
+                file = (MonoBehaviour.Instantiate((TextAsset)Resources.Load(path))).text;
+            }
             file = Regex.Replace(file, @"\s+", ""); //Simple cleanup. This also makes ReadAttack totally inappropriate for dialogue.
             file = file.Replace("\n", "");
             file = file.Replace("\r", "");

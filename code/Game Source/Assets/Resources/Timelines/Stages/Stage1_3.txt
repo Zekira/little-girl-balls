@@ -65,7 +65,7 @@ endrepeat;
 
 wait(70);
 
-loadlevel(1);
+//loadlevel(1);
 
 enemyproperty(fairy2, startpos, 0, 5);
 createenemy(fairy2);

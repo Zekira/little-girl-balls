@@ -68,8 +68,11 @@ public class DialogueEntry {
     /// <summary>
     /// Parses a list of lines of dialogue seperated by newlines
     /// </summary>
-    public static List<DialogueEntry> ParseFile(string path) { //todo: eventually allow from outside unity
-        string content = (Resources.Load(path) as TextAsset).text;
+    public static List<DialogueEntry> ParseFile(string path) {
+        string content = SaveLoad.TryReadTextFile(path);
+        if (content == null) {
+            content = (Resources.Load(path) as TextAsset).text;
+        }
         List<DialogueEntry> returnList = new List<DialogueEntry>();
         foreach (string line in content.Split(new char[] {'\n', '\r'}, System.StringSplitOptions.RemoveEmptyEntries)) {
             returnList.Add(ParseLine(line));

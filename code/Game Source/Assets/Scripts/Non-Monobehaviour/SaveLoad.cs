@@ -10,6 +10,7 @@ public static class SaveLoad
     private static string configPath = basePath + "Config.dat";
     private static string playerDataPath = basePath + "PlayerData.dat";
     private static string replayBasePath = basePath + "Replays" + Path.DirectorySeparatorChar; //Expecting to put things like "replay1.touaoiireplay" after thie replayBasePath
+    private static string resourcesBasePath = basePath + "Resources" + Path.DirectorySeparatorChar;
 
     /// <summary>
     /// Saves spellcard histories. 'histories' should be a multiple of four long because the safe format goes as following:
@@ -417,5 +418,16 @@ public static class SaveLoad
 
             return loadedReplay;
         }
+    }
+
+    /// <summary>
+    /// Returns the text contents of a file if it exists, or null if it doesn't. Relative to Resources.
+    /// </summary>
+    public static string TryReadTextFile(string path) {
+        if (!File.Exists(resourcesBasePath + path + ".txt")) {
+            return null;
+        }
+        Debug.Log(("[Info] Loaded external text from '" + resourcesBasePath + path + ".txt" + "'").Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar));
+        return File.ReadAllText(resourcesBasePath + path + ".txt");
     }
 }
