@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// <summary>
 /// A class reading .txt's describing either enemy or bullet info. Important in those .txt's is the wait(x) function, which is in ticks and not second, because second would not allow replays.
 /// </summary>
-public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are still, maybe something else
+public class TimelineInterprenter : MonoBehaviour {
     public string patternPath = "";
     public bool levelTimeline = false; //Set via inspector
     private int commandsId; //Which of TimelineCommand's CommandLists to use.
@@ -23,6 +23,7 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
     private static Dictionary<int, BulletTemplate> globalBulletTemplateVars = new Dictionary<int, BulletTemplate>();
     private static Dictionary<int, EnemyTemplate> globalEnemyTemplateVars = new Dictionary<int, EnemyTemplate>();
     private static Dictionary<int, LaserTemplate> globalLaserTemplateVars = new Dictionary<int, LaserTemplate>();
+    private List<Phase> phases = new List<Phase>();
     private List<int> repeatStepback = new List<int>(); //What line to go to when encountering an endrepeat.
     private Bullet parentBullet;
     private Enemy parentEnemy;
@@ -31,7 +32,7 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
     private bool bosswaiting = false;
 
     //Vars needed within the for loop. Static because they don't get used for multiple ticks, so they can be reused, so it's useless to create these for every object needing the interprenter.
-    private static int count, layers, findEndRepeatLine, lineDifference;
+    private static int count, layers, findLine, lineDifference;
     private static float num1, num2, num3;
     private static TimelineCommand currentCommand;
     private static BulletTemplate bulletTemplate;
@@ -90,6 +91,7 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
 
     void Update() {
         if (!GlobalHelper.paused && !GlobalHelper.dialogue) {
+            CheckPhases();
             if (cooldown <= 0 && !bosswaiting) {
                 //+1 because it would otherwise start at the line it terminated at (only "wait(x)"), resulting in an infinite loop, which is a nightmare. That is longer than 12 seconds.
                 currentLine++;
@@ -98,6 +100,27 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
             cooldown--;
             if (bosswaiting && GlobalHelper.activeBosses == 0) {
                 bosswaiting = false;
+            }
+        }
+    }
+
+    private void CheckPhases() {
+        foreach(Phase phase in new List<Phase>(phases)) {
+            if (phase.CheckTrigger()) {
+                currentLine = phase.goalLine;
+                //Clear all bullets if they should be killed
+                if (phase.clear) {
+                    GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(10f, BulletClear.BulletClearType.FULLCLEAR, 30);
+                }
+                //Reset all repeats because that behaviour could be weird. If's could also be weird but that only gets evaluated at IF/ELSE
+                repeatStepback = new List<int>();
+                //Destroy the relevant lock if it's there
+                if (phase.lockReference != null) {
+                    Destroy(phase.lockReference);
+                }
+                //Remove the phase checked from the "to check" list
+                phases.Remove(phase);
+                break;
             }
         }
     }
@@ -148,6 +171,9 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                     TimelineInterprenter newpattern = transform.gameObject.AddComponent<TimelineInterprenter>();
                     newpattern.patternPath = currentCommand.args[0];
                     continue;
+                case TimelineCommand.Command.STOP:
+                    currentLine = TimelineCommand.commandLists[commandsId].Count;
+                    break;
                 case TimelineCommand.Command.LOADLEVEL:
                     SceneSwitcher.ContinueToLevel(Mathf.RoundToInt(ParseValue(currentCommand.args[0])));
                     break;
@@ -161,18 +187,45 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                 case TimelineCommand.Command.BOSSNAME:
                     GlobalHelper.bossUI.transform.Find("Name").GetComponent<Text>().text = currentCommand.args[0];
                     continue;
+                //case TimelineCommand.Command.PHASE:
+                    //Do nothing, this is for being processed by TOPHASE
+                    //continue;
+                case TimelineCommand.Command.TOPHASE:
+                    string tag = currentCommand.args[0];
+                    for (findLine = currentLine + 1; findLine < TimelineCommand.commandLists[commandsId].Count; findLine++) {
+                        if (TimelineCommand.commandLists[commandsId][findLine].command == TimelineCommand.Command.PHASE &&
+                            TimelineCommand.commandLists[commandsId][findLine].args[0] == tag) {
+                            break;
+                        }
+                    }
+                    int health = Mathf.RoundToInt(ParseValue(currentCommand.args[1]));
+
+                    //Add a "phase lock" to the enemy healthbar if it's there
+                    GameObject createdObject = new GameObject();
+                    if (parentEnemy.transform.Find("Healthbar") != null) { //There's a healthbar
+                        createdObject = Instantiate((GameObject)Resources.Load("Prefabs/PhaseLock"));
+                        //Set the object to be the child of the healthbar
+                        createdObject.transform.SetParent(parentEnemy.transform.Find("Healthbar").GetChild(0));
+                        float angle = -(Mathf.PI * (health * 2f) / parentEnemy.template.maxHealth);
+                        createdObject.transform.position = new Vector3(parentEnemy.transform.position.x + 1.2f * Mathf.Sin(angle),parentEnemy.transform.position.y + 1.2f * Mathf.Cos(angle),parentEnemy.transform.position.z - 0.1f);
+                        createdObject.transform.Rotate(new Vector3(0, 0, -angle * Mathf.Rad2Deg));
+                    }
+                    //Add the new phase line to keep track off.
+                    phases.Add(new Phase(findLine, health, Mathf.RoundToInt(ParseValue(currentCommand.args[2])),
+                        ParseValue(currentCommand.args[3]) != 0, parentEnemy, createdObject));
+                    continue;
                 case TimelineCommand.Command.REPEAT:
                     //Executes everything between here and the matching endrepeat args[0] times.
                     count = Mathf.RoundToInt(ParseValue(currentCommand.args[0])) - 1;
                     layers = 0; //Goes down for every Repeat(x) line. Goes up for every Endrepeat line. When it reaches "1", it hit the right endrepeat.
-                    for (findEndRepeatLine = currentLine + 1; layers != 1; findEndRepeatLine++) {
-                        if (TimelineCommand.commandLists[commandsId][findEndRepeatLine].command == TimelineCommand.Command.REPEAT) {
+                    for (findLine = currentLine + 1; layers != 1; findLine++) {
+                        if (TimelineCommand.commandLists[commandsId][findLine].command == TimelineCommand.Command.REPEAT) {
                             layers--;
-                        } else if (TimelineCommand.commandLists[commandsId][findEndRepeatLine].command == TimelineCommand.Command.ENDREPEAT) {
+                        } else if (TimelineCommand.commandLists[commandsId][findLine].command == TimelineCommand.Command.ENDREPEAT) {
                             layers++;
                         }
                     }
-                    lineDifference = 1 + currentLine - findEndRepeatLine; //This should be how much to go back after hitting "endrepeat". Add 1 because it's 1 off and would infinite-loop.
+                    lineDifference = 1 + currentLine - findLine; //This should be how much to go back after hitting "endrepeat". Add 1 because it's 1 off and would infinite-loop.
                     repeatStepback.Add(0); //After hitting it the final time it should go to after the end. Because of the loops ++, going to exactly the end is fine.
                     for (int i = 0; i < count; i++) {
                         repeatStepback.Add(lineDifference);
@@ -220,33 +273,33 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                         continue;
                     } else {
                         layers = 0;
-                        findEndRepeatLine = currentLine + 1;
+                        findLine = currentLine + 1;
                         //"layers" goes down for every "if" line, goes up every "endif" line, "else" does not affect it. When it reaches "1" on endif or 0 on else it's done
                         while (true) {
-                            if (TimelineCommand.commandLists[commandsId][findEndRepeatLine].command == TimelineCommand.Command.IF) {
+                            if (TimelineCommand.commandLists[commandsId][findLine].command == TimelineCommand.Command.IF) {
                                 layers--;
-                            } else if (TimelineCommand.commandLists[commandsId][findEndRepeatLine].command == TimelineCommand.Command.ENDIF) {
+                            } else if (TimelineCommand.commandLists[commandsId][findLine].command == TimelineCommand.Command.ENDIF) {
                                 layers++;
                             }
-                            if ((layers >= 0 && TimelineCommand.commandLists[commandsId][findEndRepeatLine].command == TimelineCommand.Command.ELSE) ||
-                            (layers >= 1 && TimelineCommand.commandLists[commandsId][findEndRepeatLine].command == TimelineCommand.Command.ENDIF)) {
+                            if ((layers >= 0 && TimelineCommand.commandLists[commandsId][findLine].command == TimelineCommand.Command.ELSE) ||
+                            (layers >= 1 && TimelineCommand.commandLists[commandsId][findLine].command == TimelineCommand.Command.ENDIF)) {
                                 break;
                             }
-                            findEndRepeatLine++;
+                            findLine++;
                         }
-                        currentLine = findEndRepeatLine; //No +1 because that's already in the for loop this is in.
+                        currentLine = findLine; //No +1 because that's already in the for loop this is in.
                         continue;
                     }
                 case TimelineCommand.Command.ELSE:
                     //If it hits here, the if was true, so go to the endif. Only have to worry about one end possibility so it's easier, and guaranteed ends on an "endif".
-                    for (findEndRepeatLine = currentLine + 1; layers != 1; findEndRepeatLine++) {
-                        if (TimelineCommand.commandLists[commandsId][findEndRepeatLine].command == TimelineCommand.Command.IF) {
+                    for (findLine = currentLine + 1; layers != 1; findLine++) {
+                        if (TimelineCommand.commandLists[commandsId][findLine].command == TimelineCommand.Command.IF) {
                             layers--;
-                        } else if (TimelineCommand.commandLists[commandsId][findEndRepeatLine].command == TimelineCommand.Command.ENDIF) {
+                        } else if (TimelineCommand.commandLists[commandsId][findLine].command == TimelineCommand.Command.ENDIF) {
                             layers++;
                         }
                     }
-                    currentLine = findEndRepeatLine;
+                    currentLine = findLine;
                     continue;
                 //case TimelineCommand.Command.ENDIF: //Do nothing
                 //    continue;
@@ -255,6 +308,10 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                     switch (currentCommand.bulletProperty) {
                         case TimelineCommand.BulletProperty.SCRIPTROTATION:
                             if (parentBullet != null) { //If the parent is a bullet also add its angle.
+                                if (currentCommand.args.Count == 3) { //There shouldn't be scriptrotation if an extra argument exists
+                                    bulletTemplate.Rotate(ParseValue(currentCommand.args[1]));
+                                    break;
+                                }
                                 bulletTemplate.Rotate(parentBullet.bulletTemplate.scriptRotation + ParseValue(currentCommand.args[1]));
                                 break;
                             } else {
@@ -264,7 +321,8 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                         case TimelineCommand.BulletProperty.MOVEMENT:
                             num1 = ParseValue(currentCommand.args[1]);
                             num2 = ParseValue(currentCommand.args[2]);
-                            if (parentBullet != null) { //If the parent is a bullet, change its movement to be rotated
+                            if (parentBullet != null &&           //If the parent is a bullet, change its movement to be rotated
+                                currentCommand.args.Count != 4) { //It however shouldn't have script rotation if an extra argument exists.
                                 parentTemplate = parentBullet.bulletTemplate;
                                 pos.x = num1 * parentTemplate.scriptRotationMatrix.x + num2 * parentTemplate.scriptRotationMatrix.y;
                                 pos.y = num1 * parentTemplate.scriptRotationMatrix.z + num2 * parentTemplate.scriptRotationMatrix.w;
@@ -279,7 +337,8 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                             num2 = ParseValue(currentCommand.args[2]); //length
                             num1 = Mathf.Sin(num3) * num2; //x
                             num2 = Mathf.Cos(num3) * num2; //y
-                            if (parentBullet != null) { //If the parent is a bullet, change its movement to be rotated
+                            if (parentBullet != null &&           //If the parent is a bullet, change its movement to be rotated
+                                currentCommand.args.Count != 4) { //It however shouldn't have script rotation if an extra argument exists.
                                 parentTemplate = parentBullet.bulletTemplate;
                                 pos.x = num1 * parentTemplate.scriptRotationMatrix.x + num2 * parentTemplate.scriptRotationMatrix.y;
                                 pos.y = num1 * parentTemplate.scriptRotationMatrix.z + num2 * parentTemplate.scriptRotationMatrix.w;
@@ -293,7 +352,8 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                         case TimelineCommand.BulletProperty.POSITION:
                             num1 = ParseValue(currentCommand.args[1]);
                             num2 = ParseValue(currentCommand.args[2]);
-                            if (parentBullet != null) { //If the parent is a bullet, change its position to be rotated 
+                            if (parentBullet != null &&              //If the parent is a bullet, change its position to be rotated 
+                                !(currentCommand.args.Count == 4)) { //It however shouldn't have script rotation if an extra argument exists.
                                 parentTemplate = parentBullet.bulletTemplate;
                                 pos.x = num1 * parentTemplate.scriptRotationMatrix.x + num2 * parentTemplate.scriptRotationMatrix.y;
                                 pos.y = num1 * parentTemplate.scriptRotationMatrix.z + num2 * parentTemplate.scriptRotationMatrix.w;
@@ -328,7 +388,8 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                             bulletTemplate.outerColor.a = ParseValue(currentCommand.args[4]);
                             break;
                         case TimelineCommand.BulletProperty.ROTATION:
-                            if (parentBullet != null) { //If the parent is a bullet, change its rotation to be rotated if the script as a whole should be rotated
+                            if (parentBullet != null &&              //If the parent is a bullet, change its rotation to be rotated if the script as a whole should be rotated
+                                !(currentCommand.args.Count == 3)) { //It however shouldn't have script rotation if an extra argument exists.
                                 parentTemplate = parentBullet.bulletTemplate;
                                 bulletTemplate.rotation = ParseValue(currentCommand.args[1]) + Mathf.Acos(parentTemplate.scriptRotationMatrix.x);
                             } else {
@@ -453,7 +514,8 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                         case TimelineCommand.LaserProperty.POSITION:
                             num1 = ParseValue(currentCommand.args[1]);
                             num2 = ParseValue(currentCommand.args[2]);
-                            if (parentBullet != null) { //If the parent is a bullet, change its position to be rotated 
+                            if (parentBullet != null &&              //If the parent is a bullet, change its position to be rotated 
+                                !(currentCommand.args.Count == 4)) { //It however shouldn't have script rotation if an extra argument exists.
                                 parentTemplate = parentBullet.bulletTemplate;
                                 pos.x = num1 * parentTemplate.scriptRotationMatrix.x + num2 * parentTemplate.scriptRotationMatrix.y;
                                 pos.y = num1 * parentTemplate.scriptRotationMatrix.z + num2 * parentTemplate.scriptRotationMatrix.w;
@@ -487,12 +549,17 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                     ThingCreator.CreateLaser(GetLaserTemplate(currentCommand.args[0]), transform.position);
                     continue;
                 case TimelineCommand.Command.MOVEPARENT:
-                    if (parentBullet != null) { //If this is a bullet, posx,y(,z) should be modified, not its direct position
+                    if (parentBullet != null) {  //If this is a bullet, posx,y(,z) should be modified, not its direct position
                         Bullet bullet = parentBullet;
                         num1 = ParseValue(currentCommand.args[0]);
                         num2 = ParseValue(currentCommand.args[1]);
-                        pos.x = num1 * bullet.bulletTemplate.scriptRotationMatrix.x + num2 * bullet.bulletTemplate.scriptRotationMatrix.y;
-                        pos.y = num1 * bullet.bulletTemplate.scriptRotationMatrix.z + num2 * bullet.bulletTemplate.scriptRotationMatrix.w;
+                        if (!(currentCommand.args.Count == 3)) {
+                            pos.x = num1 * bullet.bulletTemplate.scriptRotationMatrix.x + num2 * bullet.bulletTemplate.scriptRotationMatrix.y;
+                            pos.y = num1 * bullet.bulletTemplate.scriptRotationMatrix.z + num2 * bullet.bulletTemplate.scriptRotationMatrix.w;
+                        } else { //It however shouldn't have script rotation if an extra argument exists.
+                            pos.x = num1;
+                            pos.y = num2;
+                        }
                         bullet.pos.x += pos.x;
                         bullet.pos.y += pos.y;
                     } else {
@@ -506,8 +573,13 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
                     num2 = Mathf.Cos(num3) * num2; //y
                     if (parentBullet != null) { //If this is a bullet, posx,y(,z) should be modified, not its direct position
                         Bullet bullet = parentBullet;
-                        pos.x = num1 * bullet.bulletTemplate.scriptRotationMatrix.x + num2 * bullet.bulletTemplate.scriptRotationMatrix.y;
-                        pos.y = num1 * bullet.bulletTemplate.scriptRotationMatrix.z + num2 * bullet.bulletTemplate.scriptRotationMatrix.w;
+                        if (!(currentCommand.args.Count == 3)) {
+                            pos.x = num1 * bullet.bulletTemplate.scriptRotationMatrix.x + num2 * bullet.bulletTemplate.scriptRotationMatrix.y;
+                            pos.y = num1 * bullet.bulletTemplate.scriptRotationMatrix.z + num2 * bullet.bulletTemplate.scriptRotationMatrix.w;
+                        } else { //It however shouldn't have script rotation if an extra argument exists.
+                            pos.x = num1;
+                            pos.y = num2;
+                        }
                         bullet.pos.x += pos.x;
                         bullet.pos.y += pos.y;
                     } else {
@@ -656,7 +728,8 @@ public class TimelineInterprenter : MonoBehaviour { //TODO: Dictionaries are sti
     }
 
     /// <summary>
-    /// Gets the BulletTemplate in the numberVars dictionary by name. If it doesn't exist, it creates it, and returns it.
+    /// Gets the Bullet
+    /// late in the numberVars dictionary by name. If it doesn't exist, it creates it, and returns it.
     /// </summary>
     private BulletTemplate GetBulletTemplate(string name) {
         if (name[0] == 95) { //Starts with '_', so global

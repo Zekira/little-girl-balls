@@ -12,6 +12,7 @@ public class FramerateCounter : MonoBehaviour {
     private int ticksPassed = 0;
     private float timePassed = 0f;
     public static float FPS;
+    public static bool speedUp = false;
 
 	void Start () {
         text = GetComponent<Text>();
@@ -27,9 +28,9 @@ public class FramerateCounter : MonoBehaviour {
             ticksPassed = 0;
             timePassed = 0f;
         }
-        if (FPS >= 55) {
+        if (FPS >= 55 && FPS <= 70) { //Normal gameplay
             Bullet.updatePosition = true;
-        } else {
+        } else { //Excessive lag or replaying with fastforward
             Bullet.updatePosition = !Bullet.updatePosition;
         }
     }

@@ -47,15 +47,21 @@ public class GlobalHelper : MonoBehaviour {
     public static int activeBosses;
     public static GlobalHelper thisHelper;
 
-    public static void SetGameFramerate() {
+    public static void SetGameFramerate(bool speedup) {
         QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 60;
+        if (speedup) {
+            Application.targetFrameRate = 180;
+            FramerateCounter.speedUp = true;
+        } else {
+            Application.targetFrameRate = 60;
+            FramerateCounter.speedUp = false;
+        }
     }
 
    //Things that make finding objects in other classes easier, but only make sense when in a level: the only time GlobalHelper is a script attached to an object.
     //Also sets up things needed for the level and such as this only runs when loading the level.
     void Awake() {
-        SetGameFramerate();
+        SetGameFramerate(false);
         if (!ReplayManager.isReplay) {
             randomSeed = random.Next();
             random = new System.Random(randomSeed);

@@ -10,11 +10,11 @@ public class TimelineCommand
     
     public enum Command
     {
-        STARTTIMELINE, LOADLEVEL, DIALOGUE, STARTMUSIC, BOSSNAME, REPEAT, ENDREPEAT, IF, ELSE, ENDIF, WAIT, BOSSWAIT,
+        STARTTIMELINE, LOADLEVEL, DIALOGUE, STARTMUSIC, BOSSNAME, REPEAT, ENDREPEAT, IF, ELSE, ENDIF, WAIT, BOSSWAIT, STOP,
         BULLETPROPERTY, ENEMYPROPERTY, LASERPROPERTY, CREATEBULLET, CREATEENEMY, CREATELASER,
         MOVEPARENT, MOVEPARENTPOLAR, DESTROYPARENT, SETPARENTHEALTH, ANGLETOPLAYER, ANGLETOPOINT, GETPOSITION, GETPLAYERPOSITION, RANDOM, MOVETOWARDSPOINT,
         SET, ADD, SUB, MUL, DIV, MOD, POW, SIN, ASIN, COS, ACOS, TAN, ATAN, ABS,
-        ATTACKDURATION, LOG
+        ATTACKDURATION, LOG, PHASE, TOPHASE
     };
     public enum EnemyProperty { SCALE, ATTACKPATH, ID, MAXHEALTH, BOSS, BOSSPORTRAIT, DROPVALUE, DROPPOWER, DROPSCORE, STARTPOS, BASESCORE };
     public enum BulletProperty { MOVEMENT, MOVEMENTPOLAR, ENEMYSHOT, SCALE, ID, INNERCOLOR, OUTERCOLOR, ROTATION, POSITION, RELATIVEPOS, CLEARIMMUNE, SCRIPTROTATION, ADVANCEDPATH, HARMLESS, SNAKELENGTH };
@@ -93,6 +93,7 @@ public class TimelineCommand
                     case "endif":
                     case "destroyparent":
                     case "bosswait":
+                    case "stop":
                         if (args.Count != 0) {
                             Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected none.");
                             foundError = true;
@@ -135,13 +136,12 @@ public class TimelineCommand
                     case "angletoplayer":
                     case "attackduration":
                     case "bossname":
+                    case "phase":
                         if (args.Count != 1) {
                             Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 1.");
                             foundError = true;
                         }
                         break;
-                    case "moveparent":
-                    case "moveparentpolar":
                     case "getposition":
                     case "getplayerposition":
                     case "set":
@@ -155,6 +155,13 @@ public class TimelineCommand
                     case "log":
                         if (args.Count != 2) {
                             Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 2.");
+                            foundError = true;
+                        }
+                        break;
+                    case "moveparent":
+                    case "moveparentpolar":
+                        if (args.Count != 2 && args.Count != 3) {
+                            Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 2 or 3.");
                             foundError = true;
                         }
                         break;
@@ -173,6 +180,12 @@ public class TimelineCommand
                             foundError = true;
                         }
                         break;
+                    case "tophase":
+                        if (args.Count != 4) {
+                            Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 4.");
+                            foundError = true;
+                        }
+                        break;
                     case "bulletproperty":
                         if (args.Count < 3) {
                             Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): No property values specified");
@@ -183,7 +196,6 @@ public class TimelineCommand
                             case "enemyshot":
                             case "scale":
                             case "id":
-                            case "rotation":
                             case "relativepos":
                             case "clearimmune":
                             case "scriptrotation":
@@ -194,11 +206,17 @@ public class TimelineCommand
                                     foundError = true;
                                 }
                                 break;
+                            case "rotation":
+                                if (args.Count != 3 && args.Count != 4) {
+                                    Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 1 or 2.");
+                                    foundError = true;
+                                }
+                                break;
                             case "position":
                             case "movement":
                             case "movementpolar":
-                                if (args.Count != 4) {
-                                    Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 2.");
+                                if (args.Count != 4 && args.Count != 5) {
+                                    Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 2 or 3.");
                                     foundError = true;
                                 }
                                 break;
@@ -273,17 +291,27 @@ public class TimelineCommand
                             case "shotduration":
                             case "width":
                             case "relativepos":
-                            case "rotation":
                             case "rotationspeed":
                                 if (args.Count != 3) {
                                     Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 1.");
                                     foundError = true;
                                 }
                                 break;
-                            case "position":
+                            case "rotation":
+                                if (args.Count != 3 && args.Count != 4) {
+                                    Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 1 or 2.");
+                                    foundError = true;
+                                }
+                                break;
                             case "movement":
                                 if (args.Count != 4) {
                                     Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 2.");
+                                    foundError = true;
+                                }
+                                break;
+                            case "position":
+                                if (args.Count != 4 && args.Count != 5) {
+                                    Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 2 or 3.");
                                     foundError = true;
                                 }
                                 break;
@@ -324,7 +352,7 @@ public class TimelineCommand
                 args = TimelineInterprenter.GetArguments(instruction);
                 for (int i = 0; i < args.Count; i++) {
                     //Global Vars don't have the luxery of a list, they live in dictionaries and don't need all this effort.
-                    if (args[i][0] == '_') {
+                    if (args[i].Length > 0 && args[i][0] == '_') {
                         continue;
                     }
                     //All situations in which the name isn't meant to be ANY variable
@@ -338,7 +366,10 @@ public class TimelineCommand
                         (function == "enemyproperty" && i == 1) ||
                         (function == "enemyproperty" && args[1] == "attackpath" && i >= 2) ||
                         (function == "enemyproperty" && args[1] == "bossportrait" && i == 2) ||
-                        (function == "laserproperty" && i == 1)) {
+                        (function == "laserproperty" && i == 1) ||
+                        (function == "phase") ||
+                        (function == "tophase" && i == 0) ||
+                        (function == "log" && i == 0)) {
                         continue;
                     }
                     //Sort out the enemyTemplate, bulletTemplate, laserTemplate id's

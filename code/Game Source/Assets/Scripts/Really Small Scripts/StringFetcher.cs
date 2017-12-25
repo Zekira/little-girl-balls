@@ -22,9 +22,12 @@ public class StringFetcher : MonoBehaviour {
     /// Puts all strings in Resources/Text/Strings into a dictionary.
     /// </summary>
 	private static Dictionary<string, string> GetFromFile () {
-        //TODO: From outside of unity.
         Dictionary<string, string> returnDict = new Dictionary<string, string>();
-        foreach (string s in ((TextAsset)Resources.Load("Text/Strings")).text.Split(new char[] { '\n', '\r' })) {
+        string text = SaveLoad.TryReadTextFile("Text/Strings");
+        if (text == null) {
+            text = ((TextAsset)Resources.Load("Text/Strings")).text;
+        }
+        foreach (string s in text.Split(new char[] { '\n', '\r' })) {
             string[] entry = s.Split(new char[] { '=' }, 2);
             if (entry.Length == 2) {
                 returnDict.Add(entry[0], entry[1].Replace("NEWLINE", System.Environment.NewLine));

@@ -27,7 +27,7 @@ public class Menu : MonoBehaviour {
     private Color inactiveColor;
 
     void Awake() {
-        GlobalHelper.SetGameFramerate();
+        GlobalHelper.SetGameFramerate(false);
         activeColor = GetComponent<Text>().color;
         inactiveColor = new Vector4(activeColor.r / 2, activeColor.g / 2, activeColor.b / 2, 0.5f);
         SaveLoad.LoadApplyConfig(); //Just in case

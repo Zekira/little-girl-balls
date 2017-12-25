@@ -74,9 +74,13 @@ public class PlayerMovement : MonoBehaviour {
         if (Input.GetKeyDown(Config.keyRestart)) {
             SceneSwitcher.LoadLevel(PlayerStats.firstStage, GlobalHelper.difficulty, ReplayManager.isReplay);
         }
-        //Check if pause
-        if (Input.GetKeyDown(Config.keyPause)) {
-            GlobalHelper.SetPaused(!GlobalHelper.paused);
+        //Check if replay
+        if (ReplayManager.isReplay) {
+            if (Input.GetKeyDown(Config.keySkip)) { //Fast forward
+                GlobalHelper.SetGameFramerate(true);
+            } else if (Input.GetKeyUp(Config.keySkip)) {
+                GlobalHelper.SetGameFramerate(false);
+            }
         }
         //Interact with game world
         if (!GlobalHelper.paused) {
@@ -113,6 +117,10 @@ public class PlayerMovement : MonoBehaviour {
                 Debug.Log("[Info] " + GlobalHelper.currentBullets + "/" + GlobalHelper.backupBullets.Count + "/" + GlobalHelper.totalFiredBullets);
                 Debug.Log("[Info] " + shotCooldown + " shot: " + Input.GetKey(Config.keyShoot) + " dialogue:" + GlobalHelper.dialogue);
             }
+        }
+        //Check if pause - here because otherwise the replay and the player would pause at different times.
+        if (Input.GetKeyDown(Config.keyPause)) {
+            GlobalHelper.SetPaused(!GlobalHelper.paused);
         }
     }
 

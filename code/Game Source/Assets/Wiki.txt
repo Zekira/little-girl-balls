@@ -81,12 +81,14 @@ The trigonometric functions are in radians.
 General functions:
 ==================
   starttimeline(<path>);
-path: The place the timeline is located within within the Resources folder in unity. TODO: From outside unity.
+path: The place the timeline is located within within the Resources folder in unity.
 Attaches another Timeline to this object that starts getting executed immediatly.
+  stop;
+Sets the line to be read to after the last one - that is, nothing more is read.
   loadlevel(<[0,6]>)
 Load a level. 0-5 are the regular levels designated by 1_x t/m 6_x, and 6 is extra level 7_x (but why would you call that one). I know, quality consistency.
   dialogue(<path>);
-path: The place the dialogue is located within within the Resources folder in unity. TODO: From outside unity.
+path: The place the dialogue is located within within the Resources folder in unity.
 Starts the dialogue. Timelines normally don't run while dialogue is active.
   bossname(<name>);
 Sets the boss' name in the upperleft corner.
@@ -115,6 +117,11 @@ storex/storey: Where to store the x and y coordinate of the poosition of the pla
 Needs to be in an attack/spellcard file. States how many 1/60th's of a second this attacks lasts. Negative values for timeout spells. If it's missing, assuming 9999. Good practice to have this the first line in a attack.
   movetowardspoint(<x>, <y>, <time>);
 Moves the parent smoothly to (x,y), taking time amount of 1/60th seconds.
+  phase(<string>);
+Sets a label for a phase, identified by string.
+  tophase(<string>, <health>, <time>, <clear>);
+When health or time fall below the specified values, go to the line with phase(string);. clear specifies whether or not all bullets should be cleared.
+This also jumps out of any repeat loops.
 ===================
 Property functions:
 ===================
@@ -160,7 +167,7 @@ Default: 1
 Whether the bullet can be cleared by bombs/deaths.
 Default: 0
   scriptrotation, <angle>
-Rotates the results of the following 'angle' radians: bulletProperty's scriprotation, movement, movementpolar, position, rotation; laserProperty's rotation; moveparent, moveparentpolar. Specifically NOT angletoplayer
+Rotates the results of the following 'angle' radians: bulletProperty's scriprotation, movement, movementpolar, position, rotation; laserProperty's rotation, position; moveparent, moveparentpolar. Add any extra argument after any of these functions to ignore the rotation. Specifically does NOT affect angletoplayer
 Default: 0
   advancedpath, <path>
 Adds a Timeline to the created bullet. Same path rules as starttimeline(<path>);
