@@ -85,6 +85,7 @@ public class PlayerStats : MonoBehaviour
             totalTimePlayed++;
             timePlayed++;
             if (grazeInATick > 0) {
+                AudioManager.QueueSound(AudioManager.SFX.GRAZE);
                 SetGraze(graze + grazeInATick);
                 grazeInATick = 0;
             }
@@ -112,6 +113,7 @@ public class PlayerStats : MonoBehaviour
             noMovement = true;
             transform.Find("DeathAnimation").gameObject.SetActive(true);
             invincibility = 210;
+            AudioManager.QueueSound(AudioManager.SFX.HIT);
             if (lives == 0) { //Getting hit with zero lives in stock is a bad idea.
                 Debug.Log("[Info] <b>Game over lul git good skrub</b>");
             } else {
@@ -152,7 +154,7 @@ public class PlayerStats : MonoBehaviour
     /// Sets the life count and updates the UI.
     /// Everything works the same as SetBombs();
     /// </summary>
-    public static void SetLives(byte total, byte part) {
+    private static void SetLives(byte total, byte part) {
         if (lives == 6) {
             part = 0;
         }
@@ -168,6 +170,16 @@ public class PlayerStats : MonoBehaviour
             }
         }
         UIVariable.transform.Find("Lifepieces").GetComponent<Text>().text = part + "/" + piecesToLife;
+    }
+    public static void AddLife() {
+        SetLives((byte)(lives + 1), lifepieces);
+        AudioManager.QueueSound(AudioManager.SFX.EXTEND);
+    }
+    public static void AddLifePiece() {
+        SetLives(lives, (byte)(lifepieces + 1));
+        if (lifepieces + 1 == piecesToLife) {
+            AudioManager.QueueSound(AudioManager.SFX.EXTEND);
+        }
     }
 
     /// <summary>
@@ -243,6 +255,10 @@ public class PlayerStats : MonoBehaviour
     ///  Adds amount to the power, up to 400, or gives a bonus if it's already 400. Also updates the UI.
     /// </summary>
     public static void AddPower(int amount) {
+        int powerMod100 = power % 100;
+        if (powerMod100 + amount >= 100) { //If transitioning across a 1.00-power boundary
+            AudioManager.QueueSound(AudioManager.SFX.POWERUP);
+        }
         SetPower(power + amount);
     }
 

@@ -25,6 +25,7 @@ public class Menu : MonoBehaviour {
 
     private Color activeColor;
     private Color inactiveColor;
+    private bool playSelect = false;
 
     void Awake() {
         GlobalHelper.SetGameFramerate(false);
@@ -108,6 +109,7 @@ public class Menu : MonoBehaviour {
     }
 
     void Update () {
+        playSelect = true;
         if (IsSelected()) {
             if (cooldown > 0) {
                 cooldown--;
@@ -161,6 +163,7 @@ public class Menu : MonoBehaviour {
                 cooldown = 8;
             }
             if (Input.GetKeyDown(Config.keyShoot)) {
+                AudioManager.QueueSound(AudioManager.SFX.MENU_SELECT);
                 cooldown = 8;
                 switch (gameObject.name) {
                     //Mostly main menu items
@@ -335,6 +338,9 @@ public class Menu : MonoBehaviour {
     /// </summary>
     private IEnumerator CoSelect(bool fromPrev) {
         if (selectable) {
+            if (playSelect) {
+                AudioManager.QueueSound(AudioManager.SFX.MENU_CHANGE_SELECTION);
+            }
             selectedObject = transform;
             //animation shit
             GetComponent<Outline>().effectColor = Color.white;
@@ -389,6 +395,7 @@ public class Menu : MonoBehaviour {
 
     public void GoBack(bool hidePrevious) {
         if (previousSelectedMenuItems.Count > 0) {
+            AudioManager.QueueSound(AudioManager.SFX.MENU_CANCEL);
             selectedObject.parent.gameObject.SetActive(!hidePrevious);
             previousSelectedMenuItems[previousSelectedMenuItems.Count - 1].parent.gameObject.SetActive(true);
             previousSelectedMenuItems[previousSelectedMenuItems.Count - 1].GetComponent<Menu>().Select(true);

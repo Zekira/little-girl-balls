@@ -13,6 +13,7 @@ public class SpellcardManager : MonoBehaviour {
     public int timeLimit = 0;
     public static bool failed = false;
     public static int currentSpellId; //Set in Enemy.GetSpell();
+    public static bool finalSpell = false; //Set in Enemy.NextPhase(). For whether the end sound effect should be a "poof" or "boom".
 
     private int ticksTaken = 0;
     private float timeTaken = 0;
@@ -46,6 +47,7 @@ public class SpellcardManager : MonoBehaviour {
         timeLimit = template.spellTimers[attack];
         string name = Enemy.GetSpell(template.attackPath[attack]);
         if (name != "") {
+            AudioManager.QueueSound(AudioManager.SFX.SPELLCARD_CHARGE);
             startValue = (uint)(GlobalHelper.difficulty + (GlobalHelper.level+1)) * 1000000;
             currentValue = startValue;
             GlobalHelper.parent3d.SetActive(false);
@@ -172,6 +174,11 @@ public class SpellcardManager : MonoBehaviour {
     /// This shows the "Got Spell Card Bonus! [x]" or "Bonus Failed...", and updates the history
     /// </summary>
     public void EndSpellcard() {
+        if (finalSpell) {
+            AudioManager.QueueSound(AudioManager.SFX.SPELLCARD_FINAL_END);
+        } else {
+            AudioManager.QueueSound(AudioManager.SFX.SPELLCARD_END);
+        }
         GlobalHelper.parent3d.SetActive(true);
         StartCoroutine(ShowBonus());
         int historyvalues = GetHistory(currentSpellId, 0); 
@@ -184,6 +191,7 @@ public class SpellcardManager : MonoBehaviour {
         if (!failed) {
             spellcardBonus.Find("Title").GetComponent<Text>().text = StringFetcher.GetString("SPELLBONUS");
             spellcardBonus.Find("Score").GetComponent<Text>().text = NumberFunctions.Commafy(currentValue);
+            AudioManager.QueueSound(AudioManager.SFX.SPELLCARD_BONUS);
         } else {
             spellcardBonus.Find("Title").GetComponent<Text>().text = StringFetcher.GetString("BONUSFAILED");
             spellcardBonus.Find("Score").GetComponent<Text>().text = "";

@@ -33,6 +33,7 @@ public class Item : MonoBehaviour {
                 float deltay = playerpos.y - pos.y;
                 float distance = deltax * deltax + deltay * deltay;
                 if (!PlayerStats.noMovement && distance < 0.016f) { //Close enough to be picked up. And you can't pick up stuff if you're dead.
+                    AudioManager.QueueSound(AudioManager.SFX.ITEM);
                     switch (type) {
                         case ItemType.POWER:
                             PlayerStats.AddPower(5);

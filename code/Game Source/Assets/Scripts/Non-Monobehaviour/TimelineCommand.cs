@@ -77,7 +77,7 @@ public class TimelineCommand
             string function;
             List<string> args;
             List<TimelineCommand> newList = new List<TimelineCommand>();
-#if UNITY_EDITOR //Logging invalid functions and preventing them from being used to prevent major console error spam //TODO: Add check if repeat/endrepeat and if/else/endif pairs match properly
+#if UNITY_EDITOR //Logging invalid functions and preventing them from being used to prevent major console error spam
             bool foundError = false;
             for (int index = 0; index < instructions.Length; index++) {
                 string instruction;

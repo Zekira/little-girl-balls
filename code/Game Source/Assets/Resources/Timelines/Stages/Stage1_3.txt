@@ -13,7 +13,6 @@ enemyproperty(fairy_blue, droppower, 0);
 enemyproperty(fairy_blue, dropscore, 5);
 enemyproperty(fairy_blue, basescore, 1000);
 
-//todo: big fairy;
 enemyproperty(fairy2, attackpath, Timelines/StageEnemies/Fairy2_3);
 enemyproperty(fairy2, id, 1);
 enemyproperty(fairy2, maxhealth, 500);

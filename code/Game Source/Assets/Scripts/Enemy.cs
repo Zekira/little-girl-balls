@@ -84,12 +84,24 @@ public class Enemy : MonoBehaviour {
     /// Starts what should happen when this enemy takes damage: reducing the health, and if it's a boss, updating the healthbar.
     /// </summary>
     public void TakeDamage(int amount) {
+        if (midDelay) { //During the delay of starting an attack damage shouldn't be taken
+            return;
+        }
+        bool lowDamage = true;
         if (template.isBoss) {
             if (!timeoutAttack) {
                 UpdateHealthbar(health - amount);
+                if (health < template.maxHealth * 0.25) {
+                    lowDamage = false;
+                }
             }
         } else {
             health -= amount;
+        }
+        if (lowDamage) {
+            AudioManager.QueueSound(AudioManager.SFX.DAMAGE_LOW);
+        } else {
+            AudioManager.QueueSound(AudioManager.SFX.DAMAGE_HIGH);
         }
     }
 
@@ -139,6 +151,12 @@ public class Enemy : MonoBehaviour {
             }
         } else {
             timer = 9999;
+        }
+        //For deciding whether the end of the attack should be a "poof" or "boom": final spells "boom", all others "poof".
+        if (currentAttack + 1 < template.spellTimers.Count) {
+            SpellcardManager.finalSpell = false;
+        } else {
+            SpellcardManager.finalSpell = true;
         }
         //Clears bullets if it's a boss, updates the UI, and starts the next spellcard
         if (template.isBoss) {

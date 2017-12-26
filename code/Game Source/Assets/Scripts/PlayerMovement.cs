@@ -120,6 +120,9 @@ public class PlayerMovement : MonoBehaviour {
         }
         //Check if pause - here because otherwise the replay and the player would pause at different times.
         if (Input.GetKeyDown(Config.keyPause)) {
+            if (GlobalHelper.paused) { //Cancel sound when unpausing
+                AudioManager.QueueSound(AudioManager.SFX.MENU_CANCEL);
+            }
             GlobalHelper.SetPaused(!GlobalHelper.paused);
         }
     }

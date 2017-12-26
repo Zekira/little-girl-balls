@@ -67,6 +67,7 @@ public class DialogueManager : MonoBehaviour {
             GlobalHelper.dialogue = false;
             return;
         }
+        AudioManager.QueueSound(AudioManager.SFX.MENU_CHANGE_SELECTION2);
         currentDialogue = dialogue[currentLine];
         if (currentDialogue.leftSpeaking) {
             LeftSays(currentDialogue, currentDialogue.showOther);
