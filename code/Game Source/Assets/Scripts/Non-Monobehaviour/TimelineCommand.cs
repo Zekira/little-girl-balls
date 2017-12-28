@@ -10,7 +10,7 @@ public class TimelineCommand
     
     public enum Command
     {
-        STARTTIMELINE, LOADLEVEL, DIALOGUE, STARTMUSIC, BOSSNAME, REPEAT, ENDREPEAT, IF, ELSE, ENDIF, WAIT, BOSSWAIT, STOP,
+        STARTTIMELINE, LOADLEVEL, DIALOGUE, STARTMUSIC, PLAYSOUND, BOSSNAME, REPEAT, ENDREPEAT, IF, ELSE, ENDIF, WAIT, BOSSWAIT, STOP,
         BULLETPROPERTY, ENEMYPROPERTY, LASERPROPERTY, CREATEBULLET, CREATEENEMY, CREATELASER,
         MOVEPARENT, MOVEPARENTPOLAR, DESTROYPARENT, SETPARENTHEALTH, ANGLETOPLAYER, ANGLETOPOINT, GETPOSITION, GETPLAYERPOSITION, RANDOM, MOVETOWARDSPOINT,
         SET, ADD, SUB, MUL, DIV, MOD, POW, SIN, ASIN, COS, ACOS, TAN, ATAN, ABS,
@@ -123,6 +123,15 @@ public class TimelineCommand
                             foundError = true;
                         } else if (!Enum.IsDefined(typeof(AudioManager.BGM), args[0].ToUpperInvariant())) {
                             Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): \"<i>" + args[0] + "</i>\" is not a valid music track.");
+                            foundError = true;
+                        }
+                        break;
+                    case "playsound":
+                        if (args.Count != 1) {
+                            Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + args.Count + " args, expected 1.");
+                            foundError = true;
+                        } else if (!Enum.IsDefined(typeof(AudioManager.SFX), args[0].ToUpperInvariant())) {
+                            Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): \"<i>" + args[0] + "</i>\" is not valid sfx.");
                             foundError = true;
                         }
                         break;
@@ -361,6 +370,7 @@ public class TimelineCommand
                         (function == "dialogue") ||
                         (function == "bossname") ||
                         (function == "startmusic") ||
+                        (function == "playsound") ||
                         (function == "bulletproperty" && i == 1) ||
                         (function == "bulletproperty" && args[1] == "advancedpath" && i == 2) ||
                         (function == "enemyproperty" && i == 1) ||

@@ -8,7 +8,6 @@ Shader "Custom/ColorChange" //Basically took Unity's default sprite shader and m
 		//_Color("Tint", Color) = (1,1,1,1) //Removed
 		[PerRendererData] _Color1("Replace Red With", Color) = (1,1,1,1) //Added
 		[PerRendererData] _Color2("Replace Green With", Color) = (1,1,1,1) //Added
-		[MaterialToggle] PixelSnap("Pixel snap", Float) = 0
 	}
 
 		SubShader
@@ -32,7 +31,6 @@ Shader "Custom/ColorChange" //Basically took Unity's default sprite shader and m
 		CGPROGRAM
 		#pragma vertex vert
 		#pragma fragment frag
-		#pragma multi_compile _ PIXELSNAP_ON
 		#include "UnityCG.cginc"
 
 	struct appdata_t
@@ -58,27 +56,17 @@ Shader "Custom/ColorChange" //Basically took Unity's default sprite shader and m
 		OUT.texcoord = IN.texcoord;
 		//OUT.color = IN.color * _Color; //Removed
 		OUT.color = IN.color; //Addded
-		#ifdef PIXELSNAP_ON
-		OUT.vertex = UnityPixelSnap(OUT.vertex);
-		#endif
 
 		return OUT;
 	}
 
 	sampler2D _MainTex;
-	sampler2D _AlphaTex;
-	float _AlphaSplitEnabled;
 	float4 _Color1; //Added
 	float4 _Color2; //Added
 
 	fixed4 SampleSpriteTexture(float2 uv)
 	{
 		fixed4 color = tex2D(_MainTex, uv);
-
-		#if UNITY_TEXTURE_ALPHASPLIT_ALLOWED
-		if (_AlphaSplitEnabled)
-			color.a = tex2D(_AlphaTex, uv).r;
-		#endif //UNITY_TEXTURE_ALPHASPLIT_ALLOWED
 
 		if (color.r > 0 || color.g > 0) { //Added
 			float denominator = color.r + color.g; //Added

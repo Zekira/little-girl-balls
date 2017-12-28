@@ -184,6 +184,9 @@ public class TimelineInterprenter : MonoBehaviour {
                 case TimelineCommand.Command.STARTMUSIC:
                     GlobalHelper.audioManager.PlayMusic((AudioManager.BGM)Enum.Parse(typeof(AudioManager.BGM), currentCommand.args[0].ToUpperInvariant()));
                     continue;
+                case TimelineCommand.Command.PLAYSOUND:
+                    AudioManager.QueueSound((AudioManager.SFX)Enum.Parse(typeof(AudioManager.SFX), currentCommand.args[0].ToUpperInvariant()));
+                    continue;
                 case TimelineCommand.Command.BOSSNAME:
                     GlobalHelper.bossUI.transform.Find("Name").GetComponent<Text>().text = currentCommand.args[0];
                     continue;

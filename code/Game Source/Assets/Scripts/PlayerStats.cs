@@ -65,6 +65,7 @@ public class PlayerStats : MonoBehaviour
             SetValue(10000);
             firstStage = GlobalHelper.level;
         } else { //it's a replay.
+            SetScore(ReplayManager.currentReplay.highScores[GlobalHelper.level]);
             SetLives((byte)(ReplayManager.currentReplay.lives[GlobalHelper.level] / piecesToLife),
                 (byte)(ReplayManager.currentReplay.lives[GlobalHelper.level] % piecesToLife));
             SetBombs((byte)(ReplayManager.currentReplay.bombs[GlobalHelper.level] / piecesToBomb),

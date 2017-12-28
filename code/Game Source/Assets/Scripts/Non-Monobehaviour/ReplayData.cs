@@ -16,7 +16,11 @@ public class ReplayData {
     public byte[] bombs = new byte[7];
     public byte[] power = new byte[7];
     public uint[] value = new uint[7];
+    public ulong[] highScores = new ulong[7];
     public int[] graze = new int[7];
+    public bool noBomb = true; //default to true, set to false on bomb
+    public bool noMiss = true; //default to true, set to false on miss
+    public bool pacifist = true; //default to true, set to false when making an enemy go to the next attack / killing the,
 
     public void SetPlayerAndDifficulty(GlobalHelper.Character character, GlobalHelper.Difficulty difficulty) {
         playerAndDifficulty = (byte)(((int)character) + 6 * ((int)difficulty));

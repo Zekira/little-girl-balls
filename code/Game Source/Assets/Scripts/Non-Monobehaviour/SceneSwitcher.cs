@@ -31,6 +31,7 @@ public class SceneSwitcher  {
         /* Data needed to be kept:
          * Everything from PlayerStats. Update the startpos.
          */
+        ReplayManager.currentReplay.highScores[GlobalHelper.level] = PlayerStats.score;
         ReplayManager.currentReplay.startpos[level] = PlayerPosGetter.playerPos;
         GlobalHelper.level = level;
         //Make the replay think we're in stage 2 and split input so it's registered at the start of the stage

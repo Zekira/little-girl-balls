@@ -253,6 +253,8 @@ public static class SaveLoad
      * Replay format (byte) = 1 byte (So different replay types won't clash if I ever were to make more)
      * Replay name (char[32]) = 64 bytes (32 chars and chars are 16-bit)
      * Playertype, difficulty = 1 byte (6 different players and 5 different difficulties = 30 possible things.)
+     * Replay flags (byte) = 1 byte (1st bit: NoBomb, 2nd bit: NoMiss, 3rd bit: Pacifist; NN can be derived from the 1st and 2nd)
+     * 4 empty ints (4 ints) = 16 bytes (For when new data is needed later, so it won't be incompatible with old replays)
      * Level 1 starting point in this file (int) = 4 bytes (-1 = undefined)
      * Level 2 starting point in this file (int) = 4 bytes (-1 = undefined)
      * ...
@@ -268,13 +270,14 @@ public static class SaveLoad
      * Playerstart power (byte) = 1 byte (there are 81 different possible values so it fits within a byte)
      * Playerstart value (int) = 4 bytes
      * Playerstart graze (int) = 4 bytes
+     * Score at the end of stage (ulong) = 8 bytes
          Inputs in timestamp order:
      * Timestamp (int) = 4 bytes
      * Key(s) (byte) = 1 byte
      * Duration (int) = 4 bytes
      */
     //Where the binarywriter should be when it should write "Level 1 starting point in this file (int)".
-    private const int LevelStartStartIndex = 1/*format*/ + 64/*32 chars*/ + 1/*player/difficulty*/;
+    private const int LevelStartStartIndex = 1/*format*/ + 64/*32 chars*/ + 1/*player/difficulty*/ + 1/*Replay flags*/ + 16/*4 empty ints*/;
     public static void SaveReplay(ReplayData replayData, int index) {
         (new FileInfo(replayBasePath)).Directory.Create(); //Create the basedirectory if it doesn't exist
         if (ReplayManager.isReplay) {
@@ -286,6 +289,11 @@ public static class SaveLoad
                 writer.Write((short)replayData.replayName[i]);
             }
             writer.Write(replayData.playerAndDifficulty);
+            writer.Write(NumberFunctions.SetBit(
+                NumberFunctions.SetBit(
+                NumberFunctions.SetBit(new byte(), 0, replayData.noBomb), 1, replayData.noMiss),
+                2, replayData.pacifist)); //Set the flags of nobomb / nomiss / pacifist
+            writer.Write((long)0); writer.Write((long)0); //The 16 empty bytes for maybe later
             writer.Seek(28, SeekOrigin.Current); //Skip the 7 ints describing where everything is because we don't know that yet.
             int currentLevelLocation = (int)writer.BaseStream.Position; //This starts at LevelStartStartIndex.
             /* What should happen here:
@@ -319,6 +327,7 @@ public static class SaveLoad
                     writer.Write(replayData.power[level]); //power
                     writer.Write(replayData.value[level]); //value
                     writer.Write(replayData.graze[level]); //graze
+                    writer.Write(replayData.highScores[level]); //score at the end
                     List<InputData> data = replayData.inputData[level];
                     for(int i = 0; i < data.Count; i++) {
                         //All input data (in order because the list is in order)
@@ -357,6 +366,16 @@ public static class SaveLoad
                 Debug.Log("[Replay] Character: " + (GlobalHelper.Character)(playerAndDifficulty % 6));
                 Debug.Log("[Replay] Difficulty: " + (GlobalHelper.Difficulty)(playerAndDifficulty / 6));
                 loadedReplay.playerAndDifficulty = playerAndDifficulty;
+                byte flags = reader.ReadByte();
+                loadedReplay.noBomb = NumberFunctions.GetBit(flags, 0);
+                Debug.Log("[Replay] NoBomb: " + loadedReplay.noBomb);
+                loadedReplay.noMiss = NumberFunctions.GetBit(flags, 1);
+                Debug.Log("[Replay] NoMiss: " + loadedReplay.noMiss);
+                loadedReplay.pacifist = NumberFunctions.GetBit(flags, 2);
+                Debug.Log("[Replay] Pacifist: " + loadedReplay.pacifist);
+                //Skip the 16 empty bytes
+                reader.BaseStream.Seek(16, SeekOrigin.Current);
+                //For emphasis, skipped!
                 int[] levelStarts = new int[7];
                 for (int i = 0; i < 7; i++) {
                     levelStarts[i] = reader.ReadInt32(); //variable to know where to jump to for each level
@@ -389,6 +408,8 @@ public static class SaveLoad
                     int pgraze = reader.ReadInt32();
                     loadedReplay.graze[i] = pgraze;
                     Debug.Log("[Replay] Player start stats: L: " + plives + " B: " + pbombs + " P: " + ppower + " V: " + pvalue + " G: " + pgraze);
+                    loadedReplay.highScores[i] = reader.ReadUInt64();
+                    Debug.Log("[Replay] Score for this stage: " + loadedReplay.highScores[i]);
                     /* What should happen here:
                      * Keep looping so long as:
                      * 1) if there is a level after here with higher position, that position is reached

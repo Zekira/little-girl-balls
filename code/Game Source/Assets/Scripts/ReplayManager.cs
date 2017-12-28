@@ -68,6 +68,7 @@ public class ReplayManager : MonoBehaviour {
                 currentReplay.SetReplayName("This is honestly a 32 char name!");
                 currentReplay.SetSeed(GlobalHelper.randomSeed, 0);
                 currentReplay.SetStartPos(PlayerStats.respawnPosition, GlobalHelper.level);
+                currentReplay.highScores[GlobalHelper.level] = PlayerStats.score;
                 InterruptAllKeys();
                 SaveLoad.SaveReplay(currentReplay, 0);
             }
@@ -92,6 +93,7 @@ public class ReplayManager : MonoBehaviour {
                     indicesToRemove.Add(i);
                 }
             }
+
             foreach(int i in indicesToRemove) {
                 currentInput.RemoveAt(i);
             }
