@@ -111,6 +111,7 @@ public class Enemy : MonoBehaviour {
     private void NextPhase(bool byDamage, int delay) {
         timeoutAttack = false;
         if (byDamage) {
+            ReplayManager.currentReplay.pacifist = false;
             if (template.isBoss) {
                 if (GetSpell(template.attackPath[currentAttack]) != "") {
                     PlayerStats.AddScore(GlobalHelper.levelManager.GetComponent<SpellcardManager>().currentValue);

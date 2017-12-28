@@ -163,6 +163,7 @@ public class PlayerMovement : MonoBehaviour {
     /// </summary>
     public void CheckBomb(bool bomb) {
         if (bomb && !GlobalHelper.dialogue && PlayerStats.bombs > 0) { //todo: graphics
+            ReplayManager.currentReplay.noBomb = false;
             //Set the spellcard bonus to failure. Does basically nothing if there's no spell active except eat like .01ms
             GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
 

@@ -108,6 +108,7 @@ public class PlayerStats : MonoBehaviour
     public void TakeDamage() {
         //Stuff should only happen when not invincible
         if (invincibility <= 0) {
+            ReplayManager.currentReplay.noMiss = false;
             //Set the spellcard bonus to failure. Does basically nothing if there's no spell active except eat like .01ms
             GlobalHelper.levelManager.GetComponent<SpellcardManager>().Fail();
             StartCoroutine(GlobalHelper.levelManager.GetComponent<BulletClear>().Clear(0.3f, BulletClear.BulletClearType.DEATH));
