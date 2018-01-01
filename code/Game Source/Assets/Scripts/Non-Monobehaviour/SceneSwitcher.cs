@@ -31,7 +31,7 @@ public class SceneSwitcher  {
         /* Data needed to be kept:
          * Everything from PlayerStats. Update the startpos.
          */
-        ReplayManager.currentReplay.highScores[GlobalHelper.level] = PlayerStats.score;
+        PlayerStats.ProcessStageHighscores();
         ReplayManager.currentReplay.startpos[level] = PlayerPosGetter.playerPos;
         GlobalHelper.level = level;
         //Make the replay think we're in stage 2 and split input so it's registered at the start of the stage
@@ -41,6 +41,7 @@ public class SceneSwitcher  {
     }
 
     public static void LoadMenu() {
+        PlayerStats.ProcessStageHighscores();
         Menu.previousSelectedMenuItems = new List<Transform>();
         UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("menu");
     }

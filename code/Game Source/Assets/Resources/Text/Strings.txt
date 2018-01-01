@@ -1,5 +1,6 @@
 https://docs.unity3d.com/Manual/StyledText.html can be used here for rich text.
 HIGHSCORE=Hi-Score
+ACTIVEREPLAY=REPLAYING
 SCORE=Score
 LIVES=Lives
 BOMBS=Spellcard

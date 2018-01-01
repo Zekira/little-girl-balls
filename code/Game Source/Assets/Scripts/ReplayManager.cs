@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ReplayManager : MonoBehaviour {
 
@@ -39,6 +40,10 @@ public class ReplayManager : MonoBehaviour {
         } else {
             //Playerstats are get in PlayerStat's start
             inputToCheck = currentReplay.inputData[GlobalHelper.level];
+
+            PlayerStats.highscore = ulong.MaxValue; //doesn't get saved anyway
+            GlobalHelper.uiVariable.Find("HighScore").GetComponent<Text>().text = StringFetcher.GetString("ACTIVEREPLAY");
+            GlobalHelper.canvas.Find("Static Canvas").Find("Nonvariable").Find("Hi-Score").gameObject.SetActive(false);
         }
     }
 
@@ -75,13 +80,7 @@ public class ReplayManager : MonoBehaviour {
                 }
             }
             if (Input.GetKeyDown(KeyCode.I)) { //TODO: Temp to remove!
-                currentReplay.SetPlayerAndDifficulty(GlobalHelper.character, GlobalHelper.difficulty);
-                currentReplay.SetReplayName("This is honestly a 32 char name!");
-                currentReplay.SetSeed(GlobalHelper.randomSeed, 0);
-                currentReplay.SetStartPos(PlayerStats.respawnPosition, GlobalHelper.level);
-                currentReplay.highScores[GlobalHelper.level] = PlayerStats.score;
-                InterruptAllKeys();
-                SaveLoad.SaveReplay(currentReplay, 0);
+                PrepareSaveReplay("This is honestly a 32 char name!", 0);
             }
         }
         if (Input.GetKeyDown(KeyCode.O)) { //TODO: Temp to remove!
@@ -168,5 +167,15 @@ public class ReplayManager : MonoBehaviour {
             currentReplay.AddInputData(new InputData(-1, -1, KeyData.keys[0]), keylevels[keyId]); //placeholder for when the data should actually be recorded
             keyindices[keyId] = currentReplay.inputData[GlobalHelper.level].Count - 1;
         }
+    }
+
+    public static void PrepareSaveReplay(string name, int index) {
+        currentReplay.SetPlayerAndDifficulty(GlobalHelper.character, GlobalHelper.difficulty);
+        currentReplay.SetReplayName(name);
+        currentReplay.SetSeed(GlobalHelper.randomSeed, 0);
+        currentReplay.SetStartPos(PlayerStats.respawnPosition, GlobalHelper.level);
+        currentReplay.highScores[GlobalHelper.level] = PlayerStats.score;
+        InterruptAllKeys();
+        SaveLoad.SaveReplay(currentReplay, index);
     }
 }

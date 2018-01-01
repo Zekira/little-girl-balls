@@ -126,19 +126,20 @@ public static class SaveLoad
      * Time played (uint) = 4 bytes
      * Bullets seen (ulong) = 8 bytes
      * Music heard (byte: 1 = stage 1 track, 2 = stage 1 track + boss, 3 is up and including to stage 2 track, etc. 12 = up to and including stage 6 boss, 13 = ex stage, 14 = ex boss, 15 = credits, 16 = ending) = 1 byte
-     * For each player: (Totalling 77 bytes per player = 462)
+     * For each player: (Totalling 313 bytes per player = 1878)
      *      Highest unlocked stage (byte: 1 through 7) (Manages stage practice unlocks / extra stage unlock) = 1 byte for each difficulty
      *      Main game attempt count (short x4) = 4*2 bytes
      *      Main game clear count
      *      Extra attempt count
      *      Extra clear count
      *      Highscore (ulong) = 8 bytes
-     *      Stage 1 through 7 highscore (ulong x7) = 7*8 bytes
+     *      Stage 1 through 7 highscore (ulong x7) easy = 7*8 bytes
+     *      Stage 1 through 7 highscore on other difficulties (ulong x28) = 7*28 bytes = 224 bytes
      *      Time played (uint) = 4 bytes
      * //Total history
      * 
      */
-    private const int playerDataPlayerSize = 89; //the size of the data in bytes a single player block uses
+    private const int playerDataPlayerSize = 313; //the size of the data in bytes a single player block uses
     private const int playerDataGlobalSize = 13;
     public static void SavePlayerData(GlobalHelper.Character character) {
         (new FileInfo(basePath)).Directory.Create(); //Create the basedirectory if it doesn't exist
@@ -169,8 +170,10 @@ public static class SaveLoad
             writer.Write(GlobalHelper.extraAttempts);
             writer.Write(GlobalHelper.extraFinishes);
             writer.Write(PlayerStats.highscore);
-            foreach (ulong score in PlayerStats.stageHighScore) {
-                writer.Write(score);
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < 7; j++) {
+                    writer.Write(PlayerStats.stageHighScore[i, j]);
+                }
             }
             writer.Write(PlayerStats.timePlayed);
         }
@@ -191,8 +194,10 @@ public static class SaveLoad
             GlobalHelper.extraAttempts = 0;
             GlobalHelper.extraFinishes = 0;
             PlayerStats.highscore = 0;
-            for (int i = 0; i < PlayerStats.stageHighScore.Length; i++) {
-                PlayerStats.stageHighScore[i] = 0;
+            for (int i = 0; i < 5; i++) {
+                for (int ii = 0; ii < 7; ii++) {
+                    PlayerStats.stageHighScore[i, ii] = 0;
+                }
             }
             PlayerStats.timePlayed = 0;
             return;
@@ -215,8 +220,10 @@ public static class SaveLoad
             GlobalHelper.extraAttempts = reader.ReadInt16();
             GlobalHelper.extraFinishes = reader.ReadInt16();
             PlayerStats.highscore = reader.ReadUInt64();
-            for (int i = 0; i < PlayerStats.stageHighScore.Length; i++) {
-                PlayerStats.stageHighScore[i] = reader.ReadUInt64();
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < 7; j++) {
+                    PlayerStats.stageHighScore[i, j] = reader.ReadUInt64();
+                }
             }
             PlayerStats.timePlayed = reader.ReadUInt32();
         }

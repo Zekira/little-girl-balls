@@ -72,33 +72,33 @@ public class Menu : MonoBehaviour {
                 break;
             case "PlayStage1":
                 SaveLoad.LoadPlayerData(GlobalHelper.character);
-                selectable = (GlobalHelper.bestUnlockedStage[(int)GlobalHelper.difficulty] >= 1);
-                GetComponent<Text>().text = PlayerStats.stageHighScore[0] + "   " + StringFetcher.GetString("PLAYSTAGE1");
+                selectable = (PlayerStats.stageHighScore[(int)GlobalHelper.difficulty,0] > 0);
+                GetComponent<Text>().text = PlayerStats.stageHighScore[(int)GlobalHelper.difficulty,0] + "   " + StringFetcher.GetString("PLAYSTAGE1");
                 break;
             case "PlayStage2":
                 SaveLoad.LoadPlayerData(GlobalHelper.character);
-                selectable = (GlobalHelper.bestUnlockedStage[(int)GlobalHelper.difficulty] >= 2);
-                GetComponent<Text>().text = PlayerStats.stageHighScore[1] + "   " + StringFetcher.GetString("PLAYSTAGE2");
+                selectable = (PlayerStats.stageHighScore[(int)GlobalHelper.difficulty, 1] > 0);
+                GetComponent<Text>().text = PlayerStats.stageHighScore[(int)GlobalHelper.difficulty, 1] + "   " + StringFetcher.GetString("PLAYSTAGE2");
                 break;
             case "PlayStage3":
                 SaveLoad.LoadPlayerData(GlobalHelper.character);
-                selectable = (GlobalHelper.bestUnlockedStage[(int)GlobalHelper.difficulty] >= 3);
-                GetComponent<Text>().text = PlayerStats.stageHighScore[2] + "   " + StringFetcher.GetString("PLAYSTAGE3");
+                selectable = (PlayerStats.stageHighScore[(int)GlobalHelper.difficulty, 2] > 0);
+                GetComponent<Text>().text = PlayerStats.stageHighScore[(int)GlobalHelper.difficulty, 2] + "   " + StringFetcher.GetString("PLAYSTAGE3");
                 break;
             case "PlayStage4":
                 SaveLoad.LoadPlayerData(GlobalHelper.character);
-                selectable = (GlobalHelper.bestUnlockedStage[(int)GlobalHelper.difficulty] >= 4);
-                GetComponent<Text>().text = PlayerStats.stageHighScore[3] + "   " + StringFetcher.GetString("PLAYSTAGE4");
+                selectable = (PlayerStats.stageHighScore[(int)GlobalHelper.difficulty, 3] > 0);
+                GetComponent<Text>().text = PlayerStats.stageHighScore[(int)GlobalHelper.difficulty, 3] + "   " + StringFetcher.GetString("PLAYSTAGE4");
                 break;
             case "PlayStage5":
                 SaveLoad.LoadPlayerData(GlobalHelper.character);
-                selectable = (GlobalHelper.bestUnlockedStage[(int)GlobalHelper.difficulty] >= 5);
-                GetComponent<Text>().text = PlayerStats.stageHighScore[4] + "   " + StringFetcher.GetString("PLAYSTAGE5");
+                selectable = (PlayerStats.stageHighScore[(int)GlobalHelper.difficulty, 4] > 0);
+                GetComponent<Text>().text = PlayerStats.stageHighScore[(int)GlobalHelper.difficulty, 4] + "   " + StringFetcher.GetString("PLAYSTAGE5");
                 break;
             case "PlayStage6":
                 SaveLoad.LoadPlayerData(GlobalHelper.character);
-                selectable = (GlobalHelper.bestUnlockedStage[(int)GlobalHelper.difficulty] >= 6);
-                GetComponent<Text>().text = PlayerStats.stageHighScore[5] + "   " + StringFetcher.GetString("PLAYSTAGE6");
+                selectable = (PlayerStats.stageHighScore[(int)GlobalHelper.difficulty, 5] > 0);
+                GetComponent<Text>().text = PlayerStats.stageHighScore[(int)GlobalHelper.difficulty, 5] + "   " + StringFetcher.GetString("PLAYSTAGE6");
                 break;
         }
         if (!selectable) {

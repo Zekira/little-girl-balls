@@ -9,7 +9,8 @@ public class PlayerStats : MonoBehaviour
 
     //Things that go on the right
     public static ulong highscore = 0;
-    public static ulong[] stageHighScore = { 0, 0, 0, 0, 0, 0, 0 }; //TODO: do stuff with this
+    //First index: difficulty, second index: score
+    public static ulong[,] stageHighScore = new ulong[,] { { 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0 }};
     public static ulong score = 0;
     public static byte lives = 3;
     public const byte piecesToLife = 3;
@@ -65,7 +66,11 @@ public class PlayerStats : MonoBehaviour
             SetValue(10000);
             firstStage = GlobalHelper.level;
         } else { //it's a replay.
-            SetScore(ReplayManager.currentReplay.highScores[GlobalHelper.level]);
+            if (GlobalHelper.level == 0) {
+                SetScore(0);
+            } else {
+                SetScore(ReplayManager.currentReplay.highScores[GlobalHelper.level-1]);
+            }
             SetLives((byte)(ReplayManager.currentReplay.lives[GlobalHelper.level] / piecesToLife),
                 (byte)(ReplayManager.currentReplay.lives[GlobalHelper.level] % piecesToLife));
             SetBombs((byte)(ReplayManager.currentReplay.bombs[GlobalHelper.level] / piecesToBomb),
@@ -275,5 +280,20 @@ public class PlayerStats : MonoBehaviour
     public static void SetValue(uint amount) {
         value = (amount / 10) * 10; //End in a nice round number. Can't have scores ending in not-0, right?
         UIVariable.transform.Find("Value").GetComponent<Text>().text = NumberFunctions.Commafy(value);
+    }
+
+    public static void ProcessStageHighscores() {
+        ReplayManager.currentReplay.highScores[GlobalHelper.level] = score;
+        if (GlobalHelper.level == 0) {
+            if (score > stageHighScore[(int)GlobalHelper.difficulty,0]) {
+                stageHighScore[(int)GlobalHelper.difficulty,0] = score;
+            }
+        } else {
+            ulong delta = score - ReplayManager.currentReplay.highScores[GlobalHelper.level - 1];
+            if (delta > stageHighScore[(int)GlobalHelper.difficulty,GlobalHelper.level]) {
+                //The part before the < denotes whatever was scored in this stage only.
+                stageHighScore[(int)GlobalHelper.difficulty,GlobalHelper.level] = delta;
+            }
+        }
     }
 }

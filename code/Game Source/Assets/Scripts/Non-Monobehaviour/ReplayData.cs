@@ -16,7 +16,7 @@ public class ReplayData {
     public byte[] bombs = new byte[7];
     public byte[] power = new byte[7];
     public uint[] value = new uint[7];
-    public ulong[] highScores = new ulong[7];
+    public ulong[] highScores = new ulong[] { 0, 0, 0, 0, 0, 0, 0 };
     public int[] graze = new int[7];
     public bool noBomb = true; //default to true, set to false on bomb
     public bool noMiss = true; //default to true, set to false on miss
