@@ -7,8 +7,8 @@ public class ReplayManager : MonoBehaviour {
     public static bool isReplay = false; //False during normal gameplay, true during replays.
     private static int[] timer = { 0, 0, 0, 0, 0, 0, 0 }; //One timer for each level.
     private static int[] keylevels = { -1, -1, -1, -1, -1, -1, -1, -1 }; //-1 stands for "no data" and is used to check if there is data from a key that's down.
-    private static int[] keytimers = { 0, 0, 0, 0, 0, 0, 0, 0 };
-    private static int[] keyindices = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    private static int[] keytimers = { 0, 0, 0, 0, 0, 0, 0, 0 }; //The count for how long each key is being pressed
+    private static int[] keyindices = { 0, 0, 0, 0, 0, 0, 0, 0 }; //The indices of the most recent of each key in currentReplay.inputData
 
     public static ReplayData currentReplay = new ReplayData();
     public static ReplayManager replayManager;
@@ -20,7 +20,7 @@ public class ReplayManager : MonoBehaviour {
     private bool[] prevAllKeys = new bool[] { false, false, false, false, false, false, false, false };
 
     public void Awake() {
-        timer = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
+        timer = new int[] { 0, 0, 0, 0, 0, 0, 0 };
         keylevels = new int[] { -1, -1, -1, -1, -1 , -1, -1, -1 };
         keytimers = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
         keyindices = new int[] {  0, 0, 0, 0, 0, 0, 0, 0 };
@@ -58,6 +58,17 @@ public class ReplayManager : MonoBehaviour {
                     keytimers[i]++; //This triggers in the SAME tick as above! be wary. This causes everything (except menu stuff) to have at least length 1.
                 }
                 if (Input.GetKeyUp(KeyData.GetKeyCode(i))) {
+                    if (keylevels[i] == -1) {
+                        /* This should honestly never happen, but it does and I can't find the cause.
+                         * If this happens, line 72's keylevels[i] goes wrong for obvious reasons.
+                         * Like once every thousand or so keypresses while keyboard mashing this if statement evaluates true.
+                         * It usually seems to be about keys that don't last long at all. (One or two ticks)
+                         * Everything else about those inputs (keytimers[i], keyindices[i]) seems correct.
+                         * So I just set the keylevels[i] to the currentlevel - what's the chance that things go wrong with
+                         *  1) This bug triggers 2) at almost EXACTLY a stage transition 3) with gameplay the player wants to save a replay?
+                         */
+                        keylevels[i] = GlobalHelper.level;
+                    }
                     currentReplay.inputData[keylevels[i]][keyindices[i]] = new InputData(timer[keylevels[i]] - keytimers[i], keytimers[i], KeyData.keys[i]);
                     keylevels[i] = -1;
                     //There can be zero-length shit in here but that doesn't really matter.
