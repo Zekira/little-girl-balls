@@ -53,6 +53,10 @@ public class Bullet : MonoBehaviour {
             if (updatePosition) {
                 //Update the position
                 thisTransform.position = pos;
+                //If the rotationspeed is non-zero, change the rotation
+                if (bulletTemplate.rotationSpeed != 0) {
+                    thisTransform.Rotate(0f, 0f, bulletTemplate.rotationSpeed * Mathf.Rad2Deg);
+                }
                 if (pos.x * pos.x + pos.y * pos.y > 64) { //AKA when it's so far out of the field it's irrelevant
                     Deactivate();
                 }

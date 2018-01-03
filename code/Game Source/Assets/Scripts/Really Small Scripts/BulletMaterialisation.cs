@@ -57,7 +57,7 @@ public class BulletMaterialisation : MonoBehaviour {
                     TimelineInterprenter interprenter = GetComponent<TimelineInterprenter>();
                     interprenter.enabled = true;
                     interprenter.patternPath = template.advancedAttackPath;
-                    interprenter.Reset(template.advancedAttackPath);
+                    //interprenter.Reset(template.advancedAttackPath); already called in timelineinterprenter's start
                 }
                 this.enabled = false;
             } else { //Times 1 through 8

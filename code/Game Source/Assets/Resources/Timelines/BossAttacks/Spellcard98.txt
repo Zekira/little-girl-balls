@@ -1,0 +1,70 @@
+//Test card;
+attackduration(7200);
+setparenthealth(3000);
+movetowardspoint(0, 3, 20);
+wait(60);
+
+bulletproperty(laser, scale, 0.3);
+bulletproperty(laser, innercolor, 1, 1, 1, 1);
+bulletproperty(laser, outercolor, 0.2, 0.8, 0.8, 0.8);
+bulletproperty(laser, relativepos, 0);
+bulletproperty(laser, snakelength, 40);
+
+bulletproperty(star, id, 10);
+bulletproperty(star, scale, 0.3);
+bulletproperty(star, rotationspeed, 0.02);
+bulletproperty(star, innercolor, 1, 1, 1, 1);
+bulletproperty(star, outercolor, 0, 0, 1, 1);
+bulletproperty(star, relativepos, 0);
+
+bulletproperty(homing, advancedpath, Timelines/Supplementary/LargeHoming_3);
+bulletproperty(homing, id, 11);
+bulletproperty(homing, scale, 0.4);
+bulletproperty(homing, innercolor, 0, 0, 1, 1);
+bulletproperty(homing, outercolor, 1, 1, 1, 1);
+bulletproperty(homing, clearimmune, 1);
+
+set(y, -3.2);
+createbullet(homing);
+repeat(10);
+repeat(10);
+repeat(3);
+random(movex, -1.5, 1.5);
+random(movey, 2.5, 3.5);
+movetowardspoint(movex, movey, 60);
+
+repeat(4);
+
+random(x, -4, 4);
+random(angle, -0.2, 0.2);
+bulletproperty(laser, position, x, y);
+bulletproperty(laser, movementpolar, angle, 0.04);
+bulletproperty(laser, rotation, angle);
+createbullet(laser);
+add(angle,angle,0.5);
+bulletproperty(laser, movementpolar, angle, 0.04);
+bulletproperty(laser, rotation, angle);
+createbullet(laser);
+add(angle,angle,-1);
+bulletproperty(laser, movementpolar, angle, 0.04);
+bulletproperty(laser, rotation, angle);
+createbullet(laser);
+add(angle,angle,0.5);
+playsound(attack_laser);
+bulletproperty(star, position, x, y);
+repeat(2);
+	repeat(5);
+		add(angle, angle, 1.257);
+		bulletproperty(star, movementpolar, angle, 0.01);
+		createbullet(star);
+	endrepeat;
+	playsound(attack_fire);
+	wait(5);
+	random(angle,0,3.14);
+endrepeat;
+wait(10);
+endrepeat;
+wait(30);
+endrepeat;
+endrepeat;
+endrepeat;

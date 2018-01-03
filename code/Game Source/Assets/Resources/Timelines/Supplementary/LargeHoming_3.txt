@@ -1,0 +1,10 @@
+repeat(10);
+repeat(10);
+repeat(10);
+getplayerposition(x,y);
+movetowardspoint(x, y, 110);
+playsound(attack_bwzz_heavy);
+wait(110);
+endrepeat;
+endrepeat;
+endrepeat;

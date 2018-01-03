@@ -17,7 +17,7 @@ public class TimelineCommand
         ATTACKDURATION, LOG, PHASE, TOPHASE
     };
     public enum EnemyProperty { SCALE, ATTACKPATH, ID, MAXHEALTH, BOSS, BOSSPORTRAIT, DROPVALUE, DROPPOWER, DROPSCORE, STARTPOS, BASESCORE };
-    public enum BulletProperty { MOVEMENT, MOVEMENTPOLAR, ENEMYSHOT, SCALE, ID, INNERCOLOR, OUTERCOLOR, ROTATION, POSITION, RELATIVEPOS, CLEARIMMUNE, SCRIPTROTATION, ADVANCEDPATH, HARMLESS, SNAKELENGTH };
+    public enum BulletProperty { MOVEMENT, MOVEMENTPOLAR, ENEMYSHOT, SCALE, ID, INNERCOLOR, OUTERCOLOR, ROTATION, ROTATIONSPEED, POSITION, RELATIVEPOS, CLEARIMMUNE, SCRIPTROTATION, ADVANCEDPATH, HARMLESS, SNAKELENGTH };
     public enum LaserProperty { WARNDURATION, SHOTDURATION, OUTERCOLOR, INNERCOLOR, WIDTH, MOVEMENT, POSITION, RELATIVEPOS, ROTATION, ROTATIONSPEED };
 
     public Command command;
@@ -210,6 +210,7 @@ public class TimelineCommand
                             case "scriptrotation":
                             case "harmless":
                             case "snakelength":
+                            case "rotationspeed":
                                 if (args.Count != 3) {
                                     Debug.LogError("[Error] Error in Timeline \"<i>" + path + "</i>\" with instruction \"<i>" + instruction + "</i>\" (instruction " + index + "): " + (args.Count - 2) + " property values, \"<i>" + args[1] + "</i>\" expects 1.");
                                     foundError = true;

@@ -83,42 +83,59 @@ General functions:
   starttimeline(<path>);
 path: The place the timeline is located within within the Resources folder in unity.
 Attaches another Timeline to this object that starts getting executed immediatly.
+
   stop;
 Sets the line to be read to after the last one - that is, nothing more is read.
+
   loadlevel(<[0,6]>)
 Load a level. 0-5 are the regular levels designated by 1_x t/m 6_x, and 6 is extra level 7_x (but why would you call that one). I know, quality consistency.
+
   dialogue(<path>);
 path: The place the dialogue is located within within the Resources folder in unity.
 Starts the dialogue. Timelines normally don't run while dialogue is active.
+
   bossname(<name>);
 Sets the boss' name in the upperleft corner.
+
   createbullet(<id>);
   createenemy(<id>);
   createlaser(<id>);
 id: what all properties have been saved to.
 This creates a bullet, enemy, or laser, found by 'id'.
+
   moveparent(<x>, <y>);
 Adds 'x' to the x-position of the object this is attached to and 'y' to the y-position. This is influenced by "scriptrotation".
+
   moveparentpolar(<angle>, <length>);
 Moves the parent
+
   destroyparent;
 Removes the object this is attached to from the game.
+
   setparenthealth(<value>);
 value: Whatever to set the health AND maxhealth of the enemy this is attached to to. If it's not attached to an enemy, it breaks because it makes no sense.
+
   angletoplayer(<store>);
 store: Where to store the angle between what object this is attached to and the player.
+
   angletopoint(<store>, <x>, <y>);
 store: Where to store the angle between what object this is attached to and a point (x,y).
+
   getposition(<storex>, <storey>);
 storex/storey: Where to store the x and y coordinate of the position of what object this is attached to.
+
   getplayerposition(<storex>, <storey>);
 storex/storey: Where to store the x and y coordinate of the poosition of the player.
+
   attackduration(<time>);
 Needs to be in an attack/spellcard file. States how many 1/60th's of a second this attacks lasts. Negative values for timeout spells. If it's missing, assuming 9999. Good practice to have this the first line in a attack.
+
   movetowardspoint(<x>, <y>, <time>);
 Moves the parent smoothly to (x,y), taking time amount of 1/60th seconds.
+
   phase(<string>);
 Sets a label for a phase, identified by string.
+
   tophase(<string>, <health>, <time>, <clear>);
 When health or time fall below the specified values, go to the line with phase(string);. clear specifies whether or not all bullets should be cleared.
 This also jumps out of any repeat loops.
@@ -135,46 +152,64 @@ All properties and values:
 Bullet:
   movement, <x>, <y>
 How this bullet moves every tick.
+
   movementpolar, <angle>, <length>
 How this bullet moves every tick, defined by polar coordinates.
 Shorthand for: sin(x, angle); cos(y, angle); mul(x, x, length); mul (y, y, length); bulletproperty(<bullet>, movement, x, y);
 Default: x=0, y=0
+
   enemyshot, <0 (false) or 1 (true)>
 Whether this is shot by an enemy and can be grazed/lethal, or can damage enemies.
 Default: 1
+
   scale, <value>
 How large the bullet is
 Default: 1
+
   id, <value>
 What the graphical ID of this bullet is. Look at Resources/Graphics/Bullets
 Default: 0
+
   innercolor, <red>, <green>, <blue>, <alpha>
 What colour and opacity the outer color (green in texture file) of this bullet is. Scale from 0 to 1. Alpha=0 means invisible, alpha=1 means fully visible.
 Default: red=1, green=1, blue=1, alpha=1 (This is also known as "white".)
+
   outercolor, <red>, <green>, <blue>, <alpha>
 What colour and opacity the inner color (red in the texture file) of this bullet is. Works the same as innercolor.
 Default: red=1, green=1, blue=1, alpha=1
+
   rotation, <value>
 What rotation this bullet has, in radians.
 Default: 0
+
+  rotationspeed, <value>
+What rotation to add to this every tick, in radians.
+Default: 0
+
   position, <x>, <y>
 What position to spawn this bullet in.
 Default: x=0, y=0
+
   relativepos, <0 (false) or 1 (true)>
 Whether the position this bullet spawns in is relative to the position the object the timeline that spawns it is attached to or absolute.
 Default: 1
+
   clearimmune, <0 (false) or 1 (true)>
 Whether the bullet can be cleared by bombs/deaths.
 Default: 0
+
   scriptrotation, <angle>
 Rotates the results of the following 'angle' radians: bulletProperty's scriprotation, movement, movementpolar, position, rotation; laserProperty's rotation, position; moveparent, moveparentpolar. Add any extra argument after any of these functions to ignore the rotation. Specifically does NOT affect angletoplayer
 Default: 0
+
   advancedpath, <path>
 Adds a Timeline to the created bullet. Same path rules as starttimeline(<path>);
 Default: 
+
   harmless, <0 (false) or 1 (true)>
 Whether this bullet can hurt the player. Different from enemyshot, as this doesn't influence graze or anything. Just disables player collisions.
 default: 0
+
   snakelength, <length>
 If this is larger than 0, it forms a snake of bullets that spawns ever 0.05 seconds <length> amount of times, and overwrites the graphics with the snake bullet graphic
 ======
@@ -182,33 +217,43 @@ Enemy:
   scale, <x>
 How large the enemy is
 Default: 1
+
   attackpath, <path1> [,<path2> ... ,<pathn>]
 What attack(s) this enemy uses. After one attack's health is depleted, it continues through it attacks until there are none, then it dies. Same path rules as starttimeline(<path>);
 Default: 
+
   id, <value>
 What the graphical ID of this bullet is. Look at Resources/Graphics/Enemies
 Default: 0
+
   maxhealth, <value>
 What the health and maxhealth of the first attack is.
 Default: 1
+
   boss, <0 (false) or 1 (true)>
 Whether this is a boss.
 Default: 0
+
   bossportrait, <use character ID from the dialogue section>
 What character's 'happy' portrait to use when announcing spellcards
 Default: rachel
+
   dropvalue, <value>
 How many value items to drop???? todo: still unsure about value
 Default: 0
+
   droppower, <value>
 How much power to drop, from 0 to 400. Whole multiples get converted into a large power item worth 100, if it's >=400, a full power item gets dropped. Rounded to 5's.
 Default: 0
+
   dropscore, <value>
 How many score items to drop.
 Default: 0
+
   startpos, <x>, <y>
 Where to spawn the enemy
 Default: x=0, y=0
+
   basescore, <value>
 How much to add directly to the score when progressing attacks/being killed. This is NOT spellcard bonus or dropped score.
 ======
@@ -216,28 +261,37 @@ Laser:
   warnduration, <value>
 For how long it is harmless. 60 in a second. The last 1/6th second it widens but is still harmless.
 Default: 0
+
   shotduration, <value>
 For how long it is harmful. 60 in a second.
+
   innercolor, <red>, <green>, <blue>, <alpha>
 What colour and opacity the outer color (green in texture file) of this laser is. Scale from 0 to 1. Alpha=0 means invisible, alpha=1 means fully visible.
 Default: red=1, green=1, blue=1, alpha=1 (This is also known as "white".)
+
   outercolor, <red>, <green>, <blue>, <alpha>
 What colour and opacity the inner color (red in the texture file) of this laser is. Works the same as innercolor.
 Default: red=1, green=1, blue=1, alpha=1
+
   width, <value>
 How wide the laser is.
 Default: 0.5
+
   movement, <x>, <y>
 How this moves.
 Default: x=0, y=0
+
   rotation, <value>
 What rotation this has, in radians.
 Default: 0
+
   rotationspeed, <value>
 How much this rotates, 60 * value radians per second.
+
   position, <x>, <y>
 What position to spawn this laser in.
 Default: x=0, y=0
+
   relativepos, <0 (false) or 1 (true)>
 Whether the position this laser spawns in is relative to the position the object the timeline that spawns it is attached to or absolute.
 Default: 1

@@ -399,6 +399,9 @@ public class TimelineInterprenter : MonoBehaviour {
                                 bulletTemplate.rotation = ParseValue(currentCommand.args[1]);
                             }
                             break;
+                        case TimelineCommand.BulletProperty.ROTATIONSPEED:
+                            bulletTemplate.rotationSpeed = ParseValue(currentCommand.args[1]);
+                            break;
                         case TimelineCommand.BulletProperty.ADVANCEDPATH:
                             bulletTemplate.advancedAttackPath = currentCommand.args[1];
                             break;
@@ -590,7 +593,7 @@ public class TimelineInterprenter : MonoBehaviour {
                     }
                     continue;
                 case TimelineCommand.Command.MOVETOWARDSPOINT:
-                    StopCoroutine("moveTowardsSmooth");
+                    StopCoroutine("MoveTowardsSmooth");
                     StartCoroutine(MoveTowardsSmooth(new Vector3(ParseValue(currentCommand.args[0]), ParseValue(currentCommand.args[1]), transform.position.z), ParseValue(currentCommand.args[2])));
                     continue;
                 case TimelineCommand.Command.DESTROYPARENT: //Destroys whatever this is attached to.
@@ -869,18 +872,33 @@ public class TimelineInterprenter : MonoBehaviour {
     /// </summary>
     private IEnumerator MoveTowardsSmooth(Vector3 endPos, float time) {
         time = Mathf.Round(time);
-        Vector3 startPos = transform.position;
+        Vector3 startPos;
+        if (parentBullet != null) {
+            startPos = parentBullet.pos;
+        } else {
+            startPos = transform.position;
+        }
+        int progress = 0;
         float linearProgress = 0f;
         float actualProgress = 0f;
-        //The difference every tick is determined by 3/(2*time) * 4x-4x^2, because for all a sum k from 0 to a (3/2a * (4k/a - 4(k/a)^2)) returns almost 1. (WA gives 1 - 1/(a^2), and a is usually at least 2 digits).
-        while (linearProgress < 1f) {
+        //actualProgress is determined by 6x^5 -15x^4 + 10x^3, with x the linearProgress
+        while (progress < time) {
             if (!GlobalHelper.paused) {
-                actualProgress = 3/(2 * time) * (4 * (linearProgress - linearProgress*linearProgress));
-                transform.position += actualProgress * (endPos - startPos);
-                linearProgress += 1 / time;
+                linearProgress = progress / time;
+                actualProgress = linearProgress*linearProgress*linearProgress * (10 + linearProgress *(6 * linearProgress - 15));
+                if (parentBullet != null) {
+                    parentBullet.pos = startPos + actualProgress * (endPos - startPos);
+                } else {
+                    transform.position = startPos + actualProgress * (endPos - startPos);
+                }
+                progress++;
             }
             yield return null;
         }
-        transform.position = endPos;
+        if (parentBullet != null) {
+            parentBullet.pos = endPos;
+        } else {
+            transform.position = endPos;
+        }
     }
 }
